@@ -1,0 +1,16 @@
+{
+  "id": "click-events",
+  "title": "Click Events",
+  "learningObjective": "Respond to user clicks and update component state.",
+  "description": "Increment a counter.",
+  "hint": "Use (click)",
+  "ts": "count = 0;",
+  "html": "<button (click)=\"count++\">Click Me</button>\n<p>Count: {{count}}</p>",
+  "expectedOutput": "Counter increases when button clicked.",
+  "checks": [
+    {
+      "type": "textIncludes",
+      "value": "Count: 1"
+    }
+  ]
+}

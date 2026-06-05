@@ -1,0 +1,17 @@
+{
+  "id": "property-binding",
+  "title": "Property Binding",
+  "learningObjective": "Bind a variable to an element property.",
+  "description": "Bind a variable to an input.",
+  "hint": "Use [value]",
+  "ts": "name = 'Angular Student';",
+  "html": "<input [value]=\"name\">",
+  "expectedOutput": "Input contains Angular Student.",
+  "checks": [
+    {
+      "type": "inputValue",
+      "selector": "input",
+      "value": "Angular Student"
+    }
+  ]
+}

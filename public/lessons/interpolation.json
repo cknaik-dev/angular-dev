@@ -1,0 +1,16 @@
+{
+  "id": "interpolation",
+  "title": "Interpolation",
+  "learningObjective": "Display a variable with Angular-style interpolation.",
+  "description": "Display a variable value.",
+  "hint": "Use {{variableName}}",
+  "ts": "name = 'Angular';",
+  "html": "<h1>Hello {{name}}</h1>",
+  "expectedOutput": "Hello Angular",
+  "checks": [
+    {
+      "type": "textIncludes",
+      "value": "Hello Angular"
+    }
+  ]
+}

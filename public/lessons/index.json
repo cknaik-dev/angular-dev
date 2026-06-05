@@ -1,0 +1,27 @@
+[
+  {
+    "id": "interpolation",
+    "title": "Interpolation",
+    "learningObjective": "Display a variable with Angular-style interpolation."
+  },
+  {
+    "id": "property-binding",
+    "title": "Property Binding",
+    "learningObjective": "Bind a variable to an element property."
+  },
+  {
+    "id": "click-events",
+    "title": "Click Events",
+    "learningObjective": "Respond to user clicks and update component state."
+  },
+  {
+    "id": "conditional-rendering",
+    "title": "Conditional Rendering",
+    "learningObjective": "Show content only when a condition is true."
+  },
+  {
+    "id": "loop-rendering",
+    "title": "Loop Rendering",
+    "learningObjective": "Render repeated content from an array."
+  }
+]
