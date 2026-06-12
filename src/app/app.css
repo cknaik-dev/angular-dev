@@ -81,10 +81,72 @@
   border-color: var(--accent);
 }
 
+/* Print split-button + dropdown */
+.print-menu {
+  display: inline-flex;
+  gap: 0.35rem;
+  align-items: stretch;
+}
+
+.print-more {
+  position: relative;
+}
+
+.print-more > summary {
+  display: inline-flex;
+  align-items: center;
+  list-style: none;
+  padding: 0.5rem 0.6rem;
+}
+
+.print-more > summary::-webkit-details-marker {
+  display: none;
+}
+
+.print-options {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.35rem);
+  z-index: 10;
+  display: grid;
+  min-width: 11rem;
+  padding: 0.3rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--surface);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.print-options button {
+  padding: 0.5rem 0.7rem;
+  border: 0;
+  border-radius: 0.4rem;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.print-options button:hover {
+  background: var(--surface-2);
+}
+
 @media (max-width: 720px) {
   .topbar {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  /* On mobile the main button prints the current chapter directly. */
+  .print-more {
+    display: none;
+  }
+}
+
+@media print {
+  .print-menu {
+    display: none;
   }
 }
 

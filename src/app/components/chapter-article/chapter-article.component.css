@@ -1,0 +1,249 @@
+/* Theme tokens (--surface, --accent, ...) cascade down from app-root. */
+
+.chapter-page {
+  padding: 2rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--surface);
+}
+
+.chapter-hero {
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.chapter-kicker {
+  margin: 0 0 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.chapter-hero h2 {
+  margin: 0;
+  font-size: 1.9rem;
+  line-height: 1.2;
+}
+
+.chapter-summary {
+  margin: 0.75rem 0 0;
+  color: var(--text-muted);
+  font-size: 1.05rem;
+}
+
+.chapter-section {
+  margin-bottom: 1.75rem;
+}
+
+/* Collapsed "Advanced" section */
+.chapter-advanced {
+  margin-bottom: 1.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--surface-2);
+  padding: 0 1rem;
+}
+
+.chapter-advanced > summary {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.9rem 0;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.chapter-advanced[open] > summary {
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.75rem;
+}
+
+.chapter-advanced .advanced-tag {
+  padding: 0.1rem 0.5rem;
+  border-radius: 0.4rem;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.chapter-advanced > *:last-child {
+  margin-bottom: 1rem;
+}
+
+.chapter-section h3 {
+  margin: 0 0 0.6rem;
+  font-size: 1.25rem;
+}
+
+.chapter-section p,
+.chapter-section li {
+  line-height: 1.7;
+}
+
+.chapter-section ul {
+  margin: 0.5rem 0 0;
+  padding-left: 1.25rem;
+}
+
+.chapter-note {
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-left: 3px solid var(--accent);
+  background: var(--surface-2);
+  font-style: italic;
+}
+
+.chapter-figure {
+  margin: 1rem 0 0;
+}
+
+.chapter-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+  border-radius: 0.5rem;
+}
+
+.chapter-figure figcaption {
+  margin-top: 0.4rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.chapter-link {
+  display: inline-block;
+  margin-top: 0.75rem;
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.chapter-link:hover {
+  text-decoration: underline;
+}
+
+/* Content blocks */
+.card-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.code-card,
+.diagram-box,
+.stack-layer,
+.flow-step {
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--surface-2);
+}
+
+.code-card {
+  flex: 1 1 240px;
+  padding: 0.9rem;
+  margin-top: 1rem;
+}
+
+.card-row .code-card {
+  margin-top: 0;
+}
+
+.code-card h4 {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+}
+
+.code-card pre {
+  margin: 0;
+  padding: 0.75rem;
+  overflow: auto;
+  border-radius: 0.4rem;
+  background: var(--bg);
+  line-height: 1.5;
+}
+
+.diagram-box {
+  flex: 1 1 140px;
+  padding: 0.9rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+.diagram-box span,
+.stack-layer span {
+  display: block;
+  margin-top: 0.3rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.stack-diagram {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.stack-layer {
+  padding: 0.75rem 0.9rem;
+}
+
+.flow-diagram {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.flow-step {
+  padding: 0.6rem 0.9rem;
+  text-align: center;
+}
+
+.flow-arrow {
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+@media (max-width: 720px) {
+  .chapter-page {
+    padding: 1.25rem;
+    font-size: 0.97rem;
+  }
+
+  .chapter-hero h2 {
+    font-size: 1.5rem;
+  }
+
+  .chapter-section h3 {
+    font-size: 1.1rem;
+  }
+}
+
+/* Print: expand collapsed advanced sections, hide live editors. */
+@media print {
+  .chapter-page {
+    border: 0;
+    padding: 0;
+  }
+
+  .chapter-advanced > summary {
+    list-style: none;
+  }
+
+  app-dom-runner,
+  app-ng-runner {
+    display: none;
+  }
+}

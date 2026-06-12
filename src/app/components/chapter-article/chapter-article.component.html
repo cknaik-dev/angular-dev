@@ -1,0 +1,133 @@
+<article class="chapter-page">
+  <header class="chapter-hero">
+    <p class="chapter-kicker">{{ chapter().kicker }}</p>
+    <h2>{{ chapter().heading }}</h2>
+    <p class="chapter-summary">{{ chapter().summary }}</p>
+  </header>
+
+  @for (section of chapter().sections; track section.id; let i = $index) {
+    @if (section.collapsed) {
+      <details class="chapter-section chapter-advanced" [id]="section.id">
+        <summary>
+          <span class="advanced-tag">Advanced</span>{{ section.title }}
+        </summary>
+        <ng-container
+          [ngTemplateOutlet]="blockList"
+          [ngTemplateOutletContext]="{ $implicit: section }"
+        />
+      </details>
+    } @else {
+      <section class="chapter-section" [id]="section.id">
+        <h3>{{ i + 1 }}. {{ section.title }}</h3>
+        <ng-container
+          [ngTemplateOutlet]="blockList"
+          [ngTemplateOutletContext]="{ $implicit: section }"
+        />
+      </section>
+    }
+  }
+</article>
+
+<ng-template #blockList let-section>
+  @for (block of section.blocks; track $index) {
+    @switch (block.type) {
+      @case ('text') {
+        <p [innerHTML]="block.text"></p>
+      }
+      @case ('list') {
+        <ul>
+          @for (item of block.items; track $index) {
+            <li [innerHTML]="item"></li>
+          }
+        </ul>
+      }
+      @case ('note') {
+        <p class="chapter-note" [innerHTML]="block.text"></p>
+      }
+      @case ('link') {
+        <a class="chapter-link" [href]="block.url" target="_blank" rel="noopener">
+          {{ block.label }} ↗
+        </a>
+      }
+      @case ('svg') {
+        <figure class="chapter-figure">
+          <app-safe-svg [svg]="block.svg" />
+          @if (block.caption) {
+            <figcaption>{{ block.caption }}</figcaption>
+          }
+        </figure>
+      }
+      @case ('image') {
+        <figure class="chapter-figure">
+          <img
+            [src]="block.src"
+            [alt]="block.alt"
+            [style.max-width.px]="block.maxWidth ?? 460"
+            loading="lazy"
+          />
+          @if (block.caption) {
+            <figcaption>{{ block.caption }}</figcaption>
+          }
+        </figure>
+      }
+      @case ('code') {
+        <div class="code-card">
+          @if (block.label) {
+            <h4>{{ block.label }}</h4>
+          }
+          <pre>{{ block.code }}</pre>
+        </div>
+      }
+      @case ('run') {
+        <app-dom-runner [initialCode]="block.code" [rows]="block.rows ?? 8" />
+      }
+      @case ('ng') {
+        <app-ng-runner [initialTs]="block.ts" [initialHtml]="block.html" />
+      }
+      @case ('compare') {
+        <div class="card-row">
+          @for (card of block.cards; track $index) {
+            <div class="code-card">
+              <h4>{{ card.title }}</h4>
+              <pre>{{ card.code }}</pre>
+            </div>
+          }
+        </div>
+      }
+      @case ('boxes') {
+        <div class="card-row">
+          @for (box of block.boxes; track $index) {
+            <div class="diagram-box">
+              {{ box.title }}
+              @if (box.detail) {
+                <span>{{ box.detail }}</span>
+              }
+            </div>
+          }
+        </div>
+      }
+      @case ('stack') {
+        <div class="stack-diagram">
+          @for (layer of block.layers; track $index) {
+            <div class="stack-layer">
+              <strong>{{ layer.title }}</strong>
+              @if (layer.detail) {
+                <span>{{ layer.detail }}</span>
+              }
+            </div>
+          }
+        </div>
+      }
+      @case ('flow') {
+        <div class="flow-diagram">
+          @for (step of block.steps; track $index; let last = $last) {
+            <div class="flow-step">{{ step }}</div>
+            @if (!last) {
+              <div class="flow-arrow">→</div>
+            }
+          }
+        </div>
+      }
+    }
+  }
+</ng-template>
