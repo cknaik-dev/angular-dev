@@ -231,7 +231,7 @@
   }
 }
 
-/* Print: expand collapsed advanced sections, hide live editors. */
+/* Print: flatten the page; runners render their own print-only code blocks. */
 @media print {
   .chapter-page {
     border: 0;
@@ -240,10 +240,5 @@
 
   .chapter-advanced > summary {
     list-style: none;
-  }
-
-  app-dom-runner,
-  app-ng-runner {
-    display: none;
   }
 }

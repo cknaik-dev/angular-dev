@@ -56,6 +56,14 @@ import { ProgressService } from '../../core/progress.service';
         }
       }
     </details>
+
+    <!-- Shown only when printing, so examples appear in the PDF. -->
+    <div class="runner-print">
+      <p class="runner-print-label">component.ts</p>
+      <pre>{{ ts }}</pre>
+      <p class="runner-print-label">component.html</p>
+      <pre>{{ html }}</pre>
+    </div>
   `,
   styles: [
     `
@@ -152,6 +160,45 @@ import { ProgressService } from '../../core/progress.service';
         background: var(--surface-2);
         color: var(--danger);
         font-size: 0.85rem;
+      }
+
+      .runner-print {
+        display: none;
+      }
+
+      @media print {
+        .runner {
+          display: none;
+        }
+
+        .runner-print {
+          display: block;
+          margin-top: 1rem;
+          border: 1px solid #999;
+          border-radius: 0.4rem;
+          overflow: hidden;
+        }
+
+        .runner-print-label {
+          margin: 0;
+          padding: 0.3rem 0.6rem;
+          background: #f0f0f0;
+          font-size: 0.78rem;
+          font-weight: 700;
+        }
+
+        .runner-print pre {
+          margin: 0;
+          padding: 0.6rem;
+          white-space: pre-wrap;
+          word-break: break-word;
+          font-size: 0.8rem;
+          line-height: 1.4;
+        }
+
+        .runner-print pre + .runner-print-label {
+          border-top: 1px solid #999;
+        }
       }
     `
   ],
