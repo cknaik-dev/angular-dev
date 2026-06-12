@@ -15,22 +15,185 @@ export class PreviewEngine {
     htmlCode: string,
     onSnapshot: (snapshot: PreviewSnapshot) => void
   ): void {
-    host.innerHTML = '';
-    const componentState = this.createComponentState(tsCode);
-    const body = this.domParser.parseFromString(`<body>${htmlCode}</body>`, 'text/html').body;
-    const fragment = document.createDocumentFragment();
-    const context: RenderContext = {
-      state: componentState,
-      scope: {},
-      rerender: () => this.render(host, tsCode, htmlCode, onSnapshot)
+    // Component state is created ONCE here and reused across event re-renders,
+    // so values like a click counter persist. It only resets when render() is
+    // called again (e.g. the user edits the code and presses Run).
+    const state = this.createComponentState(tsCode);
+
+    const renderInto = (): void => {
+      host.innerHTML = '';
+      const processedHtml = this.convertControlFlow(htmlCode);
+      const body = this.domParser.parseFromString(`<body>${processedHtml}</body>`, 'text/html').body;
+      const fragment = document.createDocumentFragment();
+      const context: RenderContext = { state, scope: {}, rerender: rerenderWithFocus };
+
+      for (const childNode of Array.from(body.childNodes)) {
+        this.processNode(childNode, fragment, context);
+      }
+
+      host.appendChild(fragment);
+      onSnapshot(this.createSnapshot(host));
     };
 
-    for (const childNode of Array.from(body.childNodes)) {
-      this.processNode(childNode, fragment, context);
+    // Re-render on events, but keep focus/caret so live typing isn't interrupted.
+    const rerenderWithFocus = (): void => {
+      const active = host.ownerDocument.activeElement as HTMLInputElement | null;
+      const activeId = active && host.contains(active) ? active.id : '';
+      const selStart = active ? active.selectionStart : null;
+      const selEnd = active ? active.selectionEnd : null;
+
+      renderInto();
+
+      if (activeId) {
+        const restored = host.querySelector<HTMLInputElement>(`#${CSS.escape(activeId)}`);
+        if (restored) {
+          restored.focus();
+          try {
+            if (selStart != null) {
+              restored.setSelectionRange(selStart, selEnd ?? selStart);
+            }
+          } catch {
+            // some input types don't support selection range; ignore
+          }
+        }
+      }
+    };
+
+    renderInto();
+  }
+
+  // Convert modern @if / @for blocks into the *ngIf / *ngFor the engine runs,
+  // so chapter examples can use the syntax we actually teach.
+  private convertControlFlow(template: string): string {
+    let result = '';
+    let i = 0;
+
+    while (i < template.length) {
+      if (template.startsWith('@if', i) && /[\s(]/.test(template[i + 3] ?? '')) {
+        const cond = this.readDelimited(template, i + 3, '(', ')');
+        const block = this.readDelimited(template, cond.end, '{', '}');
+        const condition = cond.value.trim();
+        result += `<ng-container *ngIf="${condition}">${this.convertControlFlow(block.value)}</ng-container>`;
+        i = block.end;
+
+        const afterIf = this.skipWhitespace(template, i);
+        if (template.startsWith('@else', afterIf)) {
+          const elseBlock = this.readDelimited(template, afterIf + 5, '{', '}');
+          result += `<ng-container *ngIf="!(${condition})">${this.convertControlFlow(elseBlock.value)}</ng-container>`;
+          i = elseBlock.end;
+        }
+        continue;
+      }
+
+      if (template.startsWith('@switch', i) && /[\s(]/.test(template[i + 7] ?? '')) {
+        const head = this.readDelimited(template, i + 7, '(', ')');
+        const block = this.readDelimited(template, head.end, '{', '}');
+        result += this.convertSwitch(head.value.trim(), block.value);
+        i = block.end;
+        continue;
+      }
+
+      if (template.startsWith('@for', i) && /[\s(]/.test(template[i + 4] ?? '')) {
+        const head = this.readDelimited(template, i + 4, '(', ')');
+        const block = this.readDelimited(template, head.end, '{', '}');
+        let expression = head.value.trim();
+        const trackIndex = expression.indexOf(';');
+        if (trackIndex >= 0) {
+          expression = expression.slice(0, trackIndex).trim();
+        }
+        result += `<ng-container *ngFor="let ${expression}">${this.convertControlFlow(block.value)}</ng-container>`;
+        i = block.end;
+
+        const afterFor = this.skipWhitespace(template, i);
+        if (template.startsWith('@empty', afterFor)) {
+          const emptyBlock = this.readDelimited(template, afterFor + 6, '{', '}');
+          const iterable = expression.split(/\sof\s/)[1]?.trim() ?? '[]';
+          result += `<ng-container *ngIf="!(${iterable}).length">${this.convertControlFlow(emptyBlock.value)}</ng-container>`;
+          i = emptyBlock.end;
+        }
+        continue;
+      }
+
+      result += template[i];
+      i += 1;
     }
 
-    host.appendChild(fragment);
-    onSnapshot(this.createSnapshot(host));
+    return result;
+  }
+
+  // Convert @switch / @case / @default into a chain of *ngIf comparisons.
+  private convertSwitch(switchExpr: string, body: string): string {
+    const cases: { value: string; content: string }[] = [];
+    let defaultContent: string | null = null;
+    let i = 0;
+
+    while (i < body.length) {
+      if (body.startsWith('@case', i) && /[\s(]/.test(body[i + 5] ?? '')) {
+        const value = this.readDelimited(body, i + 5, '(', ')');
+        const block = this.readDelimited(body, value.end, '{', '}');
+        cases.push({ value: value.value.trim(), content: block.value });
+        i = block.end;
+        continue;
+      }
+      if (body.startsWith('@default', i)) {
+        const block = this.readDelimited(body, i + 8, '{', '}');
+        defaultContent = block.value;
+        i = block.end;
+        continue;
+      }
+      i += 1;
+    }
+
+    let result = '';
+    for (const branch of cases) {
+      result += `<ng-container *ngIf="(${switchExpr}) === (${branch.value})">${this.convertControlFlow(branch.content)}</ng-container>`;
+    }
+    if (defaultContent != null) {
+      const noneMatch =
+        cases.map((c) => `(${switchExpr}) !== (${c.value})`).join(' && ') || 'true';
+      result += `<ng-container *ngIf="${noneMatch}">${this.convertControlFlow(defaultContent)}</ng-container>`;
+    }
+    return result;
+  }
+
+  private readDelimited(
+    source: string,
+    start: number,
+    open: string,
+    close: string
+  ): { value: string; end: number } {
+    let i = this.skipWhitespace(source, start);
+    if (source[i] !== open) {
+      return { value: '', end: i };
+    }
+
+    let depth = 0;
+    let value = '';
+    for (; i < source.length; i++) {
+      const character = source[i];
+      if (character === open) {
+        depth += 1;
+        if (depth === 1) {
+          continue;
+        }
+      } else if (character === close) {
+        depth -= 1;
+        if (depth === 0) {
+          return { value, end: i + 1 };
+        }
+      }
+      value += character;
+    }
+
+    return { value, end: i };
+  }
+
+  private skipWhitespace(source: string, start: number): number {
+    let i = start;
+    while (i < source.length && /\s/.test(source[i])) {
+      i += 1;
+    }
+    return i;
   }
 
   private createComponentState(tsCode: string): Record<string, unknown> {

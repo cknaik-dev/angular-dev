@@ -1,0 +1,105 @@
+{
+  "id": "chapter-17",
+  "number": 17,
+  "title": "Files and Folder Structure",
+  "summary": "A tour of what the CLI creates and which files matter most.",
+  "kicker": "Chapter 17",
+  "heading": "Files and Folder Structure",
+  "sections": [
+    {
+      "id": "the-big-picture",
+      "title": "The big picture",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "It looks like a lot of files at first, but you'll only touch a few of them day to day. Here's the shape of a fresh app."
+        },
+        {
+          "type": "code",
+          "label": "my-app/",
+          "code": "my-app/\n├─ src/\n│  ├─ app/\n│  │  ├─ app.ts          # root component (a class)\n│  │  ├─ app.html        # its template\n│  │  ├─ app.css         # its styles\n│  │  ├─ app.config.ts   # app-wide setup\n│  │  └─ app.routes.ts   # page routes\n│  ├─ main.ts            # starts the app\n│  ├─ index.html         # the single HTML page\n│  └─ styles.css         # global styles\n├─ public/               # images & static files\n├─ angular.json          # build settings\n├─ package.json          # dependencies & scripts\n└─ tsconfig.json         # TypeScript settings"
+        },
+        {
+          "type": "note",
+          "text": "Depending on the Angular version, the root files may be named <code>app.ts</code> or <code>app.component.ts</code>. The idea is the same either way."
+        }
+      ]
+    },
+    {
+      "id": "files-that-matter",
+      "title": "The files you'll actually use",
+      "blocks": [
+        {
+          "type": "stack",
+          "layers": [
+            {
+              "title": "src/app/",
+              "detail": "Your components live here — this is where you spend most of your time"
+            },
+            {
+              "title": "main.ts",
+              "detail": "The starting point that boots the app (you rarely change it)"
+            },
+            {
+              "title": "index.html",
+              "detail": "The one real HTML page; your whole app loads inside it"
+            },
+            {
+              "title": "styles.css",
+              "detail": "Global styles for the entire app"
+            },
+            {
+              "title": "app.config.ts",
+              "detail": "App-wide setup, like the router and HttpClient"
+            },
+            {
+              "title": "package.json",
+              "detail": "Lists your dependencies and the npm scripts (like start and build)"
+            }
+          ]
+        },
+        {
+          "type": "link",
+          "url": "https://angular.dev/reference/configs/file-structure",
+          "label": "More on angular.dev"
+        }
+      ]
+    },
+    {
+      "id": "inside-a-component",
+      "title": "Inside a component",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A component is usually a small group of files with the same name: the class, its template, and its styles. The class ties them together with a <code>@Component</code> label on top."
+        },
+        {
+          "type": "code",
+          "label": "hello.ts",
+          "code": "import { Component } from '@angular/core';\n\n@Component({\n  selector: 'app-hello',\n  templateUrl: './hello.html',\n  styleUrl: './hello.css'\n})\nexport class Hello {\n  name = 'World';\n}"
+        },
+        {
+          "type": "note",
+          "text": "Look closely: it's just a class (Chapter 8) with a label, it imports from a module (Chapter 9), and the template shows data with <code>{{ }}</code> (Chapter 6). You already know the pieces."
+        }
+      ]
+    },
+    {
+      "id": "structure-recap",
+      "title": "Recap",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "Most of your work happens in <code>src/app/</code>.",
+            "<code>main.ts</code> starts the app; <code>index.html</code> hosts it.",
+            "<code>styles.css</code> is global; component styles stay with the component.",
+            "<code>angular.json</code> and <code>package.json</code> configure the project.",
+            "A component is a class + template + styles, joined by <code>@Component</code>."
+          ]
+        }
+      ]
+    }
+  ],
+  "group": "Angular"
+}

@@ -26,35 +26,27 @@ import { PreviewEngine } from '../../preview/preview-engine';
     `
       :host {
         display: block;
-        height: 100%;
-        min-height: 26rem;
       }
 
       .preview-shell {
-        height: 100%;
+        min-height: 3rem;
         overflow: auto;
-        border-radius: 1rem;
-        border: 1px solid rgba(145, 179, 255, 0.16);
-        background:
-          linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent),
-          rgba(6, 14, 26, 0.7);
+        border-radius: 0.5rem;
+        border: 1px solid #2a3a50;
+        background: #0f1722;
+        color: #e6edf6;
       }
 
       .preview-shell.light {
-        background:
-          linear-gradient(180deg, rgba(0, 104, 255, 0.04), transparent),
-          rgba(255, 255, 255, 0.96);
+        border-color: #d4dbe6;
+        background: #ffffff;
+        color: #16202e;
       }
 
       .preview-host {
         min-height: 100%;
         padding: 1.25rem;
         color: inherit;
-        font-family: 'Space Grotesk', sans-serif;
-      }
-
-      .preview-host :is(h1, h2, h3, h4, h5, h6) {
-        letter-spacing: -0.04em;
       }
 
       .preview-host button,

@@ -1,0 +1,75 @@
+{
+  "id": "chapter-09",
+  "number": 9,
+  "title": "Modules: import and export",
+  "summary": "Split code across files and share it between them.",
+  "kicker": "Chapter 9",
+  "heading": "Modules: import and export",
+  "sections": [
+    {
+      "id": "why-modules",
+      "title": "Why modules?",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Real apps are too big for one file. Modules let you split your code into separate files and share pieces between them. You <strong>export</strong> what a file offers, and <strong>import</strong> what you need elsewhere."
+        },
+        {
+          "type": "link",
+          "url": "https://javascript.info/modules-intro",
+          "label": "More on javascript.info"
+        }
+      ]
+    },
+    {
+      "id": "export",
+      "title": "Sharing code with export",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Put <code>export</code> in front of anything you want other files to be able to use."
+        },
+        {
+          "type": "code",
+          "label": "math.js",
+          "code": "export function add(a, b) {\n  return a + b;\n}\n\nexport const PI = 3.14;"
+        }
+      ]
+    },
+    {
+      "id": "import",
+      "title": "Pulling it in with import",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "In another file, <code>import</code> the names you need and use them."
+        },
+        {
+          "type": "code",
+          "label": "app.js",
+          "code": "import { add, PI } from \"./math.js\";\n\nadd(2, 3); // 5\nPI;        // 3.14"
+        },
+        {
+          "type": "note",
+          "text": "Every Angular file starts this way. <code>import { Component } from '@angular/core';</code> is exactly this — pulling in code from another module."
+        }
+      ]
+    },
+    {
+      "id": "modules-recap",
+      "title": "Recap",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "Modules split your code across many files.",
+            "<code>export</code> shares something from a file.",
+            "<code>import</code> brings it into another file.",
+            "Angular files import the tools they need at the top."
+          ]
+        }
+      ]
+    }
+  ],
+  "group": "JavaScript"
+}

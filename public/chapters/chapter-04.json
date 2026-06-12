@@ -1,0 +1,91 @@
+{
+  "id": "chapter-04",
+  "number": 4,
+  "title": "Functions and Arrow Functions",
+  "summary": "Wrap code so you can reuse it — and meet the shorter arrow style.",
+  "kicker": "Chapter 4",
+  "heading": "Functions and Arrow Functions",
+  "sections": [
+    {
+      "id": "what-is-function",
+      "title": "What is a function?",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A function is a chunk of code with a name, so you can run it whenever you need it instead of writing it again. You can hand it <strong>inputs</strong> (called parameters), and it can hand back a <strong>result</strong> (the return value)."
+        },
+        {
+          "type": "svg",
+          "caption": "A function takes inputs and gives back a result.",
+          "svg": "<svg viewBox='0 0 440 130' role='img' aria-label='Inputs go into a function and a result comes out'><defs><marker id='fn-ar' markerWidth='8' markerHeight='8' refX='6' refY='3' orient='auto'><path d='M0,0 L6,3 L0,6 Z' fill='currentColor'/></marker></defs><g fill='none' stroke='currentColor' stroke-width='1.5'><rect x='15' y='45' width='90' height='40' rx='6'/><rect x='170' y='30' width='110' height='70' rx='8'/><rect x='335' y='45' width='90' height='40' rx='6'/><line x1='105' y1='65' x2='166' y2='65' marker-end='url(#fn-ar)'/><line x1='282' y1='65' x2='331' y2='65' marker-end='url(#fn-ar)'/></g><g fill='currentColor' font-size='14' text-anchor='middle' font-family='sans-serif'><text x='60' y='70'>inputs</text><text x='225' y='62'>add()</text><text x='225' y='80' font-size='11' opacity='0.7'>function</text><text x='380' y='70'>result</text></g></svg>"
+        },
+        {
+          "type": "code",
+          "label": "Declaration",
+          "code": "function add(a, b) {\n  return a + b;\n}\n\nadd(2, 3); // 5"
+        },
+        {
+          "type": "run",
+          "rows": 8,
+          "height": 70,
+          "code": "<p id=\"out\"></p>\n\n<script>\n  function add(a, b) {\n    return a + b;\n  }\n  document.getElementById(\"out\").textContent = \"add(2, 3) = \" + add(2, 3);\n</script>"
+        },
+        {
+          "type": "link",
+          "url": "https://javascript.info/function-basics",
+          "label": "More on javascript.info"
+        }
+      ]
+    },
+    {
+      "id": "arrow-functions",
+      "title": "Arrow functions",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Arrow functions are just a shorter way to write the same thing. When the body is a single expression, you can drop the <code>return</code> and the curly braces."
+        },
+        {
+          "type": "compare",
+          "cards": [
+            {
+              "title": "Normal",
+              "code": "function add(a, b) {\n  return a + b;\n}"
+            },
+            {
+              "title": "Arrow",
+              "code": "const add = (a, b) => a + b;"
+            }
+          ]
+        },
+        {
+          "type": "run",
+          "rows": 8,
+          "height": 70,
+          "code": "<p id=\"out\"></p>\n\n<script>\n  const add = (a, b) => a + b;\n  const square = n => n * n;\n  document.getElementById(\"out\").textContent =\n    \"add(2,3)=\" + add(2, 3) + \", square(5)=\" + square(5);\n</script>"
+        },
+        {
+          "type": "link",
+          "url": "https://javascript.info/arrow-functions-basics",
+          "label": "More on javascript.info"
+        }
+      ]
+    },
+    {
+      "id": "functions-recap",
+      "title": "Recap",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "A function bundles up code you can reuse anytime.",
+            "Parameters are the inputs; <code>return</code> sends back the result.",
+            "Arrow functions are a shorter style: <code>(a, b) => a + b</code>.",
+            "If the body is a single expression, it returns on its own — no <code>return</code> needed."
+          ]
+        }
+      ]
+    }
+  ],
+  "group": "JavaScript"
+}

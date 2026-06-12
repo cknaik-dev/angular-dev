@@ -1,0 +1,50 @@
+{
+  "id": "chapter-14",
+  "number": 14,
+  "title": "Typed Functions and Generics",
+  "summary": "Give functions typed inputs and outputs, and reuse types with generics.",
+  "kicker": "Chapter 14",
+  "heading": "Typed Functions and Generics",
+  "group": "TypeScript",
+  "sections": [
+    {
+      "id": "typed-functions",
+      "title": "Typing functions",
+      "blocks": [
+        { "type": "text", "text": "Functions (Chapter 4) get types too: one for each parameter, and one for what they return. Now TypeScript checks that you call them correctly." },
+        { "type": "code", "label": "typed function", "code": "function add(a: number, b: number): number {\n  return a + b;\n}\n\nadd(2, 3);     // ok\nadd(2, \"3\");   // Error: \"3\" is not a number" },
+        { "type": "link", "url": "https://www.typescriptlang.org/docs/handbook/2/functions.html", "label": "More on typescriptlang.org" }
+      ]
+    },
+    {
+      "id": "literal-unions",
+      "title": "Functions with union types",
+      "blocks": [
+        { "type": "text", "text": "Parameters can use unions too, so a function only accepts the values you allow." },
+        { "type": "code", "label": "union param", "code": "function setStatus(state: \"on\" | \"off\") {\n  // ...\n}\n\nsetStatus(\"on\");   // ok\nsetStatus(\"maybe\"); // Error" }
+      ]
+    },
+    {
+      "id": "generics",
+      "title": "Generics: types as inputs",
+      "blocks": [
+        { "type": "text", "text": "Sometimes a function should work with <em>any</em> type but still keep that type. A <strong>generic</strong> uses a placeholder (often <code>T</code>) that is filled in when the function is used." },
+        { "type": "code", "label": "generic", "code": "function first<T>(items: T[]): T {\n  return items[0];\n}\n\nfirst<string>([\"a\", \"b\"]); // returns a string\nfirst([1, 2, 3]);          // T inferred as number" },
+        { "type": "note", "text": "You've already used generics: <code>signal&lt;number&gt;(0)</code> and <code>input&lt;string&gt;()</code> from the Angular chapters work exactly this way." }
+      ]
+    },
+    {
+      "id": "generics-recap",
+      "title": "Recap",
+      "blocks": [
+        { "type": "list", "items": [
+          "Type each parameter and the return value of a function.",
+          "Union parameters limit which values are allowed.",
+          "Generics keep a type while staying reusable: <code>&lt;T&gt;</code>.",
+          "The type can be passed in or inferred from the arguments.",
+          "Angular's <code>signal&lt;T&gt;</code> and <code>input&lt;T&gt;</code> are generics."
+        ] }
+      ]
+    }
+  ]
+}

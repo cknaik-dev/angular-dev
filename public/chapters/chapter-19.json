@@ -1,0 +1,131 @@
+{
+  "id": "chapter-19",
+  "number": 19,
+  "title": "Components: The Basics",
+  "summary": "The building block of every Angular app — a reusable piece of UI.",
+  "kicker": "Chapter 19",
+  "heading": "Components: The Basics",
+  "sections": [
+    {
+      "id": "what-is-component",
+      "title": "What is a component?",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A component is one reusable piece of the screen — a header, a button, a card, a whole page. An Angular app is really just a tree of components nested inside each other."
+        },
+        {
+          "type": "svg",
+          "caption": "An app is a tree of components.",
+          "svg": "<svg viewBox='0 0 440 175' role='img' aria-label='An app component with header, list and footer child components'><g fill='none' stroke='currentColor' stroke-width='1.5'><line x1='220' y1='48' x2='80' y2='120'/><line x1='220' y1='48' x2='220' y2='120'/><line x1='220' y1='48' x2='360' y2='120'/><rect x='170' y='14' width='100' height='34' rx='6'/><rect x='30' y='120' width='100' height='34' rx='6'/><rect x='170' y='120' width='100' height='34' rx='6'/><rect x='310' y='120' width='100' height='34' rx='6'/></g><g fill='currentColor' font-size='13' text-anchor='middle' font-family='sans-serif'><text x='220' y='35'>App</text><text x='80' y='141'>Header</text><text x='220' y='141'>List</text><text x='360' y='141'>Footer</text></g></svg>"
+        },
+        {
+          "type": "link",
+          "url": "https://angular.dev/guide/components",
+          "label": "More on angular.dev"
+        }
+      ]
+    },
+    {
+      "id": "component-anatomy",
+      "title": "The parts of a component",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A component is a class (Chapter 8) with a <code>@Component</code> label on top. The label tells Angular three things: the tag name to use it as, where its template is, and where its styles are."
+        },
+        {
+          "type": "code",
+          "label": "hello.ts",
+          "code": "import { Component } from '@angular/core';\n\n@Component({\n  selector: 'app-hello',     // the tag name\n  templateUrl: './hello.html', // the view\n  styleUrl: './hello.css'      // the styles\n})\nexport class Hello {\n  name = 'World';\n}"
+        },
+        {
+          "type": "stack",
+          "layers": [
+            {
+              "title": "selector",
+              "detail": "The custom tag you write to use the component"
+            },
+            {
+              "title": "template",
+              "detail": "The HTML the component shows"
+            },
+            {
+              "title": "styles",
+              "detail": "CSS that applies only to this component"
+            },
+            {
+              "title": "class",
+              "detail": "The data and logic behind it"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "using-component",
+      "title": "Using a component",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Once a component has a selector, you use it like an HTML tag inside another component's template. First make it available by adding it to <code>imports</code>."
+        },
+        {
+          "type": "code",
+          "label": "app.ts",
+          "code": "import { Component } from '@angular/core';\nimport { Hello } from './hello';\n\n@Component({\n  selector: 'app-root',\n  imports: [Hello],\n  template: `<app-hello />`\n})\nexport class App {}"
+        },
+        {
+          "type": "note",
+          "text": "Modern Angular components are <strong>standalone</strong> — each one lists its own imports, so there are no big NgModules to manage."
+        },
+        {
+          "type": "text",
+          "text": "Here's a component you can edit and run — the class holds the data, the template shows it:"
+        },
+        {
+          "type": "ng",
+          "ts": "title = 'My First Component';\ntagline = 'Reusable piece of UI';",
+          "html": "<h2>{{ title }}</h2>\n<p>{{ tagline }}</p>"
+        }
+      ]
+    },
+    {
+      "id": "generate-component",
+      "title": "Creating one with the CLI",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "You don't write all those files by hand. The CLI generates a component — class, template, and styles — and wires the naming for you."
+        },
+        {
+          "type": "code",
+          "label": "Terminal",
+          "code": "ng generate component hello\n# short version:\nng g c hello"
+        },
+        {
+          "type": "link",
+          "url": "https://angular.dev/cli/generate/component",
+          "label": "More on angular.dev"
+        }
+      ]
+    },
+    {
+      "id": "components-recap",
+      "title": "Recap",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "A component is a reusable piece of UI; an app is a tree of them.",
+            "It's a class with a <code>@Component</code> label.",
+            "The label sets the <code>selector</code>, template, and styles.",
+            "Use a component by its selector tag, after adding it to <code>imports</code>.",
+            "Generate one with <code>ng g c name</code>."
+          ]
+        }
+      ]
+    }
+  ],
+  "group": "Angular"
+}

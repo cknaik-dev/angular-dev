@@ -1,0 +1,96 @@
+{
+  "id": "chapter-24",
+  "number": 24,
+  "title": "Styles and Content Projection",
+  "summary": "Scoped styling, passing markup into a component, and reaching its elements.",
+  "kicker": "Chapter 24",
+  "heading": "Styles and Content Projection",
+  "sections": [
+    {
+      "id": "scoped-styles",
+      "title": "Component styles are scoped",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A component's styles only affect that component's own template. So a <code>.title</code> rule in one component won't accidentally restyle a <code>.title</code> somewhere else. Angular keeps each component's CSS to itself — this is called view encapsulation."
+        },
+        {
+          "type": "code",
+          "label": "card.css",
+          "code": ".title {\n  font-size: 1.2rem;\n}\n/* applies only inside Card's template */"
+        },
+        {
+          "type": "link",
+          "url": "https://angular.dev/guide/components/styling",
+          "label": "More on angular.dev"
+        }
+      ]
+    },
+    {
+      "id": "content-projection",
+      "title": "Content projection with ng-content",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Sometimes a component is a wrapper — like a card — and you want to drop your own content inside it. <code>&lt;ng-content&gt;</code> marks the slot where that content lands."
+        },
+        {
+          "type": "svg",
+          "caption": "Markup you write between the tags drops into the ng-content slot.",
+          "svg": "<svg viewBox='0 0 440 150' role='img' aria-label='Your markup is projected into the component ng-content slot'><defs><marker id='cp-ar' markerWidth='8' markerHeight='8' refX='6' refY='3' orient='auto'><path d='M0,0 L6,3 L0,6 Z' fill='currentColor'/></marker></defs><g fill='none' stroke='currentColor' stroke-width='1.5'><rect x='12' y='48' width='140' height='44' rx='8'/><rect x='270' y='24' width='158' height='100' rx='8'/></g><g fill='none' stroke='currentColor' stroke-width='1.3' stroke-dasharray='5 4'><rect x='288' y='66' width='122' height='40' rx='6'/></g><line x1='152' y1='70' x2='268' y2='80' stroke='currentColor' stroke-width='1.5' marker-end='url(#cp-ar)'/><g fill='currentColor' font-size='12' text-anchor='middle' font-family='sans-serif'><text x='82' y='74'>your markup</text><text x='349' y='48'>Card</text></g><g fill='currentColor' font-size='11' text-anchor='middle' font-family='monospace' opacity='0.8'><text x='349' y='90'>ng-content</text></g></svg>"
+        },
+        {
+          "type": "code",
+          "label": "card.ts (the wrapper)",
+          "code": "@Component({\n  selector: 'app-card',\n  template: `\n    <div class=\"card\">\n      <ng-content />\n    </div>`\n})\nexport class Card {}"
+        },
+        {
+          "type": "code",
+          "label": "using it",
+          "code": "<app-card>\n  <h2>Hello</h2>\n  <p>This goes into the slot.</p>\n</app-card>"
+        },
+        {
+          "type": "link",
+          "url": "https://angular.dev/guide/components/content-projection",
+          "label": "More on angular.dev"
+        }
+      ]
+    },
+    {
+      "id": "view-child",
+      "title": "Reaching elements with viewChild",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Now and then you need a real element from your template — to focus an input, for example. Mark it with a reference (Chapter 20) and grab it with <code>viewChild</code>."
+        },
+        {
+          "type": "code",
+          "label": "search.ts",
+          "code": "import { Component, viewChild, ElementRef } from '@angular/core';\n\n@Component({\n  selector: 'app-search',\n  template: `\n    <input #box>\n    <button (click)=\"focus()\">Focus</button>`\n})\nexport class Search {\n  box = viewChild<ElementRef>('box');\n  focus() {\n    this.box()?.nativeElement.focus();\n  }\n}"
+        },
+        {
+          "type": "note",
+          "text": "Reach for this only when you truly need the element. Most of the time, bindings and signals already do what you want."
+        }
+      ]
+    },
+    {
+      "id": "projection-recap",
+      "title": "Recap",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "Component styles are scoped to that component only.",
+            "<code>&lt;ng-content&gt;</code> is a slot for markup passed in from outside.",
+            "Whatever you put between the component's tags lands in that slot.",
+            "<code>viewChild</code> grabs an element from the template when you need it.",
+            "Prefer bindings and signals first; use queries sparingly."
+          ]
+        }
+      ]
+    }
+  ],
+  "group": "Angular"
+}

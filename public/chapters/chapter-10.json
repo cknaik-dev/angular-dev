@@ -1,0 +1,95 @@
+{
+  "id": "chapter-10",
+  "number": 10,
+  "title": "Promises and async / await",
+  "summary": "How JavaScript handles things that take time, like loading data.",
+  "kicker": "Chapter 10",
+  "heading": "Promises and async / await",
+  "sections": [
+    {
+      "id": "what-is-promise",
+      "title": "What is a Promise?",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Some things take time — loading data, a timer, an image. JavaScript doesn't wait around for them; it keeps going and deals with the result later. A <strong>Promise</strong> is a placeholder for a value that isn't ready yet. It promises to give you the result once it's done — whether it worked or failed."
+        },
+        {
+          "type": "svg",
+          "caption": "A Promise starts pending, then settles as fulfilled or rejected.",
+          "svg": "<svg viewBox='0 0 440 170' role='img' aria-label='A promise goes from pending to fulfilled or rejected'><defs><marker id='pr-ar' markerWidth='8' markerHeight='8' refX='6' refY='3' orient='auto'><path d='M0,0 L6,3 L0,6 Z' fill='currentColor'/></marker></defs><g fill='none' stroke='currentColor' stroke-width='1.5'><rect x='20' y='60' width='120' height='50' rx='8'/><rect x='290' y='16' width='130' height='48' rx='6'/><rect x='290' y='106' width='130' height='48' rx='6'/><line x1='140' y1='78' x2='288' y2='44' marker-end='url(#pr-ar)'/><line x1='140' y1='92' x2='288' y2='128' marker-end='url(#pr-ar)'/></g><g fill='currentColor' font-size='14' text-anchor='middle' font-family='sans-serif'><text x='80' y='90'>pending</text><text x='355' y='45'>fulfilled</text><text x='355' y='135'>rejected</text></g><g fill='currentColor' font-size='11' text-anchor='middle' opacity='0.75' font-family='monospace'><text x='220' y='52'>success</text><text x='220' y='120'>error</text></g></svg>"
+        },
+        {
+          "type": "link",
+          "url": "https://javascript.info/promise-basics",
+          "label": "More on javascript.info"
+        }
+      ]
+    },
+    {
+      "id": "then-catch",
+      "title": "Handling the result: .then and .catch",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "You can't use the value right away, so you hand the Promise a function to run once it's ready. <code>.then(...)</code> handles success, and <code>.catch(...)</code> handles errors. Press Run and wait one second."
+        },
+        {
+          "type": "run",
+          "rows": 11,
+          "code": "<p id=\"out\">Waiting...</p>\n\n<script>\n  const wait = new Promise(function (resolve) {\n    setTimeout(function () {\n      resolve(\"Done after 1 second!\");\n    }, 1000);\n  });\n\n  wait.then(function (message) {\n    document.getElementById(\"out\").textContent = message;\n  });\n</script>"
+        }
+      ]
+    },
+    {
+      "id": "async-await",
+      "title": "A cleaner way: async / await",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Chaining lots of <code>.then(...)</code> calls gets hard to read. <code>async</code> / <code>await</code> lets you write code that waits, but still reads top to bottom like normal steps. <code>await</code> pauses until the Promise is ready."
+        },
+        {
+          "type": "compare",
+          "cards": [
+            {
+              "title": ".then",
+              "code": "wait().then(msg => {\n  show(msg);\n});"
+            },
+            {
+              "title": "async / await",
+              "code": "const msg = await wait();\nshow(msg);"
+            }
+          ]
+        },
+        {
+          "type": "run",
+          "rows": 13,
+          "code": "<p id=\"out\">Waiting...</p>\n\n<script>\n  function wait(ms) {\n    return new Promise(function (resolve) {\n      setTimeout(resolve, ms);\n    });\n  }\n\n  async function run() {\n    document.getElementById(\"out\").textContent = \"Loading...\";\n    await wait(800);\n    document.getElementById(\"out\").textContent = \"Finished!\";\n  }\n\n  run();\n</script>"
+        },
+        {
+          "type": "link",
+          "url": "https://javascript.info/async-await",
+          "label": "More on javascript.info"
+        }
+      ]
+    },
+    {
+      "id": "promises-recap",
+      "title": "Recap",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "A Promise stands for a value that will arrive later.",
+            "It starts <em>pending</em>, then becomes <em>fulfilled</em> (success) or <em>rejected</em> (error).",
+            "<code>.then(...)</code> handles success; <code>.catch(...)</code> handles errors.",
+            "<code>async / await</code> is a cleaner way to write the same thing.",
+            "<code>fetch</code> (next chapter) returns a Promise."
+          ]
+        }
+      ]
+    }
+  ],
+  "group": "JavaScript"
+}

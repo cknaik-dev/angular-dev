@@ -1,0 +1,123 @@
+{
+  "id": "chapter-22",
+  "number": 22,
+  "title": "Control Flow in Templates",
+  "summary": "Show, hide, repeat, and switch parts of your template.",
+  "kicker": "Chapter 22",
+  "heading": "Control Flow in Templates",
+  "sections": [
+    {
+      "id": "if-template",
+      "title": "Showing things with @if",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "<code>@if</code> shows a block only when a condition is true, with an optional <code>@else</code>. It's the same idea as the if/else from Chapter 2, but inside the template."
+        },
+        {
+          "type": "code",
+          "label": "template",
+          "code": "@if (isLoggedIn()) {\n  <p>Welcome back!</p>\n} @else {\n  <p>Please sign in.</p>\n}"
+        },
+        {
+          "type": "text",
+          "text": "Here it is as a live Angular example — press the button to flip the value and watch the block switch. Edit it and run:"
+        },
+        {
+          "type": "ng",
+          "ts": "show = true;\ntoggle() {\n  show = !show;\n}",
+          "html": "<button (click)=\"toggle()\">Toggle</button>\n\n@if (show) {\n  <p>Now you see me</p>\n} @else {\n  <p>Now you don't</p>\n}"
+        }
+      ]
+    },
+    {
+      "id": "for-template",
+      "title": "Repeating with @for",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "<code>@for</code> renders a block once for each item in a list. The <code>track</code> part helps Angular update the list efficiently — usually track a unique id."
+        },
+        {
+          "type": "svg",
+          "caption": "One list item in, one rendered block out — for every item.",
+          "svg": "<svg viewBox='0 0 440 150' role='img' aria-label='An array of three users becomes three list items'><defs><marker id='for-ar' markerWidth='8' markerHeight='8' refX='6' refY='3' orient='auto'><path d='M0,0 L6,3 L0,6 Z' fill='currentColor'/></marker></defs><g fill='none' stroke='currentColor' stroke-width='1.5'><rect x='15' y='40' width='130' height='66' rx='8'/><rect x='300' y='16' width='125' height='30' rx='5'/><rect x='300' y='58' width='125' height='30' rx='5'/><rect x='300' y='100' width='125' height='30' rx='5'/><line x1='145' y1='73' x2='298' y2='31' marker-end='url(#for-ar)'/><line x1='145' y1='73' x2='298' y2='73' marker-end='url(#for-ar)'/><line x1='145' y1='73' x2='298' y2='115' marker-end='url(#for-ar)'/></g><g fill='currentColor' font-size='12' text-anchor='middle' font-family='monospace'><text x='80' y='70'>users()</text><text x='80' y='88' font-size='10' opacity='0.7'>[Asha, Ravi, Sam]</text><text x='362' y='36'>Asha</text><text x='362' y='78'>Ravi</text><text x='362' y='120'>Sam</text></g></svg>"
+        },
+        {
+          "type": "code",
+          "label": "template",
+          "code": "<ul>\n  @for (user of users(); track user.id) {\n    <li>{{ user.name }}</li>\n  } @empty {\n    <li>No users yet.</li>\n  }\n</ul>"
+        },
+        {
+          "type": "note",
+          "text": "<code>@empty</code> is optional — it shows when the list has no items."
+        },
+        {
+          "type": "text",
+          "text": "A live Angular example — add items and watch <code>@for</code> render each one. Edit it and run:"
+        },
+        {
+          "type": "ng",
+          "ts": "items = ['Asha', 'Ravi'];\nadd() {\n  items = [...items, 'Item ' + (items.length + 1)];\n}\nclear() {\n  items = [];\n}",
+          "html": "<button (click)=\"add()\">Add</button>\n<button (click)=\"clear()\">Clear</button>\n\n<ul>\n  @for (item of items; track item) {\n    <li>{{ item }}</li>\n  } @empty {\n    <li>No items yet.</li>\n  }\n</ul>"
+        }
+      ]
+    },
+    {
+      "id": "switch-template",
+      "title": "Choosing with @switch",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "<code>@switch</code> picks one block out of several based on a value — handy when there are more than two options."
+        },
+        {
+          "type": "code",
+          "label": "template",
+          "code": "@switch (status()) {\n  @case ('loading') { <p>Loading...</p> }\n  @case ('error')   { <p>Something went wrong.</p> }\n  @default          { <p>All done!</p> }\n}"
+        },
+        {
+          "type": "text",
+          "text": "A live example — click a button to change the status and watch <code>@switch</code> pick the matching block. Edit it and run:"
+        },
+        {
+          "type": "ng",
+          "ts": "status = 'loading';\nset(value) {\n  status = value;\n}",
+          "html": "<button (click)=\"set('loading')\">Loading</button>\n<button (click)=\"set('error')\">Error</button>\n<button (click)=\"set('done')\">Done</button>\n\n@switch (status) {\n  @case ('loading') { <p>Loading...</p> }\n  @case ('error') { <p>Something went wrong.</p> }\n  @default { <p>All done!</p> }\n}"
+        }
+      ]
+    },
+    {
+      "id": "control-flow-note",
+      "title": "The modern way",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "You may see older code using <code>*ngIf</code> and <code>*ngFor</code> as attributes. The newer <code>@if</code> and <code>@for</code> blocks are built into the template, easier to read, and the recommended choice today."
+        },
+        {
+          "type": "link",
+          "url": "https://angular.dev/guide/templates/control-flow",
+          "label": "More on angular.dev"
+        }
+      ]
+    },
+    {
+      "id": "control-flow-recap",
+      "title": "Recap",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "<code>@if / @else</code> shows or hides a block.",
+            "<code>@for (item of list; track item.id)</code> repeats a block.",
+            "<code>@empty</code> covers the empty-list case.",
+            "<code>@switch / @case / @default</code> picks one of many.",
+            "These replace the older <code>*ngIf</code> / <code>*ngFor</code>."
+          ]
+        }
+      ]
+    }
+  ],
+  "group": "Angular"
+}

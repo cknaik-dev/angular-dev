@@ -1,0 +1,65 @@
+{
+  "id": "chapter-11",
+  "number": 11,
+  "title": "A Taste of REST and fetch",
+  "summary": "A first peek at loading data from the internet. We'll go deeper later.",
+  "kicker": "Chapter 11",
+  "heading": "A Taste of REST and fetch",
+  "sections": [
+    {
+      "id": "what-is-rest",
+      "title": "What is a REST API?",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Most apps don't keep all their data inside themselves — they ask a server for it. A REST API is just a set of web addresses you can call to get or send data. Your code makes a request, the server sends a response back."
+        },
+        {
+          "type": "svg",
+          "caption": "Your app asks; the server answers.",
+          "svg": "<svg viewBox='0 0 440 150' role='img' aria-label='App sends a request and the server sends back a response'><defs><marker id='rest-ar' markerWidth='8' markerHeight='8' refX='6' refY='3' orient='auto'><path d='M0,0 L6,3 L0,6 Z' fill='currentColor'/></marker></defs><g fill='none' stroke='currentColor' stroke-width='1.5'><rect x='20' y='45' width='120' height='60' rx='8'/><rect x='300' y='45' width='120' height='60' rx='8'/><line x1='142' y1='62' x2='296' y2='62' marker-end='url(#rest-ar)'/><line x1='298' y1='90' x2='144' y2='90' marker-end='url(#rest-ar)'/></g><g fill='currentColor' font-size='14' text-anchor='middle' font-family='sans-serif'><text x='80' y='80'>Your app</text><text x='360' y='80'>Server</text></g><g fill='currentColor' font-size='11' text-anchor='middle' opacity='0.75' font-family='monospace'><text x='220' y='54'>request</text><text x='220' y='104'>response (data)</text></g></svg>"
+        },
+        {
+          "type": "note",
+          "text": "This is a quick taste only — we'll cover REST properly in a later chapter."
+        }
+      ]
+    },
+    {
+      "id": "fetch",
+      "title": "Loading data with fetch",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "<code>fetch</code> is the built-in way to call an API. It returns the response a moment later, so we use <code>.then(...)</code> to handle the data once it arrives. Press Run to load a real item from a free practice API."
+        },
+        {
+          "type": "run",
+          "rows": 12,
+          "code": "<p id=\"out\">Loading...</p>\n\n<script>\n  fetch(\"https://jsonplaceholder.typicode.com/todos/1\")\n    .then(response => response.json())\n    .then(data => {\n      document.getElementById(\"out\").textContent = \"Title: \" + data.title;\n    })\n    .catch(() => {\n      document.getElementById(\"out\").textContent = \"Could not load (check your connection).\";\n    });\n</script>"
+        },
+        {
+          "type": "link",
+          "url": "https://javascript.info/fetch",
+          "label": "More on javascript.info"
+        }
+      ]
+    },
+    {
+      "id": "rest-recap",
+      "title": "Recap",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "A REST API is a set of web addresses for getting and sending data.",
+            "Your app makes a request; the server sends a response.",
+            "<code>fetch</code> calls an API, and <code>.then(...)</code> handles the data when it arrives.",
+            "We'll dig into REST in depth in a later chapter."
+          ]
+        }
+      ]
+    }
+  ],
+  "group": "JavaScript"
+}

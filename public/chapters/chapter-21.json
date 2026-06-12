@@ -1,0 +1,116 @@
+{
+  "id": "chapter-21",
+  "number": 21,
+  "title": "Inputs and Outputs",
+  "summary": "How a parent component talks to a child, and the child talks back.",
+  "kicker": "Chapter 21",
+  "heading": "Inputs and Outputs",
+  "sections": [
+    {
+      "id": "why-inputs-outputs",
+      "title": "Talking between components",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Components are nested, so they need to share. A parent passes data <strong>down</strong> to a child through an <strong>input</strong>, and a child sends events <strong>up</strong> to the parent through an <strong>output</strong>."
+        },
+        {
+          "type": "svg",
+          "caption": "Data flows down through inputs; events flow up through outputs.",
+          "svg": "<svg viewBox='0 0 440 150' role='img' aria-label='Parent passes input down to child, child emits output up to parent'><defs><marker id='io-ar' markerWidth='8' markerHeight='8' refX='6' refY='3' orient='auto'><path d='M0,0 L6,3 L0,6 Z' fill='currentColor'/></marker></defs><g fill='none' stroke='currentColor' stroke-width='1.5'><rect x='150' y='12' width='140' height='44' rx='8'/><rect x='150' y='96' width='140' height='44' rx='8'/><line x1='195' y1='56' x2='195' y2='94' marker-end='url(#io-ar)'/><line x1='245' y1='94' x2='245' y2='58' marker-end='url(#io-ar)'/></g><g fill='currentColor' font-size='13' text-anchor='middle' font-family='sans-serif'><text x='220' y='39'>Parent</text><text x='220' y='123'>Child</text></g><g fill='currentColor' font-size='11' text-anchor='middle' opacity='0.75' font-family='monospace'><text x='150' y='79'>input</text><text x='300' y='79'>output</text></g></svg>"
+        },
+        {
+          "type": "link",
+          "url": "https://angular.dev/guide/components/inputs",
+          "label": "More on angular.dev"
+        }
+      ]
+    },
+    {
+      "id": "inputs",
+      "title": "Receiving data with input()",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Inside the child, declare an <code>input()</code>. It becomes a signal, so you read it by calling it with <code>()</code>."
+        },
+        {
+          "type": "code",
+          "label": "greeting.ts (child)",
+          "code": "import { Component, input } from '@angular/core';\n\n@Component({\n  selector: 'app-greeting',\n  template: `<p>Hello {{ name() }}</p>`\n})\nexport class Greeting {\n  name = input('friend'); // default value\n}"
+        }
+      ]
+    },
+    {
+      "id": "passing-inputs",
+      "title": "Passing data from the parent",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The parent sets the input with property binding — the same <code>[ ]</code> from the last chapter."
+        },
+        {
+          "type": "code",
+          "label": "app.ts (parent)",
+          "code": "// class:  title = 'Asha';\n\n<app-greeting [name]=\"title\" />"
+        }
+      ]
+    },
+    {
+      "id": "outputs",
+      "title": "Sending events with output()",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The child declares an <code>output()</code> and calls <code>.emit(...)</code> to send a value up when something happens."
+        },
+        {
+          "type": "code",
+          "label": "like-button.ts (child)",
+          "code": "import { Component, output } from '@angular/core';\n\n@Component({\n  selector: 'app-like-button',\n  template: `<button (click)=\"liked.emit()\">Like</button>`\n})\nexport class LikeButton {\n  liked = output<void>();\n}"
+        }
+      ]
+    },
+    {
+      "id": "listening-outputs",
+      "title": "Listening in the parent",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The parent listens with event binding — the same <code>( )</code> from the last chapter."
+        },
+        {
+          "type": "code",
+          "label": "app.ts (parent)",
+          "code": "// class:  onLike() { console.log('liked!'); }\n\n<app-like-button (liked)=\"onLike()\" />"
+        },
+        {
+          "type": "note",
+          "text": "Inputs and outputs connect two components, so they need a real Angular app to run — try them in your own project with <code>ng serve</code>."
+        },
+        {
+          "type": "link",
+          "url": "https://angular.dev/guide/components/outputs",
+          "label": "More on angular.dev"
+        }
+      ]
+    },
+    {
+      "id": "io-recap",
+      "title": "Recap",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "Data flows <strong>down</strong> via <code>input()</code>; events flow <strong>up</strong> via <code>output()</code>.",
+            "An input is a signal — read it with <code>name()</code>.",
+            "The parent sets an input with <code>[name]=\"value\"</code>.",
+            "A child fires an output with <code>thing.emit(value)</code>.",
+            "The parent listens with <code>(thing)=\"handler()\"</code>."
+          ]
+        }
+      ]
+    }
+  ],
+  "group": "Angular"
+}

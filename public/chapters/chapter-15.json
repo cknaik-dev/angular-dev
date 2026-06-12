@@ -1,0 +1,123 @@
+{
+  "id": "chapter-15",
+  "number": 15,
+  "title": "Getting Started with Angular",
+  "summary": "Install the tools and create your first Angular app.",
+  "kicker": "Chapter 15",
+  "heading": "Getting Started with Angular",
+  "sections": [
+    {
+      "id": "what-you-need",
+      "title": "What you need first",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Angular runs on <strong>Node.js</strong>, which also gives you <strong>npm</strong> — the tool that installs code packages. Install Node first, and npm comes along with it. Pick the LTS (long-term support) version."
+        },
+        {
+          "type": "flow",
+          "steps": [
+            "Install Node.js",
+            "Install Angular CLI",
+            "ng new",
+            "ng serve"
+          ]
+        },
+        {
+          "type": "link",
+          "url": "https://nodejs.org/",
+          "label": "Download Node.js"
+        }
+      ]
+    },
+    {
+      "id": "install-cli",
+      "title": "Install the Angular CLI",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The <strong>Angular CLI</strong> is a command-line tool that creates apps, runs them, and builds them for you. Install it once, globally, with npm."
+        },
+        {
+          "type": "code",
+          "label": "Terminal",
+          "code": "npm install -g @angular/cli"
+        },
+        {
+          "type": "text",
+          "text": "Check it worked by asking for its version:"
+        },
+        {
+          "type": "code",
+          "label": "Terminal",
+          "code": "ng version"
+        },
+        {
+          "type": "link",
+          "url": "https://angular.dev/tools/cli/setup-local",
+          "label": "More on angular.dev"
+        }
+      ]
+    },
+    {
+      "id": "create-app",
+      "title": "Create a new app",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Use <code>ng new</code> and give your app a name. The CLI asks a couple of setup questions (like which stylesheet format), then builds the whole project folder for you."
+        },
+        {
+          "type": "code",
+          "label": "Terminal",
+          "code": "ng new my-app"
+        },
+        {
+          "type": "note",
+          "text": "This can take a minute — the CLI is downloading and wiring up everything your app needs."
+        }
+      ]
+    },
+    {
+      "id": "run-app",
+      "title": "Run it in the browser",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Move into the new folder and start the development server. It watches your files and reloads the page automatically whenever you save."
+        },
+        {
+          "type": "code",
+          "label": "Terminal",
+          "code": "cd my-app\nng serve"
+        },
+        {
+          "type": "text",
+          "text": "Now open <code>http://localhost:4200</code> in your browser. That's your app running."
+        },
+        {
+          "type": "link",
+          "url": "https://angular.dev/installation",
+          "label": "More on angular.dev"
+        }
+      ]
+    },
+    {
+      "id": "start-recap",
+      "title": "Recap",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "Install <strong>Node.js</strong> (LTS) — it includes npm.",
+            "Install the CLI once: <code>npm install -g @angular/cli</code>.",
+            "Create an app: <code>ng new my-app</code>.",
+            "Run it: <code>cd my-app</code> then <code>ng serve</code>.",
+            "Open <code>http://localhost:4200</code> to see it."
+          ]
+        }
+      ]
+    }
+  ],
+  "group": "Angular"
+}
