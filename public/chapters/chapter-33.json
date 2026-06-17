@@ -1,190 +1,265 @@
 {
   "id": "chapter-33",
   "number": 33,
-  "title": "CRUD with JSON Server",
-  "summary": "Spin up a fake REST API and do the four CRUD operations against it.",
+  "title": "REST APIs In Depth",
+  "summary": "Resources, HTTP methods, CRUD, and status codes — the full picture.",
   "kicker": "Chapter 33",
   "group": "Angular",
-  "heading": "CRUD with JSON Server",
+  "heading": "REST APIs In Depth",
   "sections": [
     {
-      "id": "json-server",
-      "title": "What is JSON Server?",
+      "id": "recap-rest",
+      "title": "A quick recap",
       "blocks": [
         {
           "type": "text",
-          "text": "To practice talking to an API you need a server. <strong>JSON Server</strong> turns a plain JSON file into a full REST API in seconds — no backend code needed. It's perfect for learning and prototypes."
+          "text": "Back in the taste chapter we saw that a REST API is a set of web addresses your app calls to get and send data. Now let's go deeper: how those addresses are organised, which HTTP method to use, and what the server's reply means."
         },
         {
-          "type": "code",
-          "label": "Terminal",
-          "code": "npm install -g json-server"
-        },
-        {
-          "type": "text",
-          "text": "Create a <code>db.json</code> file with some starting data. Each top-level key becomes a resource (a collection)."
-        },
-        {
-          "type": "code",
-          "label": "db.json",
-          "code": "{\n  \"users\": [\n    { \"id\": 1, \"name\": \"Asha\", \"age\": 20 },\n    { \"id\": 2, \"name\": \"Ravi\", \"age\": 25 }\n  ]\n}"
-        },
-        {
-          "type": "code",
-          "label": "Terminal",
-          "code": "json-server --watch db.json\n# API now running at http://localhost:3000"
-        },
-        {
-          "type": "note",
-          "text": "You instantly get the endpoints <code>/users</code> and <code>/users/:id</code> — and JSON Server saves every change back into <code>db.json</code>."
+          "type": "flow",
+          "steps": [
+            "Your app",
+            "HTTP request",
+            "Server + database",
+            "HTTP response"
+          ]
         },
         {
           "type": "link",
-          "url": "https://github.com/typicode/json-server",
-          "label": "JSON Server on GitHub"
+          "url": "/chapter/chapter-11",
+          "label": "Revisit Chapter 11: A Taste of REST and fetch"
+        },
+        {
+          "type": "link",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods",
+          "label": "HTTP methods on MDN"
         }
       ]
     },
     {
-      "id": "what-is-crud",
-      "title": "What is CRUD?",
+      "id": "resources",
+      "title": "Resources and endpoints",
       "blocks": [
         {
           "type": "text",
-          "text": "<strong>CRUD</strong> stands for the four things you do with data: <strong>C</strong>reate, <strong>R</strong>ead, <strong>U</strong>pdate, and <strong>D</strong>elete. Every app — a todo list, a shop, a social feed — is mostly CRUD underneath."
+          "text": "REST is built around <strong>resources</strong> — things like users, products, or posts. Each resource has a collection address and an item address."
         },
         {
+          "type": "compare",
+          "cards": [
+            {
+              "title": "Collection",
+              "code": "/users         all users\n/products      all products"
+            },
+            {
+              "title": "Single item",
+              "code": "/users/1       the user with id 1\n/products/42   the product with id 42"
+            }
+          ]
+        },
+        {
+          "type": "note",
+          "text": "Use plural nouns for collections (<code>/users</code>), and put the id in the path for one item (<code>/users/1</code>) — not verbs like <code>/getUser</code>."
+        }
+      ]
+    },
+    {
+      "id": "methods-crud",
+      "title": "HTTP methods = CRUD",
+      "blocks": [
+        {
           "type": "text",
-          "text": "Over a REST API (Chapter 32), each CRUD operation is a different HTTP method."
+          "text": "The four basic data operations — Create, Read, Update, Delete (CRUD) — map directly onto four HTTP methods."
         },
         {
           "type": "stack",
           "layers": [
             {
-              "title": "Create",
-              "detail": "POST — add a new item"
+              "title": "GET",
+              "detail": "Read — fetch a collection or one item (never changes data)"
             },
             {
-              "title": "Read",
-              "detail": "GET — fetch items"
+              "title": "POST",
+              "detail": "Create — add a new item to a collection"
             },
             {
-              "title": "Update",
-              "detail": "PUT — change an existing item"
+              "title": "PUT",
+              "detail": "Update — replace an existing item with new data"
             },
             {
-              "title": "Delete",
-              "detail": "DELETE — remove an item"
+              "title": "DELETE",
+              "detail": "Delete — remove an item"
             }
           ]
         },
         {
-          "type": "link",
-          "url": "/chapter/chapter-32",
-          "label": "Revisit Chapter 32: REST APIs In Depth"
+          "type": "code",
+          "label": "CRUD on /users",
+          "code": "GET    /users        -> list users      (Read)\nGET    /users/1      -> one user        (Read)\nPOST   /users        -> create a user    (Create)\nPUT    /users/1      -> update user 1    (Update)\nDELETE /users/1      -> remove user 1    (Delete)"
         }
       ]
     },
     {
-      "id": "crud-read",
-      "title": "Read — GET",
+      "id": "method-get",
+      "title": "GET — read data",
       "blocks": [
         {
           "type": "text",
-          "text": "Reading has two shapes: get the whole collection, or get one item by its id. These are plain <code>GET</code> requests — you can even open the URLs in your browser."
+          "text": "<code>GET</code> asks for data and never changes anything. It has no request body — everything it needs is in the URL. The server replies with <code>200 OK</code> and the data."
         },
         {
           "type": "code",
-          "label": "get all",
-          "code": "GET http://localhost:3000/users\n\n[\n  { \"id\": 1, \"name\": \"Asha\", \"age\": 20 },\n  { \"id\": 2, \"name\": \"Ravi\", \"age\": 25 }\n]"
-        },
-        {
-          "type": "code",
-          "label": "get one",
-          "code": "GET http://localhost:3000/users/1\n\n{ \"id\": 1, \"name\": \"Asha\", \"age\": 20 }"
-        },
-        {
-          "type": "text",
-          "text": "On the command line you can try it with <code>curl</code>:"
-        },
-        {
-          "type": "code",
-          "label": "Terminal",
-          "code": "curl http://localhost:3000/users\ncurl http://localhost:3000/users/1"
-        }
-      ]
-    },
-    {
-      "id": "crud-create",
-      "title": "Create — POST",
-      "blocks": [
-        {
-          "type": "text",
-          "text": "Send a new item in the request body to the collection. JSON Server gives it a new <code>id</code> and saves it, then returns the created item."
-        },
-        {
-          "type": "code",
-          "label": "Terminal",
-          "code": "curl -X POST http://localhost:3000/users \\\n  -H \"Content-Type: application/json\" \\\n  -d '{ \"name\": \"Meera\", \"age\": 22 }'"
-        },
-        {
-          "type": "code",
-          "label": "response",
-          "code": "{ \"id\": 3, \"name\": \"Meera\", \"age\": 22 }"
-        }
-      ]
-    },
-    {
-      "id": "crud-update",
-      "title": "Update — PUT",
-      "blocks": [
-        {
-          "type": "text",
-          "text": "Point at one item's id and send the full updated object. JSON Server replaces it and returns the new version."
-        },
-        {
-          "type": "code",
-          "label": "Terminal",
-          "code": "curl -X PUT http://localhost:3000/users/1 \\\n  -H \"Content-Type: application/json\" \\\n  -d '{ \"name\": \"Asha\", \"age\": 21 }'"
-        },
-        {
-          "type": "code",
-          "label": "response",
-          "code": "{ \"id\": 1, \"name\": \"Asha\", \"age\": 21 }"
-        }
-      ]
-    },
-    {
-      "id": "crud-delete",
-      "title": "Delete — DELETE",
-      "blocks": [
-        {
-          "type": "text",
-          "text": "Point at the item's id with the <code>DELETE</code> method. JSON Server removes it and returns an empty object."
-        },
-        {
-          "type": "code",
-          "label": "Terminal",
-          "code": "curl -X DELETE http://localhost:3000/users/1"
+          "label": "request → response",
+          "code": "GET /users/1\n\nHTTP/1.1 200 OK\n{\n  \"id\": 1,\n  \"name\": \"Asha\",\n  \"age\": 20\n}"
         },
         {
           "type": "note",
-          "text": "Check <code>db.json</code> after each call — you'll see the file actually change as you create, update, and delete."
+          "text": "GET is <strong>safe</strong> (changes nothing) and <strong>idempotent</strong> (asking twice gives the same answer), so results can be cached."
         }
       ]
     },
     {
-      "id": "crud-recap",
+      "id": "method-post",
+      "title": "POST — create data",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "<code>POST</code> sends new data in the request body to a <em>collection</em>. The server creates the item, assigns it an <code>id</code>, and replies with <code>201 Created</code> and the new item."
+        },
+        {
+          "type": "code",
+          "label": "request → response",
+          "code": "POST /users\nContent-Type: application/json\n{\n  \"name\": \"Meera\",\n  \"age\": 22\n}\n\nHTTP/1.1 201 Created\n{ \"id\": 3, \"name\": \"Meera\", \"age\": 22 }"
+        },
+        {
+          "type": "note",
+          "text": "POST is <strong>not idempotent</strong>: send it twice and you create two items. You POST to the collection (<code>/users</code>), not to an id."
+        }
+      ]
+    },
+    {
+      "id": "method-put",
+      "title": "PUT — update data",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "<code>PUT</code> replaces an existing item at its id with the full object you send. The server applies it and replies with <code>200 OK</code> and the updated item."
+        },
+        {
+          "type": "code",
+          "label": "request → response",
+          "code": "PUT /users/1\nContent-Type: application/json\n{\n  \"name\": \"Asha\",\n  \"age\": 21\n}\n\nHTTP/1.1 200 OK\n{ \"id\": 1, \"name\": \"Asha\", \"age\": 21 }"
+        },
+        {
+          "type": "note",
+          "text": "PUT is <strong>idempotent</strong>: sending the same update again leaves the item in the same state. Send the whole object — fields you leave out can be wiped."
+        }
+      ]
+    },
+    {
+      "id": "method-delete",
+      "title": "DELETE — remove data",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "<code>DELETE</code> removes the item at its id. It usually needs no body, and the server often replies with <code>204 No Content</code> (success, nothing to return)."
+        },
+        {
+          "type": "code",
+          "label": "request → response",
+          "code": "DELETE /users/1\n\nHTTP/1.1 204 No Content"
+        },
+        {
+          "type": "note",
+          "text": "DELETE is <strong>idempotent</strong>: once the item is gone, deleting it again still ends with it gone (often a 404 the second time)."
+        }
+      ]
+    },
+    {
+      "id": "request-anatomy",
+      "title": "What a request carries",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A request has a <strong>method</strong>, a <strong>URL</strong>, optional <strong>headers</strong> (extra info like the data format or an auth token), and — for POST and PUT — a <strong>body</strong> with the data."
+        },
+        {
+          "type": "code",
+          "label": "POST /users",
+          "code": "POST /users HTTP/1.1\nContent-Type: application/json\nAuthorization: Bearer <token>\n\n{\n  \"name\": \"Asha\",\n  \"age\": 20\n}"
+        },
+        {
+          "type": "text",
+          "text": "The server replies with a <strong>status code</strong> and usually a body (often JSON)."
+        },
+        {
+          "type": "code",
+          "label": "Response",
+          "code": "HTTP/1.1 201 Created\nContent-Type: application/json\n\n{\n  \"id\": 3,\n  \"name\": \"Asha\",\n  \"age\": 20\n}"
+        }
+      ]
+    },
+    {
+      "id": "status-codes",
+      "title": "Status codes",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The status code tells you what happened. The first digit is the family."
+        },
+        {
+          "type": "stack",
+          "layers": [
+            {
+              "title": "2xx — Success",
+              "detail": "200 OK, 201 Created, 204 No Content (e.g. after DELETE)"
+            },
+            {
+              "title": "4xx — Your request was wrong",
+              "detail": "400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found"
+            },
+            {
+              "title": "5xx — The server failed",
+              "detail": "500 Internal Server Error, 503 Service Unavailable"
+            }
+          ]
+        },
+        {
+          "type": "note",
+          "text": "Rule of thumb: 2xx = it worked, 4xx = fix your request, 5xx = the server has a problem."
+        }
+      ]
+    },
+    {
+      "id": "safe-idempotent",
+      "title": "Safe and idempotent",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Two handy ideas: a <strong>safe</strong> method doesn't change data (GET). An <strong>idempotent</strong> method gives the same result no matter how many times you repeat it."
+        },
+        {
+          "type": "list",
+          "items": [
+            "<code>GET</code> — safe and idempotent.",
+            "<code>PUT</code> and <code>DELETE</code> — idempotent (repeating gives the same end state).",
+            "<code>POST</code> — not idempotent (calling it twice creates two items)."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rest-depth-recap",
       "title": "Recap",
       "blocks": [
         {
           "type": "list",
           "items": [
-            "<strong>JSON Server</strong> turns a <code>db.json</code> into a real REST API for practice.",
-            "<strong>CRUD</strong> = Create, Read, Update, Delete.",
-            "Create → <code>POST /users</code>, Read → <code>GET /users</code> or <code>/users/1</code>.",
-            "Update → <code>PUT /users/1</code>, Delete → <code>DELETE /users/1</code>.",
-            "JSON Server saves changes straight into <code>db.json</code>."
+            "REST is organised around resources: <code>/users</code> and <code>/users/1</code>.",
+            "CRUD maps to methods: GET, POST, PUT, DELETE.",
+            "Requests carry a method, URL, headers, and (sometimes) a body.",
+            "Status codes: 2xx success, 4xx your fault, 5xx server's fault.",
+            "GET is safe; PUT/DELETE are idempotent; POST is not."
           ]
         }
       ]

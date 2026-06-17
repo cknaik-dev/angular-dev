@@ -1,109 +1,178 @@
 {
   "id": "chapter-31",
   "number": 31,
-  "title": "Route Guards",
-  "summary": "Protect routes with guards — like blocking pages behind a login.",
+  "title": "Routing",
+  "summary": "Show different pages for different URLs, with path and query parameters.",
   "kicker": "Chapter 31",
   "group": "Angular",
-  "heading": "Route Guards",
+  "heading": "Routing",
   "sections": [
     {
-      "id": "what-is-guard",
-      "title": "What is a route guard?",
+      "id": "what-is-routing",
+      "title": "What is routing?",
       "blocks": [
         {
           "type": "text",
-          "text": "A <strong>guard</strong> is a small function the router runs before (or after) navigating. It decides whether the user is allowed to go there — for example, blocking a dashboard unless the user is logged in."
+          "text": "A single-page app doesn't reload the whole page when you move around. Instead, the <strong>router</strong> watches the URL and swaps which component is shown — so each \"page\" has its own address you can bookmark, share, and use Back/Forward with."
         },
         {
           "type": "flow",
           "steps": [
-            "User opens a route",
-            "Guard runs",
-            "Allow ✓ or redirect ✗"
+            "URL changes",
+            "Router matches a route",
+            "Component shown in <router-outlet>"
           ]
         },
         {
+          "type": "note",
+          "text": "This very app uses the router — each chapter is a route like <code>/chapter/chapter-01</code>."
+        },
+        {
           "type": "link",
-          "url": "https://angular.dev/guide/routing/route-guards",
+          "url": "https://angular.dev/guide/routing",
           "label": "More on angular.dev"
         }
       ]
     },
     {
-      "id": "auth-guard",
-      "title": "An auth guard with canActivate",
+      "id": "setup",
+      "title": "Setting up routes",
       "blocks": [
         {
           "type": "text",
-          "text": "A modern guard is just a function of type <code>CanActivateFn</code>. Inside it you can <code>inject</code> services. Return <code>true</code> to allow, or a <code>UrlTree</code> (from <code>router.parseUrl</code>) to redirect."
+          "text": "You define a list of routes — each maps a <code>path</code> to a <code>component</code> — and register them with <code>provideRouter</code>."
         },
         {
           "type": "code",
-          "label": "auth.guard.ts",
-          "code": "import { inject } from '@angular/core';\nimport { CanActivateFn, Router } from '@angular/router';\nimport { AuthService } from './auth.service';\n\nexport const authGuard: CanActivateFn = () => {\n  const auth = inject(AuthService);\n  const router = inject(Router);\n\n  if (auth.isLoggedIn()) {\n    return true;\n  }\n  // not logged in -> send to the login page\n  return router.parseUrl('/login');\n};"
+          "label": "app.routes.ts",
+          "code": "import { Routes } from '@angular/router';\nimport { Home } from './home';\nimport { About } from './about';\n\nexport const routes: Routes = [\n  { path: '', component: Home },\n  { path: 'about', component: About }\n];"
+        },
+        {
+          "type": "code",
+          "label": "app.config.ts",
+          "code": "import { provideRouter } from '@angular/router';\nimport { routes } from './app.routes';\n\nexport const appConfig = {\n  providers: [provideRouter(routes)]\n};"
+        },
+        {
+          "type": "text",
+          "text": "Then place a <code>&lt;router-outlet&gt;</code> where the matched component should appear:"
+        },
+        {
+          "type": "code",
+          "label": "app.html",
+          "code": "<nav>...</nav>\n<router-outlet />"
         }
       ]
     },
     {
-      "id": "attach-guard",
-      "title": "Attaching the guard to a route",
+      "id": "links",
+      "title": "Linking between pages",
       "blocks": [
         {
           "type": "text",
-          "text": "List the guard in the route's <code>canActivate</code> array. You can attach several guards."
+          "text": "Use <code>routerLink</code> instead of <code>href</code> so navigation happens without a full reload. <code>routerLinkActive</code> adds a class to the active link."
+        },
+        {
+          "type": "code",
+          "label": "template",
+          "code": "<a routerLink=\"/\">Home</a>\n<a routerLink=\"/about\" routerLinkActive=\"active\">About</a>"
+        },
+        {
+          "type": "note",
+          "text": "Add <code>RouterLink</code> (and <code>RouterLinkActive</code>) to the component's <code>imports</code>."
+        }
+      ]
+    },
+    {
+      "id": "path-params",
+      "title": "Path (route) parameters",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A <strong>path parameter</strong> is part of the URL that changes — like an id. Mark it with <code>:</code> in the route."
+        },
+        {
+          "type": "code",
+          "label": "route",
+          "code": "{ path: 'product/:id', component: ProductPage }\n// matches /product/42, /product/7, ..."
+        },
+        {
+          "type": "text",
+          "text": "Read it from <code>ActivatedRoute</code>. Use the <code>paramMap</code> observable so it updates when the id changes:"
+        },
+        {
+          "type": "code",
+          "label": "product-page.ts",
+          "code": "import { Component, inject } from '@angular/core';\nimport { ActivatedRoute } from '@angular/router';\n\nexport class ProductPage {\n  private route = inject(ActivatedRoute);\n  id = '';\n\n  constructor() {\n    this.route.paramMap.subscribe(params => {\n      this.id = params.get('id') ?? '';\n    });\n  }\n}"
+        },
+        {
+          "type": "note",
+          "text": "With <code>provideRouter(routes, withComponentInputBinding())</code> you can skip ActivatedRoute and just declare <code>id = input&lt;string&gt;()</code> — the router feeds the <code>:id</code> straight into the input."
+        }
+      ]
+    },
+    {
+      "id": "query-params",
+      "title": "Query strings",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Query parameters are the <code>?key=value</code> bits after the path — great for things like search terms, filters, or page numbers. They don't need to be declared in the route."
+        },
+        {
+          "type": "code",
+          "label": "linking with query params",
+          "code": "<a [routerLink]=\"['/search']\" [queryParams]=\"{ q: 'angular', page: 2 }\">\n  Search\n</a>\n<!-- goes to /search?q=angular&page=2 -->"
+        },
+        {
+          "type": "code",
+          "label": "reading them",
+          "code": "private route = inject(ActivatedRoute);\n\nconstructor() {\n  this.route.queryParamMap.subscribe(params => {\n    const term = params.get('q');     // 'angular'\n    const page = params.get('page');  // '2'\n  });\n}"
+        }
+      ]
+    },
+    {
+      "id": "programmatic",
+      "title": "Navigating from code",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Sometimes you navigate after an action (a login, a save). Inject <code>Router</code> and call <code>navigate</code>."
+        },
+        {
+          "type": "code",
+          "label": "navigate()",
+          "code": "import { Router } from '@angular/router';\n\nprivate router = inject(Router);\n\nopenProduct(id: number) {\n  this.router.navigate(['/product', id], {\n    queryParams: { ref: 'home' }\n  });\n}"
+        }
+      ]
+    },
+    {
+      "id": "redirects-wildcard",
+      "title": "Redirects and the 404 route",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Send the empty path to a default page, and catch anything unknown with a wildcard <code>**</code> route. Order matters — the wildcard goes last."
         },
         {
           "type": "code",
           "label": "routes",
-          "code": "import { authGuard } from './auth.guard';\n\nexport const routes: Routes = [\n  { path: 'login', component: Login },\n  {\n    path: 'dashboard',\n    component: Dashboard,\n    canActivate: [authGuard]\n  }\n];"
-        },
-        {
-          "type": "note",
-          "text": "Now visiting <code>/dashboard</code> while logged out bounces the user to <code>/login</code>."
+          "code": "export const routes: Routes = [\n  { path: '', redirectTo: 'home', pathMatch: 'full' },\n  { path: 'home', component: Home },\n  { path: 'product/:id', component: ProductPage },\n  { path: '**', component: NotFound }\n];"
         }
       ]
     },
     {
-      "id": "other-guards",
-      "title": "Other guards",
-      "blocks": [
-        {
-          "type": "stack",
-          "layers": [
-            {
-              "title": "canActivate",
-              "detail": "Can the user enter this route? (auth, roles)"
-            },
-            {
-              "title": "canActivateChild",
-              "detail": "Same check, applied to a route's children"
-            },
-            {
-              "title": "canDeactivate",
-              "detail": "Can the user leave? (warn about unsaved changes)"
-            }
-          ]
-        },
-        {
-          "type": "code",
-          "label": "canDeactivate example",
-          "code": "export const unsavedGuard: CanDeactivateFn<EditPage> = (page) => {\n  return page.hasUnsavedChanges()\n    ? confirm('Leave without saving?')\n    : true;\n};"
-        }
-      ]
-    },
-    {
-      "id": "guards-recap",
+      "id": "routing-recap",
       "title": "Recap",
       "blocks": [
         {
           "type": "list",
           "items": [
-            "A guard is a function the router runs to allow or block navigation.",
-            "<code>CanActivateFn</code> returns <code>true</code>, <code>false</code>, or a <code>UrlTree</code> to redirect.",
-            "<code>inject()</code> services inside the guard (auth, router).",
-            "Attach with <code>canActivate: [authGuard]</code> on the route.",
-            "<code>canActivateChild</code> guards child routes; <code>canDeactivate</code> guards leaving."
+            "Routes map a <code>path</code> to a <code>component</code>; register with <code>provideRouter</code>.",
+            "<code>&lt;router-outlet&gt;</code> is where the matched component shows.",
+            "Navigate with <code>routerLink</code>, or <code>Router.navigate()</code> from code.",
+            "Path params (<code>:id</code>) are read from <code>ActivatedRoute.paramMap</code>.",
+            "Query params (<code>?q=...</code>) are read from <code>queryParamMap</code>.",
+            "<code>''</code> redirects to a default; <code>**</code> catches unknown URLs."
           ]
         }
       ]

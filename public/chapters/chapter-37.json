@@ -1,0 +1,66 @@
+{
+  "id": "chapter-37",
+  "number": 37,
+  "title": "HttpClient with a Service",
+  "summary": "Move your API calls into a service that components can share.",
+  "kicker": "Chapter 37",
+  "group": "Angular",
+  "heading": "HttpClient with a Service",
+  "sections": [
+    {
+      "id": "why-here",
+      "title": "Why put HttpClient in a service?",
+      "blocks": [
+        { "type": "text", "text": "In Chapter 35 we called the API straight from a component. That's fine for one screen, but the URL and request logic get copied around as the app grows. Move them into a <strong>service</strong>: one place owns the API, and every component just asks it for data." },
+        { "type": "flow", "steps": ["Component", "Service", "HttpClient", "Server"] },
+        { "type": "link", "url": "https://angular.dev/guide/http", "label": "More on angular.dev" }
+      ]
+    },
+    {
+      "id": "the-service",
+      "title": "The data service",
+      "blocks": [
+        { "type": "text", "text": "Inject <code>HttpClient</code> once, keep the base URL in one spot, and expose a method per operation. Each returns an Observable — the request runs when something subscribes." },
+        { "type": "code", "label": "user.service.ts", "code": "import { inject, Injectable } from '@angular/core';\nimport { HttpClient } from '@angular/common/http';\n\nexport interface User { id?: number; name: string; age: number; }\n\n@Injectable({ providedIn: 'root' })\nexport class UserService {\n  private http = inject(HttpClient);\n  private url = 'http://localhost:3000/users';\n\n  getAll()            { return this.http.get<User[]>(this.url); }\n  getOne(id: number)  { return this.http.get<User>(`${this.url}/${id}`); }\n  create(user: User)  { return this.http.post<User>(this.url, user); }\n  update(u: User)     { return this.http.put<User>(`${this.url}/${u.id}`, u); }\n  remove(id: number)  { return this.http.delete(`${this.url}/${id}`); }\n}" }
+      ]
+    },
+    {
+      "id": "example-read",
+      "title": "Example 1 & 2: read all and read one",
+      "blocks": [
+        { "type": "text", "text": "The component injects the service and subscribes. It holds no URL and no HTTP code." },
+        { "type": "code", "label": "list.ts", "code": "private users = inject(UserService);\nlist = signal<User[]>([]);\n\nngOnInit() {\n  this.users.getAll().subscribe(data => this.list.set(data));\n}\n\nopen(id: number) {\n  this.users.getOne(id).subscribe(user => console.log(user));\n}" }
+      ]
+    },
+    {
+      "id": "example-write",
+      "title": "Example 3, 4 & 5: create, update, delete",
+      "blocks": [
+        { "type": "text", "text": "Create and update send an object; delete takes an id. After a change, refresh the list (or update the signal locally)." },
+        { "type": "code", "label": "list.ts", "code": "add() {\n  this.users.create({ name: 'Meera', age: 22 })\n    .subscribe(() => this.reload());\n}\n\nsave(user: User) {\n  this.users.update({ ...user, age: 30 })\n    .subscribe(updated => console.log('saved', updated));\n}\n\nremove(id: number) {\n  this.users.remove(id).subscribe(() => {\n    this.list.update(l => l.filter(u => u.id !== id));\n  });\n}\n\nprivate reload() {\n  this.users.getAll().subscribe(data => this.list.set(data));\n}" }
+      ]
+    },
+    {
+      "id": "loading-error",
+      "title": "Loading and error state",
+      "blocks": [
+        { "type": "text", "text": "Because the service returns an Observable, the component decides how to handle waiting and failure — usually with a couple of signals." },
+        { "type": "code", "label": "list.ts", "code": "loading = signal(false);\nerror = signal<string | null>(null);\n\nload() {\n  this.loading.set(true);\n  this.users.getAll().subscribe({\n    next: data => { this.list.set(data); this.loading.set(false); },\n    error: () => { this.error.set('Could not load'); this.loading.set(false); }\n  });\n}" },
+        { "type": "note", "text": "Tip: the <code>async</code> pipe can subscribe for you — <code>@if (users.getAll() | async; as list) { ... }</code> — though caching the Observable in a field is better than calling it in the template." }
+      ]
+    },
+    {
+      "id": "http-service-recap",
+      "title": "Recap",
+      "blocks": [
+        { "type": "list", "items": [
+          "Put <code>HttpClient</code> and the API URL in a service, not the component.",
+          "Expose one method per operation, each returning an Observable.",
+          "Components <code>inject</code> the service and subscribe — they stay thin.",
+          "The same service is reused by every component that needs the data.",
+          "Handle loading/errors in the component (or via the <code>async</code> pipe)."
+        ] }
+      ]
+    }
+  ]
+}

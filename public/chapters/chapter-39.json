@@ -1,0 +1,63 @@
+{
+  "id": "chapter-39",
+  "number": 39,
+  "title": "Environments",
+  "summary": "Keep different settings — like API URLs — for development and production.",
+  "kicker": "Chapter 39",
+  "group": "Angular",
+  "heading": "Environments",
+  "sections": [
+    {
+      "id": "why-env",
+      "title": "Why environments?",
+      "blocks": [
+        { "type": "text", "text": "Your app needs different settings depending on where it runs. In development the API is <code>http://localhost:3000</code>; in production it's your real server. Hard-coding URLs means editing code before every deploy. <strong>Environment files</strong> hold these settings separately, and Angular swaps them in automatically at build time." },
+        { "type": "flow", "steps": ["ng serve", "uses dev settings", "ng build", "uses prod settings"] },
+        { "type": "link", "url": "https://angular.dev/tools/cli/environments", "label": "More on angular.dev" }
+      ]
+    },
+    {
+      "id": "generate-env",
+      "title": "Creating the files",
+      "blocks": [
+        { "type": "text", "text": "The CLI scaffolds the environment files and wires them into the build for you." },
+        { "type": "code", "label": "Terminal", "code": "ng generate environments" },
+        { "type": "text", "text": "It creates two files. The base one is used for production; the <code>.development</code> one overrides it during development." },
+        { "type": "code", "label": "src/environments/environment.ts", "code": "export const environment = {\n  production: true,\n  apiUrl: 'https://api.myapp.com'\n};" },
+        { "type": "code", "label": "src/environments/environment.development.ts", "code": "export const environment = {\n  production: false,\n  apiUrl: 'http://localhost:3000'\n};" }
+      ]
+    },
+    {
+      "id": "how-swap",
+      "title": "How the swap works",
+      "blocks": [
+        { "type": "text", "text": "<code>ng generate environments</code> adds a <strong>file replacement</strong> to <code>angular.json</code>. During a development build, Angular replaces <code>environment.ts</code> with <code>environment.development.ts</code> — so your imports stay the same, but the values change." },
+        { "type": "code", "label": "angular.json (development config)", "code": "\"development\": {\n  \"fileReplacements\": [\n    {\n      \"replace\": \"src/environments/environment.ts\",\n      \"with\": \"src/environments/environment.development.ts\"\n    }\n  ]\n}" },
+        { "type": "note", "text": "<code>ng serve</code> uses the development configuration (so you get the dev values); <code>ng build</code> defaults to production (the base file)." }
+      ]
+    },
+    {
+      "id": "using-env",
+      "title": "Using it in your code",
+      "blocks": [
+        { "type": "text", "text": "Always import from <code>environment.ts</code> (no suffix). Angular substitutes the right file for the build. A service is the perfect place to use it — instead of a hard-coded URL." },
+        { "type": "code", "label": "user.service.ts", "code": "import { inject, Injectable } from '@angular/core';\nimport { HttpClient } from '@angular/common/http';\nimport { environment } from '../environments/environment';\n\n@Injectable({ providedIn: 'root' })\nexport class UserService {\n  private http = inject(HttpClient);\n  private url = `${environment.apiUrl}/users`;\n\n  getAll() {\n    return this.http.get(this.url);\n  }\n}" },
+        { "type": "note", "text": "Environment files are bundled into the browser, so never put secrets (API keys, passwords) in them — anyone can read the shipped code. Keep secrets on the server." }
+      ]
+    },
+    {
+      "id": "env-recap",
+      "title": "Recap",
+      "blocks": [
+        { "type": "list", "items": [
+          "Environments hold per-build settings like the API URL.",
+          "Create them with <code>ng generate environments</code>.",
+          "<code>environment.ts</code> = production; <code>environment.development.ts</code> overrides it in dev.",
+          "<code>angular.json</code> file replacement swaps them at build time.",
+          "Import from <code>environment.ts</code> everywhere — Angular picks the right one.",
+          "Never store secrets — env values ship to the browser."
+        ] }
+      ]
+    }
+  ]
+}

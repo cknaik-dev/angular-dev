@@ -205,36 +205,71 @@
   {
     "id": "chapter-30",
     "number": 30,
-    "title": "Routing",
-    "summary": "Show different pages for different URLs, with path and query parameters.",
+    "title": "Custom Form Controls (ControlValueAccessor)",
+    "summary": "Make your own component work with ngModel and formControlName.",
     "group": "Angular"
   },
   {
     "id": "chapter-31",
     "number": 31,
-    "title": "Route Guards",
-    "summary": "Protect routes with guards — like blocking pages behind a login.",
+    "title": "Routing",
+    "summary": "Show different pages for different URLs, with path and query parameters.",
     "group": "Angular"
   },
   {
     "id": "chapter-32",
     "number": 32,
-    "title": "REST APIs In Depth",
-    "summary": "Resources, HTTP methods, CRUD, and status codes — the full picture.",
+    "title": "Route Guards",
+    "summary": "Protect routes with guards — like blocking pages behind a login.",
     "group": "Angular"
   },
   {
     "id": "chapter-33",
     "number": 33,
-    "title": "CRUD with JSON Server",
-    "summary": "Spin up a fake REST API and do the four CRUD operations against it.",
+    "title": "REST APIs In Depth",
+    "summary": "Resources, HTTP methods, CRUD, and status codes — the full picture.",
     "group": "Angular"
   },
   {
     "id": "chapter-34",
     "number": 34,
+    "title": "CRUD with JSON Server",
+    "summary": "Spin up a fake REST API and do the four CRUD operations against it.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-35",
+    "number": 35,
     "title": "HttpClient in a Component",
     "summary": "Call your JSON Server API straight from a component with HttpClient.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-36",
+    "number": 36,
+    "title": "Services and Dependency Injection",
+    "summary": "Share logic and data across components with injectable services.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-37",
+    "number": 37,
+    "title": "HttpClient with a Service",
+    "summary": "Move your API calls into a service that components can share.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-38",
+    "number": 38,
+    "title": "Sharing Data with a Service",
+    "summary": "Let far-apart components communicate through a shared service.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-39",
+    "number": 39,
+    "title": "Environments",
+    "summary": "Keep different settings — like API URLs — for development and production.",
     "group": "Angular"
   }
 ]

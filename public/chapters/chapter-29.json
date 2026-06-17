@@ -102,6 +102,37 @@
       ]
     },
     {
+      "id": "rf-nested",
+      "title": "Nested form groups",
+      "collapsed": true,
+      "blocks": [
+        { "type": "text", "text": "A <code>FormGroup</code> can hold another <code>FormGroup</code> — perfect for grouping related fields like an address." },
+        { "type": "code", "label": "signup.ts", "code": "form = this.fb.group({\n  name: [''],\n  address: this.fb.group({\n    street: [''],\n    city: ['']\n  })\n});" },
+        { "type": "code", "label": "signup.html", "code": "<form [formGroup]=\"form\">\n  <input formControlName=\"name\">\n\n  <div formGroupName=\"address\">\n    <input formControlName=\"street\">\n    <input formControlName=\"city\">\n  </div>\n</form>" },
+        { "type": "note", "text": "The value nests too: <code>form.value.address.city</code>." }
+      ]
+    },
+    {
+      "id": "rf-split",
+      "title": "Splitting a form across components",
+      "collapsed": true,
+      "blocks": [
+        { "type": "text", "text": "Pass a nested <code>FormGroup</code> down to a child component as an input. The child binds it with <code>[formGroup]</code> — the parent still owns the whole form." },
+        { "type": "code", "label": "parent.html", "code": "<!-- form.controls.address is a FormGroup -->\n<app-address [group]=\"form.controls.address\" />" },
+        { "type": "code", "label": "address.ts (child)", "code": "import { Component, input } from '@angular/core';\nimport { FormGroup, ReactiveFormsModule } from '@angular/forms';\n\n@Component({\n  selector: 'app-address',\n  imports: [ReactiveFormsModule],\n  template: `\n    <div [formGroup]=\"group()\">\n      <input formControlName=\"street\">\n      <input formControlName=\"city\">\n    </div>`\n})\nexport class Address {\n  group = input.required<FormGroup>();\n}" }
+      ]
+    },
+    {
+      "id": "rf-array",
+      "title": "Dynamic lists with FormArray",
+      "collapsed": true,
+      "blocks": [
+        { "type": "text", "text": "A <code>FormArray</code> holds a changing number of controls — like a list of phone numbers the user can add to or remove." },
+        { "type": "code", "label": "phones.ts", "code": "import { inject } from '@angular/core';\nimport { FormBuilder, FormArray } from '@angular/forms';\n\nprivate fb = inject(FormBuilder);\n\nform = this.fb.group({\n  phones: this.fb.array([ this.fb.control('') ])\n});\n\nget phones() {\n  return this.form.get('phones') as FormArray;\n}\naddPhone() { this.phones.push(this.fb.control('')); }\nremovePhone(i: number) { this.phones.removeAt(i); }" },
+        { "type": "code", "label": "phones.html", "code": "<div formArrayName=\"phones\">\n  @for (ctrl of phones.controls; track i; let i = $index) {\n    <input [formControlName]=\"i\">\n    <button type=\"button\" (click)=\"removePhone(i)\">✕</button>\n  }\n</div>\n<button type=\"button\" (click)=\"addPhone()\">Add phone</button>" }
+      ]
+    },
+    {
       "id": "reactive-recap",
       "title": "Recap",
       "blocks": [

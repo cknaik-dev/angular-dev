@@ -1,265 +1,163 @@
 {
   "id": "chapter-32",
   "number": 32,
-  "title": "REST APIs In Depth",
-  "summary": "Resources, HTTP methods, CRUD, and status codes — the full picture.",
+  "title": "Route Guards",
+  "summary": "Protect routes with guards — like blocking pages behind a login.",
   "kicker": "Chapter 32",
   "group": "Angular",
-  "heading": "REST APIs In Depth",
+  "heading": "Route Guards",
   "sections": [
     {
-      "id": "recap-rest",
-      "title": "A quick recap",
+      "id": "what-is-guard",
+      "title": "What is a route guard?",
       "blocks": [
         {
           "type": "text",
-          "text": "Back in the taste chapter we saw that a REST API is a set of web addresses your app calls to get and send data. Now let's go deeper: how those addresses are organised, which HTTP method to use, and what the server's reply means."
+          "text": "A <strong>guard</strong> is a small function the router runs before (or after) navigating. It decides whether the user is allowed to go there — for example, blocking a dashboard unless the user is logged in."
         },
         {
           "type": "flow",
           "steps": [
-            "Your app",
-            "HTTP request",
-            "Server + database",
-            "HTTP response"
+            "User opens a route",
+            "Guard runs",
+            "Allow ✓ or redirect ✗"
           ]
         },
         {
           "type": "link",
-          "url": "/chapter/chapter-11",
-          "label": "Revisit Chapter 11: A Taste of REST and fetch"
-        },
-        {
-          "type": "link",
-          "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods",
-          "label": "HTTP methods on MDN"
+          "url": "https://angular.dev/guide/routing/route-guards",
+          "label": "More on angular.dev"
         }
       ]
     },
     {
-      "id": "resources",
-      "title": "Resources and endpoints",
+      "id": "generate-guard",
+      "title": "Generating a guard with the CLI",
       "blocks": [
         {
           "type": "text",
-          "text": "REST is built around <strong>resources</strong> — things like users, products, or posts. Each resource has a collection address and an item address."
+          "text": "Don't write the file by hand — let the CLI scaffold it. <code>ng generate guard</code> creates the guard file (and its test)."
         },
         {
-          "type": "compare",
-          "cards": [
-            {
-              "title": "Collection",
-              "code": "/users         all users\n/products      all products"
-            },
-            {
-              "title": "Single item",
-              "code": "/users/1       the user with id 1\n/products/42   the product with id 42"
-            }
-          ]
+          "type": "code",
+          "label": "Terminal",
+          "code": "ng generate guard auth\n# short version:\nng g guard auth"
+        },
+        {
+          "type": "text",
+          "text": "The CLI then asks which kind of guard you want — pick one (or more) with the spacebar:"
+        },
+        {
+          "type": "code",
+          "label": "prompt",
+          "code": "? Which type of guard would you like to create?\n  ◯ CanActivate\n  ◯ CanActivateChild\n  ◯ CanDeactivate\n  ◯ CanMatch"
+        },
+        {
+          "type": "text",
+          "text": "Choosing <strong>CanActivate</strong> generates a ready-to-fill functional guard:"
+        },
+        {
+          "type": "code",
+          "label": "auth.guard.ts (generated)",
+          "code": "import { CanActivateFn } from '@angular/router';\n\nexport const authGuard: CanActivateFn = (route, state) => {\n  return true;\n};"
         },
         {
           "type": "note",
-          "text": "Use plural nouns for collections (<code>/users</code>), and put the id in the path for one item (<code>/users/1</code>) — not verbs like <code>/getUser</code>."
+          "text": "It also creates <code>auth.guard.spec.ts</code>. Now you just fill in the logic — that's the next step."
         }
       ]
     },
     {
-      "id": "methods-crud",
-      "title": "HTTP methods = CRUD",
+      "id": "auth-guard",
+      "title": "An auth guard with canActivate",
       "blocks": [
         {
           "type": "text",
-          "text": "The four basic data operations — Create, Read, Update, Delete (CRUD) — map directly onto four HTTP methods."
+          "text": "A modern guard is just a function of type <code>CanActivateFn</code>. Inside it you can <code>inject</code> services. Return <code>true</code> to allow, or a <code>UrlTree</code> (from <code>router.parseUrl</code>) to redirect."
         },
+        {
+          "type": "code",
+          "label": "auth.guard.ts",
+          "code": "import { inject } from '@angular/core';\nimport { CanActivateFn, Router } from '@angular/router';\nimport { AuthService } from './auth.service';\n\nexport const authGuard: CanActivateFn = () => {\n  const auth = inject(AuthService);\n  const router = inject(Router);\n\n  if (auth.isLoggedIn()) {\n    return true;\n  }\n  // not logged in -> send to the login page\n  return router.parseUrl('/login');\n};"
+        }
+      ]
+    },
+    {
+      "id": "attach-guard",
+      "title": "Attaching the guard to a route",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "List the guard in the route's <code>canActivate</code> array. You can attach several guards."
+        },
+        {
+          "type": "code",
+          "label": "routes",
+          "code": "import { authGuard } from './auth.guard';\n\nexport const routes: Routes = [\n  { path: 'login', component: Login },\n  {\n    path: 'dashboard',\n    component: Dashboard,\n    canActivate: [authGuard]\n  }\n];"
+        },
+        {
+          "type": "note",
+          "text": "Now visiting <code>/dashboard</code> while logged out bounces the user to <code>/login</code>."
+        }
+      ]
+    },
+    {
+      "id": "other-guards",
+      "title": "Other guards",
+      "blocks": [
         {
           "type": "stack",
           "layers": [
             {
-              "title": "GET",
-              "detail": "Read — fetch a collection or one item (never changes data)"
+              "title": "canActivate",
+              "detail": "Can the user enter this route? (auth, roles)"
             },
             {
-              "title": "POST",
-              "detail": "Create — add a new item to a collection"
+              "title": "canActivateChild",
+              "detail": "Same check, applied to a route's children"
             },
             {
-              "title": "PUT",
-              "detail": "Update — replace an existing item with new data"
-            },
-            {
-              "title": "DELETE",
-              "detail": "Delete — remove an item"
+              "title": "canDeactivate",
+              "detail": "Can the user leave? (warn about unsaved changes)"
             }
           ]
         },
         {
           "type": "code",
-          "label": "CRUD on /users",
-          "code": "GET    /users        -> list users      (Read)\nGET    /users/1      -> one user        (Read)\nPOST   /users        -> create a user    (Create)\nPUT    /users/1      -> update user 1    (Update)\nDELETE /users/1      -> remove user 1    (Delete)"
+          "label": "canDeactivate example",
+          "code": "export const unsavedGuard: CanDeactivateFn<EditPage> = (page) => {\n  return page.hasUnsavedChanges()\n    ? confirm('Leave without saving?')\n    : true;\n};"
         }
       ]
     },
     {
-      "id": "method-get",
-      "title": "GET — read data",
+      "id": "guard-use-cases",
+      "title": "Common use cases",
       "blocks": [
-        {
-          "type": "text",
-          "text": "<code>GET</code> asks for data and never changes anything. It has no request body — everything it needs is in the URL. The server replies with <code>200 OK</code> and the data."
-        },
-        {
-          "type": "code",
-          "label": "request → response",
-          "code": "GET /users/1\n\nHTTP/1.1 200 OK\n{\n  \"id\": 1,\n  \"name\": \"Asha\",\n  \"age\": 20\n}"
-        },
-        {
-          "type": "note",
-          "text": "GET is <strong>safe</strong> (changes nothing) and <strong>idempotent</strong> (asking twice gives the same answer), so results can be cached."
-        }
+        { "type": "text", "text": "Guards show up all over real apps. A few you'll meet often:" },
+        { "type": "stack", "layers": [
+          { "title": "Authentication", "detail": "Require a logged-in user before showing a page; otherwise redirect to /login." },
+          { "title": "Roles & permissions", "detail": "Let only admins reach /admin; send others to a 'not allowed' page." },
+          { "title": "Unsaved changes", "detail": "canDeactivate: warn before leaving a half-filled form." },
+          { "title": "Onboarding / setup", "detail": "Force new users through a setup step before the main app." },
+          { "title": "Subscription / paywall", "detail": "Block premium routes unless the plan is active." },
+          { "title": "Feature flags", "detail": "Hide a route that isn't enabled yet for this user." }
+        ] },
+        { "type": "code", "label": "role guard example", "code": "export const adminGuard: CanActivateFn = () => {\n  const auth = inject(AuthService);\n  const router = inject(Router);\n  return auth.isAdmin() ? true : router.parseUrl('/not-allowed');\n};" },
+        { "type": "note", "text": "A guard can also return a <code>Promise</code> or <code>Observable</code> of <code>boolean</code>/<code>UrlTree</code> — handy when the check needs a server call (e.g. verifying a token)." }
       ]
     },
     {
-      "id": "method-post",
-      "title": "POST — create data",
-      "blocks": [
-        {
-          "type": "text",
-          "text": "<code>POST</code> sends new data in the request body to a <em>collection</em>. The server creates the item, assigns it an <code>id</code>, and replies with <code>201 Created</code> and the new item."
-        },
-        {
-          "type": "code",
-          "label": "request → response",
-          "code": "POST /users\nContent-Type: application/json\n{\n  \"name\": \"Meera\",\n  \"age\": 22\n}\n\nHTTP/1.1 201 Created\n{ \"id\": 3, \"name\": \"Meera\", \"age\": 22 }"
-        },
-        {
-          "type": "note",
-          "text": "POST is <strong>not idempotent</strong>: send it twice and you create two items. You POST to the collection (<code>/users</code>), not to an id."
-        }
-      ]
-    },
-    {
-      "id": "method-put",
-      "title": "PUT — update data",
-      "blocks": [
-        {
-          "type": "text",
-          "text": "<code>PUT</code> replaces an existing item at its id with the full object you send. The server applies it and replies with <code>200 OK</code> and the updated item."
-        },
-        {
-          "type": "code",
-          "label": "request → response",
-          "code": "PUT /users/1\nContent-Type: application/json\n{\n  \"name\": \"Asha\",\n  \"age\": 21\n}\n\nHTTP/1.1 200 OK\n{ \"id\": 1, \"name\": \"Asha\", \"age\": 21 }"
-        },
-        {
-          "type": "note",
-          "text": "PUT is <strong>idempotent</strong>: sending the same update again leaves the item in the same state. Send the whole object — fields you leave out can be wiped."
-        }
-      ]
-    },
-    {
-      "id": "method-delete",
-      "title": "DELETE — remove data",
-      "blocks": [
-        {
-          "type": "text",
-          "text": "<code>DELETE</code> removes the item at its id. It usually needs no body, and the server often replies with <code>204 No Content</code> (success, nothing to return)."
-        },
-        {
-          "type": "code",
-          "label": "request → response",
-          "code": "DELETE /users/1\n\nHTTP/1.1 204 No Content"
-        },
-        {
-          "type": "note",
-          "text": "DELETE is <strong>idempotent</strong>: once the item is gone, deleting it again still ends with it gone (often a 404 the second time)."
-        }
-      ]
-    },
-    {
-      "id": "request-anatomy",
-      "title": "What a request carries",
-      "blocks": [
-        {
-          "type": "text",
-          "text": "A request has a <strong>method</strong>, a <strong>URL</strong>, optional <strong>headers</strong> (extra info like the data format or an auth token), and — for POST and PUT — a <strong>body</strong> with the data."
-        },
-        {
-          "type": "code",
-          "label": "POST /users",
-          "code": "POST /users HTTP/1.1\nContent-Type: application/json\nAuthorization: Bearer <token>\n\n{\n  \"name\": \"Asha\",\n  \"age\": 20\n}"
-        },
-        {
-          "type": "text",
-          "text": "The server replies with a <strong>status code</strong> and usually a body (often JSON)."
-        },
-        {
-          "type": "code",
-          "label": "Response",
-          "code": "HTTP/1.1 201 Created\nContent-Type: application/json\n\n{\n  \"id\": 3,\n  \"name\": \"Asha\",\n  \"age\": 20\n}"
-        }
-      ]
-    },
-    {
-      "id": "status-codes",
-      "title": "Status codes",
-      "blocks": [
-        {
-          "type": "text",
-          "text": "The status code tells you what happened. The first digit is the family."
-        },
-        {
-          "type": "stack",
-          "layers": [
-            {
-              "title": "2xx — Success",
-              "detail": "200 OK, 201 Created, 204 No Content (e.g. after DELETE)"
-            },
-            {
-              "title": "4xx — Your request was wrong",
-              "detail": "400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found"
-            },
-            {
-              "title": "5xx — The server failed",
-              "detail": "500 Internal Server Error, 503 Service Unavailable"
-            }
-          ]
-        },
-        {
-          "type": "note",
-          "text": "Rule of thumb: 2xx = it worked, 4xx = fix your request, 5xx = the server has a problem."
-        }
-      ]
-    },
-    {
-      "id": "safe-idempotent",
-      "title": "Safe and idempotent",
-      "blocks": [
-        {
-          "type": "text",
-          "text": "Two handy ideas: a <strong>safe</strong> method doesn't change data (GET). An <strong>idempotent</strong> method gives the same result no matter how many times you repeat it."
-        },
-        {
-          "type": "list",
-          "items": [
-            "<code>GET</code> — safe and idempotent.",
-            "<code>PUT</code> and <code>DELETE</code> — idempotent (repeating gives the same end state).",
-            "<code>POST</code> — not idempotent (calling it twice creates two items)."
-          ]
-        }
-      ]
-    },
-    {
-      "id": "rest-depth-recap",
+      "id": "guards-recap",
       "title": "Recap",
       "blocks": [
         {
           "type": "list",
           "items": [
-            "REST is organised around resources: <code>/users</code> and <code>/users/1</code>.",
-            "CRUD maps to methods: GET, POST, PUT, DELETE.",
-            "Requests carry a method, URL, headers, and (sometimes) a body.",
-            "Status codes: 2xx success, 4xx your fault, 5xx server's fault.",
-            "GET is safe; PUT/DELETE are idempotent; POST is not."
+            "A guard is a function the router runs to allow or block navigation.",
+            "<code>CanActivateFn</code> returns <code>true</code>, <code>false</code>, or a <code>UrlTree</code> to redirect.",
+            "<code>inject()</code> services inside the guard (auth, router).",
+            "Attach with <code>canActivate: [authGuard]</code> on the route.",
+            "<code>canActivateChild</code> guards child routes; <code>canDeactivate</code> guards leaving."
           ]
         }
       ]

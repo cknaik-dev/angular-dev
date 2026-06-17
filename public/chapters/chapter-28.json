@@ -109,6 +109,37 @@
       ]
     },
     {
+      "id": "td-nested",
+      "title": "Nested groups",
+      "collapsed": true,
+      "blocks": [
+        { "type": "text", "text": "Group related fields with <code>ngModelGroup</code>. The grouped controls become a nested object inside the form value." },
+        { "type": "code", "label": "template", "code": "<form #f=\"ngForm\">\n  <input name=\"name\" ngModel>\n\n  <div ngModelGroup=\"address\">\n    <input name=\"street\" ngModel>\n    <input name=\"city\" ngModel>\n  </div>\n</form>" },
+        { "type": "code", "label": "f.value", "code": "{\n  name: '...',\n  address: { street: '...', city: '...' }\n}" }
+      ]
+    },
+    {
+      "id": "td-split",
+      "title": "Splitting a form across components",
+      "collapsed": true,
+      "blocks": [
+        { "type": "text", "text": "To move part of a form into a child component, let the child reuse the parent's <code>NgForm</code> through <code>viewProviders</code>. Then the child's <code>ngModel</code> controls register with the parent form automatically." },
+        { "type": "code", "label": "address.ts (child)", "code": "import { Component } from '@angular/core';\nimport { ControlContainer, NgForm, FormsModule } from '@angular/forms';\n\n@Component({\n  selector: 'app-address',\n  imports: [FormsModule],\n  viewProviders: [\n    { provide: ControlContainer, useExisting: NgForm }\n  ],\n  template: `\n    <input name=\"street\" [(ngModel)]=\"model.street\">\n    <input name=\"city\" [(ngModel)]=\"model.city\">`\n})\nexport class Address {\n  model = { street: '', city: '' };\n}" },
+        { "type": "note", "text": "Without that <code>viewProviders</code> line, the child's inputs wouldn't join the parent form." }
+      ]
+    },
+    {
+      "id": "td-array",
+      "title": "A list of fields (form array)",
+      "collapsed": true,
+      "blocks": [
+        { "type": "text", "text": "Template-driven forms have no <code>FormArray</code>. For a dynamic list, loop over an array in your model and give each input a unique <code>name</code>." },
+        { "type": "code", "label": "component", "code": "phones = [''];\n\naddPhone() { this.phones.push(''); }\nremovePhone(i: number) { this.phones.splice(i, 1); }" },
+        { "type": "code", "label": "template", "code": "@for (phone of phones; track i; let i = $index) {\n  <input [name]=\"'phone' + i\" [(ngModel)]=\"phones[i]\">\n  <button type=\"button\" (click)=\"removePhone(i)\">✕</button>\n}\n<button type=\"button\" (click)=\"addPhone()\">Add phone</button>" },
+        { "type": "note", "text": "This works but is manual. For dynamic lists, reactive forms' <code>FormArray</code> is cleaner — see the Reactive Forms chapter." }
+      ]
+    },
+    {
       "id": "td-recap",
       "title": "Recap",
       "blocks": [
