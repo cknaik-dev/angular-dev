@@ -99,6 +99,15 @@
           "type": "code",
           "label": "date",
           "code": "{{ today | date }}              <!-- Jun 12, 2026 -->\n{{ today | date:'shortTime' }}  <!-- 9:30 AM -->\n{{ today | date:'dd/MM/yyyy' }} <!-- 12/06/2026 -->\n{{ today | date:'fullDate' }}   <!-- Friday, June 12, 2026 -->"
+        },
+        {
+          "type": "text",
+          "text": "Edit and run — these show today's date in different formats:"
+        },
+        {
+          "type": "ng",
+          "ts": "today = new Date();",
+          "html": "<p>default: {{ today | date }}</p>\n<p>time: {{ today | date:'shortTime' }}</p>\n<p>full: {{ today | date:'fullDate' }}</p>"
         }
       ]
     },
@@ -124,6 +133,15 @@
           "type": "code",
           "label": "keyvalue",
           "code": "@for (entry of user | keyvalue; track entry.key) {\n  <li>{{ entry.key }}: {{ entry.value }}</li>\n}"
+        },
+        {
+          "type": "text",
+          "text": "Edit and run — see <code>json</code> and <code>slice</code> in action:"
+        },
+        {
+          "type": "ng",
+          "ts": "user = { name: 'Asha', age: 20 };\nitems = ['apple', 'mango', 'kiwi', 'pear', 'plum'];",
+          "html": "<pre>{{ user | json }}</pre>\n\n<p>first 3: {{ items | slice:0:3 }}</p>\n<ul>\n  @for (item of items | slice:0:3; track item) {\n    <li>{{ item }}</li>\n  }\n</ul>"
         }
       ]
     },

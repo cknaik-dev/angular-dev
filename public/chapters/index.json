@@ -240,36 +240,57 @@
   {
     "id": "chapter-35",
     "number": 35,
-    "title": "HttpClient in a Component",
-    "summary": "Call your JSON Server API straight from a component with HttpClient.",
+    "title": "RxJS and Observables",
+    "summary": "Streams of values over time — the foundation behind HttpClient and forms.",
     "group": "Angular"
   },
   {
     "id": "chapter-36",
     "number": 36,
-    "title": "Services and Dependency Injection",
-    "summary": "Share logic and data across components with injectable services.",
+    "title": "HttpClient in a Component",
+    "summary": "Call your JSON Server API straight from a component with HttpClient.",
     "group": "Angular"
   },
   {
     "id": "chapter-37",
     "number": 37,
-    "title": "HttpClient with a Service",
-    "summary": "Move your API calls into a service that components can share.",
+    "title": "Services and Dependency Injection",
+    "summary": "Share logic and data across components with injectable services.",
     "group": "Angular"
   },
   {
     "id": "chapter-38",
     "number": 38,
-    "title": "Sharing Data with a Service",
-    "summary": "Let far-apart components communicate through a shared service.",
+    "title": "HttpClient with a Service",
+    "summary": "Move your API calls into a service that components can share.",
     "group": "Angular"
   },
   {
     "id": "chapter-39",
     "number": 39,
+    "title": "Sharing Data with a Service",
+    "summary": "Let far-apart components communicate through a shared service.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-40",
+    "number": 40,
     "title": "Environments",
     "summary": "Keep different settings — like API URLs — for development and production.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-41",
+    "number": 41,
+    "title": "HTTP Interceptors",
+    "summary": "Run code on every request and response — auth tokens, errors, logging.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-42",
+    "number": 42,
+    "title": "Authentication Flow",
+    "summary": "Put it all together: login, store a token, attach it, and guard routes.",
     "group": "Angular"
   }
 ]

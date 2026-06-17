@@ -293,7 +293,14 @@ export class PreviewEngine {
       }
 
       (element as unknown as Record<string, unknown>)[binding.propertyName] = value as unknown;
-      if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+      if (typeof value === 'boolean') {
+        // Boolean attributes are presence-based: add when true, remove when false.
+        if (value) {
+          element.setAttribute(binding.propertyName, '');
+        } else {
+          element.removeAttribute(binding.propertyName);
+        }
+      } else if (typeof value === 'string' || typeof value === 'number') {
         element.setAttribute(binding.propertyName, `${value}`);
       }
     }

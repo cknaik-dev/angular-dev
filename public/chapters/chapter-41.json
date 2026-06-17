@@ -1,0 +1,115 @@
+{
+  "id": "chapter-41",
+  "number": 41,
+  "title": "HTTP Interceptors",
+  "summary": "Run code on every request and response — auth tokens, errors, logging.",
+  "kicker": "Chapter 41",
+  "group": "Angular",
+  "heading": "HTTP Interceptors",
+  "sections": [
+    {
+      "id": "what-is-interceptor",
+      "title": "What is an interceptor?",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "An <strong>interceptor</strong> is a function that sits between your app and the server. Every HTTP request passes through it on the way out, and every response on the way back — so it's the perfect place to do something for <em>all</em> calls at once: attach an auth token, log requests, show a loading bar, or handle errors globally."
+        },
+        {
+          "type": "flow",
+          "steps": [
+            "Your request",
+            "Interceptor",
+            "Server",
+            "Interceptor",
+            "Your code"
+          ]
+        },
+        {
+          "type": "note",
+          "text": "Instead of adding the same header or try/catch in every service method, you write it once in an interceptor."
+        },
+        {
+          "type": "link",
+          "url": "https://angular.dev/guide/http/interceptors",
+          "label": "More on angular.dev"
+        }
+      ]
+    },
+    {
+      "id": "registering",
+      "title": "Writing and registering one",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A modern interceptor is a function of type <code>HttpInterceptorFn</code>. It receives the request and a <code>next</code> function to pass it along. Register interceptors with <code>withInterceptors</code>."
+        },
+        {
+          "type": "code",
+          "label": "logging.interceptor.ts",
+          "code": "import { HttpInterceptorFn } from '@angular/common/http';\n\nexport const loggingInterceptor: HttpInterceptorFn = (req, next) => {\n  console.log('→', req.method, req.url);\n  return next(req); // pass it on\n};"
+        },
+        {
+          "type": "code",
+          "label": "app.config.ts",
+          "code": "import { provideHttpClient, withInterceptors } from '@angular/common/http';\nimport { loggingInterceptor } from './logging.interceptor';\n\nexport const appConfig = {\n  providers: [\n    provideHttpClient(withInterceptors([loggingInterceptor]))\n  ]\n};"
+        }
+      ]
+    },
+    {
+      "id": "auth-interceptor",
+      "title": "Attaching an auth token",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Requests are <strong>immutable</strong>, so you <code>clone</code> the request and add a header. Here we add a Bearer token from a service to every outgoing call."
+        },
+        {
+          "type": "code",
+          "label": "auth.interceptor.ts",
+          "code": "import { HttpInterceptorFn } from '@angular/common/http';\nimport { inject } from '@angular/core';\nimport { AuthService } from './auth.service';\n\nexport const authInterceptor: HttpInterceptorFn = (req, next) => {\n  const token = inject(AuthService).token();\n  if (!token) {\n    return next(req);\n  }\n  const authReq = req.clone({\n    setHeaders: { Authorization: `Bearer ${token}` }\n  });\n  return next(authReq);\n};"
+        },
+        {
+          "type": "note",
+          "text": "You can <code>inject()</code> services inside an interceptor, just like in a guard."
+        }
+      ]
+    },
+    {
+      "id": "error-interceptor",
+      "title": "Handling errors globally",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Use the RxJS <code>catchError</code> operator on the response stream to deal with failures in one place — for example, logging out and redirecting on a <code>401 Unauthorized</code>."
+        },
+        {
+          "type": "code",
+          "label": "error.interceptor.ts",
+          "code": "import { HttpInterceptorFn } from '@angular/common/http';\nimport { inject } from '@angular/core';\nimport { Router } from '@angular/router';\nimport { catchError, throwError } from 'rxjs';\n\nexport const errorInterceptor: HttpInterceptorFn = (req, next) => {\n  const router = inject(Router);\n  return next(req).pipe(\n    catchError(err => {\n      if (err.status === 401) {\n        router.navigate(['/login']);\n      }\n      return throwError(() => err);\n    })\n  );\n};"
+        },
+        {
+          "type": "note",
+          "text": "Interceptors run in the order you list them: <code>withInterceptors([authInterceptor, errorInterceptor])</code>."
+        }
+      ]
+    },
+    {
+      "id": "interceptor-recap",
+      "title": "Recap",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "An interceptor runs on every HTTP request and response.",
+            "It's an <code>HttpInterceptorFn</code> that calls <code>next(req)</code>.",
+            "Register with <code>provideHttpClient(withInterceptors([...]))</code>.",
+            "Requests are immutable — <code>req.clone({ setHeaders })</code> to add headers.",
+            "Use <code>catchError</code> for global error handling (e.g. 401 → login).",
+            "Great companion to services and route guards for auth."
+          ]
+        }
+      ]
+    }
+  ]
+}

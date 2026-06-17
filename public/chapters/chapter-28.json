@@ -105,6 +105,24 @@
           "type": "code",
           "label": "signup.html",
           "code": "<form #form=\"ngForm\" (ngSubmit)=\"submit()\">\n  <input name=\"name\" [(ngModel)]=\"model.name\" required>\n  <button type=\"submit\" [disabled]=\"form.invalid\">\n    Sign up\n  </button>\n</form>"
+        },
+        {
+          "type": "text",
+          "text": "You can also pass that <code>#form</code> reference straight into your method — <code>(ngSubmit)=\"submit(form)\"</code> — so the component reads the form's value and validity:"
+        },
+        {
+          "type": "code",
+          "label": "signup.ts",
+          "code": "import { NgForm } from '@angular/forms';\n\nsubmit(form: NgForm) {\n  if (form.invalid) return;\n  console.log(form.value);   // { name: '...' }\n  console.log(form.valid);   // true\n  form.resetForm();          // clear all fields\n}"
+        },
+        {
+          "type": "text",
+          "text": "Or grab it from the class without passing it, using <code>viewChild</code>:"
+        },
+        {
+          "type": "code",
+          "label": "signup.ts",
+          "code": "import { viewChild } from '@angular/core';\nimport { NgForm } from '@angular/forms';\n\nform = viewChild.required<NgForm>('form');\n\nsave() {\n  const f = this.form();\n  console.log(f.value, f.valid);\n}"
         }
       ]
     },

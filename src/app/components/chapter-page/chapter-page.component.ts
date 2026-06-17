@@ -1,3 +1,4 @@
+import { DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Title } from '@angular/platform-browser';
@@ -17,6 +18,20 @@ export class ChapterPageComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly chapterRepository = inject(ChapterRepositoryService);
   private readonly title = inject(Title);
+  private readonly document = inject(DOCUMENT);
+
+  // Scroll to a section; open it first if it's a collapsed (advanced) section.
+  protected scrollToSection(id: string, event: Event): void {
+    event.preventDefault();
+    const el = this.document.getElementById(id);
+    if (!el) {
+      return;
+    }
+    if (el.tagName === 'DETAILS') {
+      (el as HTMLDetailsElement).open = true;
+    }
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 
   protected readonly chapters = signal<ChapterSummary[]>([]);
   protected readonly selectedChapter = signal<ChapterDefinition | null>(null);

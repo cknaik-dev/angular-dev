@@ -24,7 +24,11 @@
           <summary>On this page</summary>
           <nav class="chapter-nav">
             @for (section of chapter.sections; track section.id) {
-              <a class="chapter-nav-link" [href]="'#' + section.id">{{ section.title }}</a>
+              <a
+                class="chapter-nav-link"
+                [href]="'#' + section.id"
+                (click)="scrollToSection(section.id, $event)"
+              >{{ section.title }}</a>
             }
           </nav>
         </details>

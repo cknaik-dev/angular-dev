@@ -38,6 +38,15 @@
           "type": "code",
           "label": "template",
           "code": "// class:  name = 'Asha';\n\n<h1>Hello {{ name }}</h1>"
+        },
+        {
+          "type": "text",
+          "text": "Edit and run — the heading shows whatever the class holds, and updates when it changes:"
+        },
+        {
+          "type": "ng",
+          "ts": "name = 'World';\nchange() {\n  name = name === 'World' ? 'Angular' : 'World';\n}",
+          "html": "<h1>Hello, {{ name }}!</h1>\n<button (click)=\"change()\">Change name</button>"
         }
       ]
     },
@@ -53,6 +62,15 @@
           "type": "code",
           "label": "template",
           "code": "// class:  isBusy = true;\n\n<button [disabled]=\"isBusy\">Save</button>\n<img [src]=\"photoUrl\">"
+        },
+        {
+          "type": "text",
+          "text": "Edit and run — toggling the value flips the Save button between enabled and disabled:"
+        },
+        {
+          "type": "ng",
+          "ts": "busy = false;\ntoggle() {\n  busy = !busy;\n}",
+          "html": "<button (click)=\"toggle()\">Toggle</button>\n<button [disabled]=\"busy\">Save</button>\n<p>busy = {{ busy }}</p>"
         }
       ]
     },

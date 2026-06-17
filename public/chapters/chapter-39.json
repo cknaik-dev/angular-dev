@@ -1,62 +1,105 @@
 {
   "id": "chapter-39",
   "number": 39,
-  "title": "Environments",
-  "summary": "Keep different settings — like API URLs — for development and production.",
+  "title": "Sharing Data with a Service",
+  "summary": "Let far-apart components communicate through a shared service.",
   "kicker": "Chapter 39",
   "group": "Angular",
-  "heading": "Environments",
+  "heading": "Sharing Data with a Service",
   "sections": [
     {
-      "id": "why-env",
-      "title": "Why environments?",
+      "id": "the-problem",
+      "title": "The problem: prop drilling",
       "blocks": [
-        { "type": "text", "text": "Your app needs different settings depending on where it runs. In development the API is <code>http://localhost:3000</code>; in production it's your real server. Hard-coding URLs means editing code before every deploy. <strong>Environment files</strong> hold these settings separately, and Angular swaps them in automatically at build time." },
-        { "type": "flow", "steps": ["ng serve", "uses dev settings", "ng build", "uses prod settings"] },
-        { "type": "link", "url": "https://angular.dev/tools/cli/environments", "label": "More on angular.dev" }
+        {
+          "type": "text",
+          "text": "Inputs and outputs are perfect between a parent and its direct child. But when data must travel through many levels — or between two components that aren't related at all — passing it down through every layer (\"prop drilling\") gets painful and brittle."
+        },
+        {
+          "type": "svg",
+          "caption": "Threading data through every level vs. one shared service.",
+          "svg": "<svg viewBox='0 0 440 190' role='img' aria-label='Prop drilling through layers versus a shared service hub'><defs><marker id='sh-ar' markerWidth='8' markerHeight='8' refX='6' refY='3' orient='auto'><path d='M0,0 L6,3 L0,6 Z' fill='currentColor'/></marker></defs><g fill='none' stroke='currentColor' stroke-width='1.5'><rect x='20' y='12' width='90' height='30' rx='5'/><rect x='20' y='72' width='90' height='30' rx='5'/><rect x='20' y='132' width='90' height='30' rx='5'/><line x1='65' y1='42' x2='65' y2='72' marker-end='url(#sh-ar)'/><line x1='65' y1='102' x2='65' y2='132' marker-end='url(#sh-ar)'/></g><g fill='none' stroke='currentColor' stroke-width='1.5'><rect x='300' y='12' width='120' height='30' rx='5'/><rect x='300' y='132' width='120' height='30' rx='5'/><rect x='250' y='72' width='120' height='34' rx='8'/><line x1='360' y1='42' x2='320' y2='72' marker-end='url(#sh-ar)'/><line x1='320' y1='106' x2='360' y2='132' marker-end='url(#sh-ar)'/></g><g fill='currentColor' font-size='10' text-anchor='middle' font-family='sans-serif'><text x='65' y='31'>A</text><text x='65' y='91'>B</text><text x='65' y='151'>C</text><text x='65' y='182' font-size='9' opacity='0.7'>prop drilling</text><text x='360' y='31'>A</text><text x='360' y='151'>C</text><text x='310' y='93'>Service</text><text x='360' y='182' font-size='9' opacity='0.7'>shared service</text></g></svg>"
+        },
+        {
+          "type": "link",
+          "url": "https://angular.dev/guide/di",
+          "label": "More on angular.dev"
+        }
       ]
     },
     {
-      "id": "generate-env",
-      "title": "Creating the files",
+      "id": "shared-state",
+      "title": "A shared state service",
       "blocks": [
-        { "type": "text", "text": "The CLI scaffolds the environment files and wires them into the build for you." },
-        { "type": "code", "label": "Terminal", "code": "ng generate environments" },
-        { "type": "text", "text": "It creates two files. The base one is used for production; the <code>.development</code> one overrides it during development." },
-        { "type": "code", "label": "src/environments/environment.ts", "code": "export const environment = {\n  production: true,\n  apiUrl: 'https://api.myapp.com'\n};" },
-        { "type": "code", "label": "src/environments/environment.development.ts", "code": "export const environment = {\n  production: false,\n  apiUrl: 'http://localhost:3000'\n};" }
+        {
+          "type": "text",
+          "text": "A <code>providedIn: 'root'</code> service is a single shared instance. Put the state in it as <strong>signals</strong>, and any component — however deep or unrelated — can read and update the same data."
+        },
+        {
+          "type": "code",
+          "label": "cart.service.ts",
+          "code": "import { Injectable, signal, computed } from '@angular/core';\n\n@Injectable({ providedIn: 'root' })\nexport class CartService {\n  readonly items = signal<string[]>([]);\n  readonly count = computed(() => this.items().length);\n\n  add(item: string) {\n    this.items.update(list => [...list, item]);\n  }\n  clear() {\n    this.items.set([]);\n  }\n}"
+        }
       ]
     },
     {
-      "id": "how-swap",
-      "title": "How the swap works",
+      "id": "two-components",
+      "title": "Two unrelated components, one source",
       "blocks": [
-        { "type": "text", "text": "<code>ng generate environments</code> adds a <strong>file replacement</strong> to <code>angular.json</code>. During a development build, Angular replaces <code>environment.ts</code> with <code>environment.development.ts</code> — so your imports stay the same, but the values change." },
-        { "type": "code", "label": "angular.json (development config)", "code": "\"development\": {\n  \"fileReplacements\": [\n    {\n      \"replace\": \"src/environments/environment.ts\",\n      \"with\": \"src/environments/environment.development.ts\"\n    }\n  ]\n}" },
-        { "type": "note", "text": "<code>ng serve</code> uses the development configuration (so you get the dev values); <code>ng build</code> defaults to production (the base file)." }
+        {
+          "type": "text",
+          "text": "A product list (deep in one part of the tree) adds items; a cart badge (in the header) shows the count. They never talk to each other — they both just use the service."
+        },
+        {
+          "type": "code",
+          "label": "product.ts",
+          "code": "private cart = inject(CartService);\n\nbuy(name: string) {\n  this.cart.add(name);\n}"
+        },
+        {
+          "type": "code",
+          "label": "cart-badge.ts",
+          "code": "private cart = inject(CartService);\n\n// template:  🛒 {{ cart.count() }}\ncount = this.cart.count;"
+        },
+        {
+          "type": "note",
+          "text": "Because both injected the same singleton, adding in one place updates the badge instantly — no inputs, outputs, or shared parent needed."
+        }
       ]
     },
     {
-      "id": "using-env",
-      "title": "Using it in your code",
+      "id": "events",
+      "title": "Sending events across components",
       "blocks": [
-        { "type": "text", "text": "Always import from <code>environment.ts</code> (no suffix). Angular substitutes the right file for the build. A service is the perfect place to use it — instead of a hard-coded URL." },
-        { "type": "code", "label": "user.service.ts", "code": "import { inject, Injectable } from '@angular/core';\nimport { HttpClient } from '@angular/common/http';\nimport { environment } from '../environments/environment';\n\n@Injectable({ providedIn: 'root' })\nexport class UserService {\n  private http = inject(HttpClient);\n  private url = `${environment.apiUrl}/users`;\n\n  getAll() {\n    return this.http.get(this.url);\n  }\n}" },
-        { "type": "note", "text": "Environment files are bundled into the browser, so never put secrets (API keys, passwords) in them — anyone can read the shipped code. Keep secrets on the server." }
+        {
+          "type": "text",
+          "text": "For one-off events (a toast message, a \"refresh\" ping) rather than stored state, expose a <code>Subject</code> from the service. Components subscribe to react."
+        },
+        {
+          "type": "code",
+          "label": "notify.service.ts",
+          "code": "import { Injectable } from '@angular/core';\nimport { Subject } from 'rxjs';\n\n@Injectable({ providedIn: 'root' })\nexport class NotifyService {\n  private messages = new Subject<string>();\n  readonly messages$ = this.messages.asObservable();\n\n  show(text: string) {\n    this.messages.next(text);\n  }\n}"
+        },
+        {
+          "type": "code",
+          "label": "anywhere",
+          "code": "// sender:\nthis.notify.show('Saved!');\n\n// listener (e.g. a toast component):\nthis.notify.messages$.subscribe(text => this.toast = text);"
+        }
       ]
     },
     {
-      "id": "env-recap",
+      "id": "share-recap",
       "title": "Recap",
       "blocks": [
-        { "type": "list", "items": [
-          "Environments hold per-build settings like the API URL.",
-          "Create them with <code>ng generate environments</code>.",
-          "<code>environment.ts</code> = production; <code>environment.development.ts</code> overrides it in dev.",
-          "<code>angular.json</code> file replacement swaps them at build time.",
-          "Import from <code>environment.ts</code> everywhere — Angular picks the right one.",
-          "Never store secrets — env values ship to the browser."
-        ] }
+        {
+          "type": "list",
+          "items": [
+            "Use inputs/outputs for direct parent ↔ child; use a service for far-apart or unrelated components.",
+            "A <code>providedIn: 'root'</code> service is one shared instance for everyone.",
+            "Hold shared state as <strong>signals</strong> (with <code>computed</code> for derived values).",
+            "Any component injects the service and reads/updates the same data.",
+            "For events instead of state, expose a <code>Subject</code> and subscribe."
+          ]
+        }
       ]
     }
   ]

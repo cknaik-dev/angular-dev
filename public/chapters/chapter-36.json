@@ -1,81 +1,145 @@
 {
   "id": "chapter-36",
   "number": 36,
-  "title": "Services and Dependency Injection",
-  "summary": "Share logic and data across components with injectable services.",
+  "title": "HttpClient in a Component",
+  "summary": "Call your JSON Server API straight from a component with HttpClient.",
   "kicker": "Chapter 36",
   "group": "Angular",
-  "heading": "Services and Dependency Injection",
+  "heading": "HttpClient in a Component",
   "sections": [
     {
-      "id": "what-is-service",
-      "title": "What is a service?",
+      "id": "setup",
+      "title": "Turn on HttpClient",
       "blocks": [
-        { "type": "text", "text": "A <strong>service</strong> is a plain class for logic and data that isn't tied to one screen — fetching data, holding shared state, calculations, logging. Components stay focused on the view; services do the rest, and many components can share one." },
-        { "type": "svg", "caption": "Many components share one service.", "svg": "<svg viewBox='0 0 440 180' role='img' aria-label='Three components inject one shared service'><defs><marker id='sv-ar' markerWidth='8' markerHeight='8' refX='6' refY='3' orient='auto'><path d='M0,0 L6,3 L0,6 Z' fill='currentColor'/></marker></defs><g fill='none' stroke='currentColor' stroke-width='1.5'><rect x='18' y='18' width='118' height='40' rx='6'/><rect x='161' y='18' width='118' height='40' rx='6'/><rect x='304' y='18' width='118' height='40' rx='6'/><rect x='140' y='120' width='160' height='46' rx='8'/><line x1='77' y1='58' x2='200' y2='118' marker-end='url(#sv-ar)'/><line x1='220' y1='58' x2='220' y2='118' marker-end='url(#sv-ar)'/><line x1='363' y1='58' x2='240' y2='118' marker-end='url(#sv-ar)'/></g><g fill='currentColor' font-size='12' text-anchor='middle' font-family='sans-serif'><text x='77' y='42'>Component A</text><text x='220' y='42'>Component B</text><text x='363' y='42'>Component C</text><text x='220' y='147'>UserService</text></g><g fill='currentColor' font-size='10' text-anchor='middle' opacity='0.7' font-family='monospace'><text x='150' y='95'>inject()</text></g></svg>" },
-        { "type": "link", "url": "https://angular.dev/guide/di", "label": "More on angular.dev" }
+        {
+          "type": "text",
+          "text": "In the last chapter we hit the API with <code>curl</code>. Now let's do it from Angular. Angular talks to APIs through <code>HttpClient</code> — switch it on once in your app config."
+        },
+        {
+          "type": "code",
+          "label": "app.config.ts",
+          "code": "import { provideHttpClient } from '@angular/common/http';\n\nexport const appConfig = {\n  providers: [provideHttpClient()]\n};"
+        },
+        {
+          "type": "text",
+          "text": "Then <code>inject</code> it wherever you need it. We'll keep everything in one component here — no separate service."
+        },
+        {
+          "type": "code",
+          "label": "users.ts",
+          "code": "import { Component, inject } from '@angular/core';\nimport { HttpClient } from '@angular/common/http';\n\nexport class Users {\n  private http = inject(HttpClient);\n  private url = 'http://localhost:3000/users';\n}"
+        },
+        {
+          "type": "link",
+          "url": "https://angular.dev/guide/http",
+          "label": "HttpClient on angular.dev"
+        }
       ]
     },
     {
-      "id": "why-service",
-      "title": "Why services? What they fix",
+      "id": "read",
+      "title": "Read — GET the list",
       "blocks": [
-        { "type": "text", "text": "Without services, logic ends up copy-pasted into components, and data gets passed through layers of inputs and outputs just to reach where it's needed. Services solve that." },
-        { "type": "stack", "layers": [
-          { "title": "Reuse", "detail": "Write logic once, use it in any component — no duplication" },
-          { "title": "Thin components", "detail": "Components handle the view; services handle data and rules" },
-          { "title": "Single source of truth", "detail": "One place owns the data, so screens stay in sync" },
-          { "title": "Easy to test & swap", "detail": "Test a service on its own; replace it without touching components" }
-        ] }
+        {
+          "type": "text",
+          "text": "Call <code>http.get</code> with the URL and <code>subscribe</code> to receive the data. <code>get&lt;User[]&gt;</code> tells TypeScript the response is an array. Store it in a signal and load it when the component starts."
+        },
+        {
+          "type": "code",
+          "label": "users.ts",
+          "code": "import { Component, inject, signal, OnInit } from '@angular/core';\nimport { HttpClient } from '@angular/common/http';\n\ninterface User { id?: number; name: string; age: number; }\n\n@Component({ /* ... */ })\nexport class Users implements OnInit {\n  private http = inject(HttpClient);\n  private url = 'http://localhost:3000/users';\n  users = signal<User[]>([]);\n\n  ngOnInit() {\n    this.http.get<User[]>(this.url)\n      .subscribe(data => this.users.set(data));\n  }\n}"
+        },
+        {
+          "type": "code",
+          "label": "users.html",
+          "code": "<ul>\n  @for (user of users(); track user.id) {\n    <li>{{ user.name }} ({{ user.age }})</li>\n  }\n</ul>"
+        },
+        {
+          "type": "note",
+          "text": "The request doesn't run until you <code>subscribe</code> — that's how Observables work."
+        }
       ]
     },
     {
-      "id": "generate",
-      "title": "Generating a service",
+      "id": "create",
+      "title": "Create — POST",
       "blocks": [
-        { "type": "text", "text": "Let the CLI create it. A service is just a class marked <code>@Injectable</code>." },
-        { "type": "code", "label": "Terminal", "code": "ng generate service user\n# short version:\nng g s user" },
-        { "type": "code", "label": "user.service.ts", "code": "import { Injectable } from '@angular/core';\n\n@Injectable({ providedIn: 'root' })\nexport class UserService {\n  private users = ['Asha', 'Ravi'];\n\n  getUsers() {\n    return this.users;\n  }\n  addUser(name: string) {\n    this.users.push(name);\n  }\n}" },
-        { "type": "note", "text": "<code>providedIn: 'root'</code> makes one shared instance available everywhere — a <strong>singleton</strong> for the whole app." }
+        {
+          "type": "text",
+          "text": "Send a new object in the body. When it succeeds, reload the list so the screen shows it."
+        },
+        {
+          "type": "code",
+          "label": "users.ts",
+          "code": "addUser() {\n  const newUser = { name: 'Meera', age: 22 };\n  this.http.post<User>(this.url, newUser).subscribe(() => {\n    this.http.get<User[]>(this.url)\n      .subscribe(data => this.users.set(data));\n  });\n}"
+        }
       ]
     },
     {
-      "id": "di",
-      "title": "Dependency Injection (DI)",
+      "id": "update",
+      "title": "Update — PUT",
       "blocks": [
-        { "type": "text", "text": "You don't create a service with <code>new</code>. You <strong>ask</strong> for it and Angular hands you the shared instance — that's <strong>dependency injection</strong>. Use the <code>inject()</code> function." },
-        { "type": "code", "label": "user-list.ts", "code": "import { Component, inject } from '@angular/core';\nimport { UserService } from './user.service';\n\n@Component({ selector: 'app-user-list', template: '...' })\nexport class UserList {\n  private users = inject(UserService);\n\n  list = this.users.getUsers();\n}" },
-        { "type": "svg", "caption": "You ask the injector; it provides the singleton.", "svg": "<svg viewBox='0 0 440 120' role='img' aria-label='Component asks the injector which provides the service'><defs><marker id='di-ar' markerWidth='8' markerHeight='8' refX='6' refY='3' orient='auto'><path d='M0,0 L6,3 L0,6 Z' fill='currentColor'/></marker></defs><g fill='none' stroke='currentColor' stroke-width='1.5'><rect x='12' y='40' width='120' height='44' rx='8'/><rect x='160' y='40' width='120' height='44' rx='8'/><rect x='308' y='40' width='120' height='44' rx='8'/><line x1='132' y1='62' x2='158' y2='62' marker-end='url(#di-ar)'/><line x1='280' y1='62' x2='306' y2='62' marker-end='url(#di-ar)'/></g><g fill='currentColor' font-size='12' text-anchor='middle' font-family='sans-serif'><text x='72' y='66'>Component</text><text x='220' y='66'>Injector</text><text x='368' y='66'>Service</text></g><g fill='currentColor' font-size='10' text-anchor='middle' opacity='0.7' font-family='monospace'><text x='145' y='34'>inject()</text><text x='293' y='34'>provides</text></g></svg>" },
-        { "type": "note", "text": "You can also inject through the constructor: <code>constructor(private users: UserService) {}</code>. Both do the same thing; <code>inject()</code> is the modern style." }
+        {
+          "type": "text",
+          "text": "Point at the item's id and send the full updated object."
+        },
+        {
+          "type": "code",
+          "label": "users.ts",
+          "code": "saveUser(user: User) {\n  const updated = { ...user, age: 30 };\n  this.http.put<User>(`${this.url}/${user.id}`, updated)\n    .subscribe(result => console.log('updated', result));\n}"
+        }
       ]
     },
     {
-      "id": "singleton-vs-scoped",
-      "title": "Singleton vs scoped services",
+      "id": "delete",
+      "title": "Delete — DELETE",
       "blocks": [
-        { "type": "text", "text": "Where you <em>provide</em> a service decides how many instances exist. <code>providedIn: 'root'</code> creates one <strong>singleton</strong> shared by the whole app. Listing a service in a component's <code>providers</code> array instead creates a fresh, <strong>scoped</strong> instance for each copy of that component (and its children)." },
-        { "type": "svg", "caption": "Singleton: one shared instance. Scoped: one per component.", "svg": "<svg viewBox='0 0 440 180' role='img' aria-label='Singleton shares one service; scoped gives each component its own'><defs><marker id='sc-ar' markerWidth='8' markerHeight='8' refX='6' refY='3' orient='auto'><path d='M0,0 L6,3 L0,6 Z' fill='currentColor'/></marker></defs><g fill='none' stroke='currentColor' stroke-width='1.5'><rect x='18' y='14' width='78' height='28' rx='5'/><rect x='112' y='14' width='78' height='28' rx='5'/><rect x='62' y='112' width='84' height='32' rx='7'/><line x1='57' y1='42' x2='95' y2='110' marker-end='url(#sc-ar)'/><line x1='151' y1='42' x2='112' y2='110' marker-end='url(#sc-ar)'/><rect x='250' y='14' width='78' height='28' rx='5'/><rect x='344' y='14' width='78' height='28' rx='5'/><rect x='250' y='112' width='78' height='32' rx='7'/><rect x='344' y='112' width='78' height='32' rx='7'/><line x1='289' y1='42' x2='289' y2='110' marker-end='url(#sc-ar)'/><line x1='383' y1='42' x2='383' y2='110' marker-end='url(#sc-ar)'/></g><g fill='currentColor' font-size='10' text-anchor='middle' font-family='sans-serif'><text x='57' y='32'>Comp</text><text x='151' y='32'>Comp</text><text x='104' y='132'>Service</text><text x='289' y='32'>Comp</text><text x='383' y='32'>Comp</text><text x='289' y='132'>Service</text><text x='383' y='132'>Service</text></g><g fill='currentColor' font-size='10' text-anchor='middle' opacity='0.7' font-family='sans-serif'><text x='104' y='168'>Singleton (root)</text><text x='336' y='168'>Scoped (providers)</text></g></svg>" },
-        { "type": "code", "label": "singleton — shared app-wide", "code": "@Injectable({ providedIn: 'root' })\nexport class CounterService {\n  count = signal(0);\n}\n// Every component that injects it sees the SAME count." },
-        { "type": "code", "label": "scoped — one per component", "code": "@Injectable() // note: no providedIn\nexport class CounterService {\n  count = signal(0);\n}\n\n@Component({\n  selector: 'app-widget',\n  providers: [CounterService], // fresh instance per <app-widget>\n  template: '...'\n})\nexport class Widget {\n  counter = inject(CounterService);\n}\n// Two <app-widget> elements each get their OWN count." },
-        { "type": "stack", "layers": [
-          { "title": "Use a singleton", "detail": "Global, shared data: auth, cart, app config, caches" },
-          { "title": "Use a scoped service", "detail": "Per-component state that shouldn't leak: a wizard/form's state, a local store" }
-        ] },
-        { "type": "note", "text": "A scoped service is created with its component and destroyed with it — handy for state that should reset each time the component appears." }
+        {
+          "type": "text",
+          "text": "Delete by id, then drop it from the signal so the list updates instantly."
+        },
+        {
+          "type": "code",
+          "label": "users.ts",
+          "code": "deleteUser(id: number) {\n  this.http.delete(`${this.url}/${id}`).subscribe(() => {\n    this.users.update(list => list.filter(u => u.id !== id));\n  });\n}"
+        },
+        {
+          "type": "code",
+          "label": "users.html",
+          "code": "@for (user of users(); track user.id) {\n  <li>\n    {{ user.name }}\n    <button (click)=\"deleteUser(user.id!)\">Delete</button>\n  </li>\n}"
+        }
       ]
     },
     {
-      "id": "service-recap",
+      "id": "errors",
+      "title": "Handling errors",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Network calls can fail. Pass an object to <code>subscribe</code> with <code>next</code> and <code>error</code> handlers."
+        },
+        {
+          "type": "code",
+          "label": "users.ts",
+          "code": "this.http.get<User[]>(this.url).subscribe({\n  next: data => this.users.set(data),\n  error: err => console.error('Request failed:', err.status)\n});"
+        }
+      ]
+    },
+    {
+      "id": "http-recap",
       "title": "Recap",
       "blocks": [
-        { "type": "list", "items": [
-          "A service is a class for reusable logic/data, marked <code>@Injectable</code>.",
-          "Generate one with <code>ng g s name</code>.",
-          "<code>providedIn: 'root'</code> = one shared singleton for the whole app.",
-          "Get it with <code>inject(MyService)</code> (or the constructor).",
-          "<code>providedIn: 'root'</code> = singleton; a component's <code>providers</code> array = a scoped instance per component.",
-          "Services keep components thin and avoid duplicated code."
-        ] }
+        {
+          "type": "list",
+          "items": [
+            "Enable Angular HTTP with <code>provideHttpClient()</code>.",
+            "<code>inject(HttpClient)</code> in the component and call <code>get/post/put/delete</code>.",
+            "Requests are Observables — they run when you <code>subscribe</code>.",
+            "Type the response: <code>get&lt;User[]&gt;</code>.",
+            "Handle failures with an <code>error</code> handler in <code>subscribe</code>.",
+            "This works for a small screen; for bigger apps you'd move the calls into a service."
+          ]
+        }
       ]
     }
   ]
