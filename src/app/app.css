@@ -77,6 +77,13 @@
   color: var(--accent-text);
 }
 
+/* The download button is an anchor styled as a button. */
+a.primary-button {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
 .secondary-button:hover {
   border-color: var(--accent);
 }

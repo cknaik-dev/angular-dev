@@ -15,6 +15,13 @@
           "text": "Most apps don't keep all their data inside themselves — they ask a server for it. A REST API is just a set of web addresses you can call to get or send data. Your code makes a request, the server sends a response back."
         },
         {
+          "type": "image",
+          "src": "images/REST.png",
+          "alt": "Illustrated overview of REST APIs and fetch",
+          "caption": "REST and fetch at a glance",
+          "maxWidth": 760
+        },
+        {
           "type": "svg",
           "caption": "Your app asks; the server answers.",
           "svg": "<svg viewBox='0 0 440 150' role='img' aria-label='App sends a request and the server sends back a response'><defs><marker id='rest-ar' markerWidth='8' markerHeight='8' refX='6' refY='3' orient='auto'><path d='M0,0 L6,3 L0,6 Z' fill='currentColor'/></marker></defs><g fill='none' stroke='currentColor' stroke-width='1.5'><rect x='20' y='45' width='120' height='60' rx='8'/><rect x='300' y='45' width='120' height='60' rx='8'/><line x1='142' y1='62' x2='296' y2='62' marker-end='url(#rest-ar)'/><line x1='298' y1='90' x2='144' y2='90' marker-end='url(#rest-ar)'/></g><g fill='currentColor' font-size='14' text-anchor='middle' font-family='sans-serif'><text x='80' y='80'>Your app</text><text x='360' y='80'>Server</text></g><g fill='currentColor' font-size='11' text-anchor='middle' opacity='0.75' font-family='monospace'><text x='220' y='54'>request</text><text x='220' y='104'>response (data)</text></g></svg>"

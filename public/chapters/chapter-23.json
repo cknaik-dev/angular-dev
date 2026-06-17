@@ -1,111 +1,119 @@
 {
   "id": "chapter-23",
   "number": 23,
-  "title": "Component Lifecycle",
-  "summary": "The stages a component goes through, from created to removed.",
+  "title": "Control Flow in Templates",
+  "summary": "Show, hide, repeat, and switch parts of your template.",
   "kicker": "Chapter 23",
-  "heading": "Component Lifecycle",
+  "heading": "Control Flow in Templates",
   "sections": [
     {
-      "id": "what-is-lifecycle",
-      "title": "What is the lifecycle?",
+      "id": "if-template",
+      "title": "Showing things with @if",
       "blocks": [
         {
           "type": "text",
-          "text": "Every component is born, lives on the screen for a while, and is eventually removed. Angular lets you run your own code at these moments by adding special methods called <strong>lifecycle hooks</strong>."
+          "text": "<code>@if</code> shows a block only when a condition is true, with an optional <code>@else</code>. It's the same idea as the if/else from Chapter 2, but inside the template."
+        },
+        {
+          "type": "code",
+          "label": "template",
+          "code": "@if (isLoggedIn()) {\n  <p>Welcome back!</p>\n} @else {\n  <p>Please sign in.</p>\n}"
+        },
+        {
+          "type": "text",
+          "text": "Here it is as a live Angular example — press the button to flip the value and watch the block switch. Edit it and run:"
+        },
+        {
+          "type": "ng",
+          "ts": "show = true;\ntoggle() {\n  show = !show;\n}",
+          "html": "<button (click)=\"toggle()\">Toggle</button>\n\n@if (show) {\n  <p>Now you see me</p>\n} @else {\n  <p>Now you don't</p>\n}"
+        }
+      ]
+    },
+    {
+      "id": "for-template",
+      "title": "Repeating with @for",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "<code>@for</code> renders a block once for each item in a list. The <code>track</code> part helps Angular update the list efficiently — usually track a unique id."
         },
         {
           "type": "svg",
-          "caption": "Angular calls hooks at each stage of a component's life.",
-          "svg": "<svg viewBox='0 0 440 130' role='img' aria-label='Lifecycle from constructor to ngOnInit to running to ngOnDestroy'><defs><marker id='lc-ar' markerWidth='8' markerHeight='8' refX='6' refY='3' orient='auto'><path d='M0,0 L6,3 L0,6 Z' fill='currentColor'/></marker></defs><g fill='none' stroke='currentColor' stroke-width='1.5'><rect x='8' y='48' width='96' height='40' rx='6'/><rect x='128' y='48' width='96' height='40' rx='6'/><rect x='248' y='48' width='80' height='40' rx='6'/><rect x='350' y='48' width='84' height='40' rx='6'/><line x1='104' y1='68' x2='126' y2='68' marker-end='url(#lc-ar)'/><line x1='224' y1='68' x2='246' y2='68' marker-end='url(#lc-ar)'/><line x1='328' y1='68' x2='348' y2='68' marker-end='url(#lc-ar)'/></g><g fill='currentColor' font-size='11' text-anchor='middle' font-family='monospace'><text x='56' y='66'>constructor</text><text x='176' y='66'>ngOnInit</text><text x='288' y='66'>running</text><text x='392' y='64'>ngOn-</text><text x='392' y='77'>Destroy</text></g></svg>"
+          "caption": "One list item in, one rendered block out — for every item.",
+          "svg": "<svg viewBox='0 0 440 150' role='img' aria-label='An array of three users becomes three list items'><defs><marker id='for-ar' markerWidth='8' markerHeight='8' refX='6' refY='3' orient='auto'><path d='M0,0 L6,3 L0,6 Z' fill='currentColor'/></marker></defs><g fill='none' stroke='currentColor' stroke-width='1.5'><rect x='15' y='40' width='130' height='66' rx='8'/><rect x='300' y='16' width='125' height='30' rx='5'/><rect x='300' y='58' width='125' height='30' rx='5'/><rect x='300' y='100' width='125' height='30' rx='5'/><line x1='145' y1='73' x2='298' y2='31' marker-end='url(#for-ar)'/><line x1='145' y1='73' x2='298' y2='73' marker-end='url(#for-ar)'/><line x1='145' y1='73' x2='298' y2='115' marker-end='url(#for-ar)'/></g><g fill='currentColor' font-size='12' text-anchor='middle' font-family='monospace'><text x='80' y='70'>users()</text><text x='80' y='88' font-size='10' opacity='0.7'>[Asha, Ravi, Sam]</text><text x='362' y='36'>Asha</text><text x='362' y='78'>Ravi</text><text x='362' y='120'>Sam</text></g></svg>"
+        },
+        {
+          "type": "code",
+          "label": "template",
+          "code": "<ul>\n  @for (user of users(); track user.id) {\n    <li>{{ user.name }}</li>\n  } @empty {\n    <li>No users yet.</li>\n  }\n</ul>"
+        },
+        {
+          "type": "note",
+          "text": "<code>@empty</code> is optional — it shows when the list has no items."
+        },
+        {
+          "type": "text",
+          "text": "A live Angular example — add items and watch <code>@for</code> render each one. Edit it and run:"
+        },
+        {
+          "type": "ng",
+          "ts": "items = ['Asha', 'Ravi'];\nadd() {\n  items = [...items, 'Item ' + (items.length + 1)];\n}\nclear() {\n  items = [];\n}",
+          "html": "<button (click)=\"add()\">Add</button>\n<button (click)=\"clear()\">Clear</button>\n\n<ul>\n  @for (item of items; track item) {\n    <li>{{ item }}</li>\n  } @empty {\n    <li>No items yet.</li>\n  }\n</ul>"
+        }
+      ]
+    },
+    {
+      "id": "switch-template",
+      "title": "Choosing with @switch",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "<code>@switch</code> picks one block out of several based on a value — handy when there are more than two options."
+        },
+        {
+          "type": "code",
+          "label": "template",
+          "code": "@switch (status()) {\n  @case ('loading') { <p>Loading...</p> }\n  @case ('error')   { <p>Something went wrong.</p> }\n  @default          { <p>All done!</p> }\n}"
+        },
+        {
+          "type": "text",
+          "text": "A live example — click a button to change the status and watch <code>@switch</code> pick the matching block. Edit it and run:"
+        },
+        {
+          "type": "ng",
+          "ts": "status = 'loading';\nset(value) {\n  status = value;\n}",
+          "html": "<button (click)=\"set('loading')\">Loading</button>\n<button (click)=\"set('error')\">Error</button>\n<button (click)=\"set('done')\">Done</button>\n\n@switch (status) {\n  @case ('loading') { <p>Loading...</p> }\n  @case ('error') { <p>Something went wrong.</p> }\n  @default { <p>All done!</p> }\n}"
+        }
+      ]
+    },
+    {
+      "id": "control-flow-note",
+      "title": "The modern way",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "You may see older code using <code>*ngIf</code> and <code>*ngFor</code> as attributes. The newer <code>@if</code> and <code>@for</code> blocks are built into the template, easier to read, and the recommended choice today."
         },
         {
           "type": "link",
-          "url": "https://angular.dev/guide/components/lifecycle",
+          "url": "https://angular.dev/guide/templates/control-flow",
           "label": "More on angular.dev"
         }
       ]
     },
     {
-      "id": "common-hooks",
-      "title": "The hooks you'll use most",
-      "blocks": [
-        {
-          "type": "stack",
-          "layers": [
-            {
-              "title": "constructor",
-              "detail": "Runs first; use it for injecting services, not for heavy work"
-            },
-            {
-              "title": "ngOnInit",
-              "detail": "Runs once after the component is set up; good for initial loading"
-            },
-            {
-              "title": "ngOnChanges",
-              "detail": "Runs whenever an input value changes"
-            },
-            {
-              "title": "ngOnDestroy",
-              "detail": "Runs just before the component is removed; clean up here"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "hook-example",
-      "title": "Using a hook",
-      "blocks": [
-        {
-          "type": "text",
-          "text": "To use a hook, implement its interface and add the method. Here the component loads data when it starts and cleans up when it leaves."
-        },
-        {
-          "type": "code",
-          "label": "timer.ts",
-          "code": "import { Component, OnInit, OnDestroy } from '@angular/core';\n\n@Component({ selector: 'app-timer', template: `...` })\nexport class Timer implements OnInit, OnDestroy {\n  ngOnInit() {\n    console.log('started');\n  }\n  ngOnDestroy() {\n    console.log('cleaning up');\n  }\n}"
-        },
-        {
-          "type": "note",
-          "text": "With signals and <code>computed</code>, you often need fewer hooks — Angular reacts to changes for you. But <code>ngOnInit</code> and <code>ngOnDestroy</code> are still very common."
-        },
-        {
-          "type": "note",
-          "text": "Lifecycle hooks need a real component being created and destroyed, so try this one in your own Angular app — add a <code>console.log</code> in each hook and watch the order in the browser console."
-        }
-      ]
-    },
-    {
-      "id": "advanced-hooks",
-      "title": "The other lifecycle hooks",
-      "collapsed": true,
-      "blocks": [
-        { "type": "text", "text": "Angular has a few more hooks for advanced cases. You'll rarely reach for these as a beginner, but here they are for completeness." },
-        { "type": "stack", "layers": [
-          { "title": "ngOnChanges", "detail": "Runs whenever an input value changes (before ngOnInit the first time)" },
-          { "title": "ngDoCheck", "detail": "Runs on every change-detection pass; for your own custom change checks" },
-          { "title": "ngAfterContentInit", "detail": "Once, after projected content (ng-content) is ready" },
-          { "title": "ngAfterContentChecked", "detail": "After Angular checks the projected content" },
-          { "title": "ngAfterViewInit", "detail": "Once, after the component's view and child views are ready" },
-          { "title": "ngAfterViewChecked", "detail": "After Angular checks the component's view" }
-        ] },
-        { "type": "note", "text": "The \"Checked\" hooks run very often, so keep them light. Most apps only ever need <code>ngOnInit</code> and <code>ngOnDestroy</code>." },
-        { "type": "link", "url": "https://angular.dev/guide/components/lifecycle", "label": "Full lifecycle reference on angular.dev" }
-      ]
-    },
-    {
-      "id": "lifecycle-recap",
+      "id": "control-flow-recap",
       "title": "Recap",
       "blocks": [
         {
           "type": "list",
           "items": [
-            "Lifecycle hooks run your code at key moments.",
-            "<code>constructor</code> first, then <code>ngOnInit</code> once set up.",
-            "<code>ngOnChanges</code> runs when inputs change.",
-            "<code>ngOnDestroy</code> runs before removal — clean up there.",
-            "Implement the matching interface to use a hook."
+            "<code>@if / @else</code> shows or hides a block.",
+            "<code>@for (item of list; track item.id)</code> repeats a block.",
+            "<code>@empty</code> covers the empty-list case.",
+            "<code>@switch / @case / @default</code> picks one of many.",
+            "These replace the older <code>*ngIf</code> / <code>*ngFor</code>."
           ]
         }
       ]

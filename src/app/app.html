@@ -10,22 +10,9 @@
         {{ theme() === 'dark' ? 'Light mode' : 'Dark mode' }}
       </button>
 
-      <div class="print-menu">
-        <button class="primary-button" type="button" (click)="printCurrent()">
-          Print / PDF
-        </button>
-        <details class="print-more" #printMenu>
-          <summary class="secondary-button" title="More print options">▾</summary>
-          <div class="print-options">
-            <button type="button" (click)="printMenu.open = false; printCurrent()">
-              This chapter
-            </button>
-            <button type="button" (click)="printMenu.open = false; printAll()">
-              All chapters
-            </button>
-          </div>
-        </details>
-      </div>
+      <a class="primary-button" href="/course.pdf" download="angular-learning.pdf">
+        Download PDF
+      </a>
     </div>
   </header>
 

@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { ProgressService } from './core/progress.service';
+import { PrintModeService } from './core/print-mode.service';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +21,7 @@ export class App {
   private readonly progressService = inject(ProgressService);
   private readonly document = inject(DOCUMENT);
   private readonly router = inject(Router);
+  private readonly printMode = inject(PrintModeService);
 
   @HostBinding('class.dark-theme') protected get isDarkThemeClass(): boolean {
     return this.theme() === 'dark';
@@ -43,7 +45,13 @@ export class App {
     this.document
       .querySelectorAll<HTMLDetailsElement>('details.chapter-advanced')
       .forEach((details) => (details.open = true));
-    window.print();
+
+    // Render example outputs for print, give them a moment, then print.
+    this.printMode.enabled.set(true);
+    setTimeout(() => {
+      window.print();
+      this.printMode.enabled.set(false);
+    }, 500);
   }
 
   // Open the full-course view, which loads every chapter and prints them.

@@ -1,123 +1,92 @@
 {
   "id": "chapter-22",
   "number": 22,
-  "title": "Control Flow in Templates",
-  "summary": "Show, hide, repeat, and switch parts of your template.",
+  "title": "Two-way Binding",
+  "summary": "Keep a value and the screen in sync, in both directions at once.",
   "kicker": "Chapter 22",
-  "heading": "Control Flow in Templates",
+  "group": "Angular",
+  "heading": "Two-way Binding",
   "sections": [
     {
-      "id": "if-template",
-      "title": "Showing things with @if",
+      "id": "what-is-two-way",
+      "title": "What is two-way binding?",
       "blocks": [
-        {
-          "type": "text",
-          "text": "<code>@if</code> shows a block only when a condition is true, with an optional <code>@else</code>. It's the same idea as the if/else from Chapter 2, but inside the template."
-        },
-        {
-          "type": "code",
-          "label": "template",
-          "code": "@if (isLoggedIn()) {\n  <p>Welcome back!</p>\n} @else {\n  <p>Please sign in.</p>\n}"
-        },
-        {
-          "type": "text",
-          "text": "Here it is as a live Angular example — press the button to flip the value and watch the block switch. Edit it and run:"
-        },
-        {
-          "type": "ng",
-          "ts": "show = true;\ntoggle() {\n  show = !show;\n}",
-          "html": "<button (click)=\"toggle()\">Toggle</button>\n\n@if (show) {\n  <p>Now you see me</p>\n} @else {\n  <p>Now you don't</p>\n}"
-        }
+        { "type": "text", "text": "Property binding sends data <em>into</em> the view; event binding sends events <em>out</em>. <strong>Two-way binding</strong> does both at once: the class updates the view, and the view updates the class — they stay in sync automatically." },
+        { "type": "svg", "caption": "The value and the view update each other.", "svg": "<svg viewBox='0 0 440 150' role='img' aria-label='Two-way binding keeps the class value and the view in sync both ways'><defs><marker id='tw-ar' markerWidth='8' markerHeight='8' refX='6' refY='3' orient='auto'><path d='M0,0 L6,3 L0,6 Z' fill='currentColor'/></marker></defs><g fill='none' stroke='currentColor' stroke-width='1.5'><rect x='15' y='45' width='150' height='60' rx='8'/><rect x='275' y='45' width='150' height='60' rx='8'/><line x1='165' y1='62' x2='273' y2='62' marker-end='url(#tw-ar)'/><line x1='273' y1='90' x2='167' y2='90' marker-end='url(#tw-ar)'/></g><g fill='currentColor' font-size='13' text-anchor='middle' font-family='sans-serif'><text x='90' y='80'>class value</text><text x='350' y='80'>view (input)</text></g><g fill='currentColor' font-size='11' text-anchor='middle' opacity='0.75' font-family='monospace'><text x='219' y='54'>set value</text><text x='219' y='104'>user types</text></g></svg>" },
+        { "type": "text", "text": "The syntax is <code>[( )]</code> — square brackets (property in) plus parentheses (event out). People call it the <strong>\"banana in a box\"</strong>." },
+        { "type": "link", "url": "https://angular.dev/guide/templates/two-way-binding", "label": "More on angular.dev" }
       ]
     },
     {
-      "id": "for-template",
-      "title": "Repeating with @for",
+      "id": "under-the-hood",
+      "title": "It's just two bindings",
       "blocks": [
-        {
-          "type": "text",
-          "text": "<code>@for</code> renders a block once for each item in a list. The <code>track</code> part helps Angular update the list efficiently — usually track a unique id."
-        },
-        {
-          "type": "svg",
-          "caption": "One list item in, one rendered block out — for every item.",
-          "svg": "<svg viewBox='0 0 440 150' role='img' aria-label='An array of three users becomes three list items'><defs><marker id='for-ar' markerWidth='8' markerHeight='8' refX='6' refY='3' orient='auto'><path d='M0,0 L6,3 L0,6 Z' fill='currentColor'/></marker></defs><g fill='none' stroke='currentColor' stroke-width='1.5'><rect x='15' y='40' width='130' height='66' rx='8'/><rect x='300' y='16' width='125' height='30' rx='5'/><rect x='300' y='58' width='125' height='30' rx='5'/><rect x='300' y='100' width='125' height='30' rx='5'/><line x1='145' y1='73' x2='298' y2='31' marker-end='url(#for-ar)'/><line x1='145' y1='73' x2='298' y2='73' marker-end='url(#for-ar)'/><line x1='145' y1='73' x2='298' y2='115' marker-end='url(#for-ar)'/></g><g fill='currentColor' font-size='12' text-anchor='middle' font-family='monospace'><text x='80' y='70'>users()</text><text x='80' y='88' font-size='10' opacity='0.7'>[Asha, Ravi, Sam]</text><text x='362' y='36'>Asha</text><text x='362' y='78'>Ravi</text><text x='362' y='120'>Sam</text></g></svg>"
-        },
-        {
-          "type": "code",
-          "label": "template",
-          "code": "<ul>\n  @for (user of users(); track user.id) {\n    <li>{{ user.name }}</li>\n  } @empty {\n    <li>No users yet.</li>\n  }\n</ul>"
-        },
-        {
-          "type": "note",
-          "text": "<code>@empty</code> is optional — it shows when the list has no items."
-        },
-        {
-          "type": "text",
-          "text": "A live Angular example — add items and watch <code>@for</code> render each one. Edit it and run:"
-        },
-        {
-          "type": "ng",
-          "ts": "items = ['Asha', 'Ravi'];\nadd() {\n  items = [...items, 'Item ' + (items.length + 1)];\n}\nclear() {\n  items = [];\n}",
-          "html": "<button (click)=\"add()\">Add</button>\n<button (click)=\"clear()\">Clear</button>\n\n<ul>\n  @for (item of items; track item) {\n    <li>{{ item }}</li>\n  } @empty {\n    <li>No items yet.</li>\n  }\n</ul>"
-        }
+        { "type": "text", "text": "Two-way binding is sugar. <code>[(value)]</code> expands to a property binding plus an event binding named <code>valueChange</code> — these two lines do exactly the same thing:" },
+        { "type": "compare", "cards": [
+          { "title": "Two-way", "code": "<app-x [(value)]=\"count\" />" },
+          { "title": "The long form", "code": "<app-x\n  [value]=\"count\"\n  (valueChange)=\"count = $event\" />" }
+        ] },
+        { "type": "note", "text": "Rule: <code>[(thing)]</code> works when something has both a <code>thing</code> input and a <code>thingChange</code> output." }
       ]
     },
     {
-      "id": "switch-template",
-      "title": "Choosing with @switch",
+      "id": "example-ngmodel",
+      "title": "Example 1: ngModel on a form input",
       "blocks": [
-        {
-          "type": "text",
-          "text": "<code>@switch</code> picks one block out of several based on a value — handy when there are more than two options."
-        },
-        {
-          "type": "code",
-          "label": "template",
-          "code": "@switch (status()) {\n  @case ('loading') { <p>Loading...</p> }\n  @case ('error')   { <p>Something went wrong.</p> }\n  @default          { <p>All done!</p> }\n}"
-        },
-        {
-          "type": "text",
-          "text": "A live example — click a button to change the status and watch <code>@switch</code> pick the matching block. Edit it and run:"
-        },
-        {
-          "type": "ng",
-          "ts": "status = 'loading';\nset(value) {\n  status = value;\n}",
-          "html": "<button (click)=\"set('loading')\">Loading</button>\n<button (click)=\"set('error')\">Error</button>\n<button (click)=\"set('done')\">Done</button>\n\n@switch (status) {\n  @case ('loading') { <p>Loading...</p> }\n  @case ('error') { <p>Something went wrong.</p> }\n  @default { <p>All done!</p> }\n}"
-        }
+        { "type": "text", "text": "The most common two-way binding is <code>[(ngModel)]</code> on an <code>&lt;input&gt;</code> — type in the box and the class value updates live. Needs <code>FormsModule</code>." },
+        { "type": "code", "label": "real Angular", "code": "// class:  name = signal('');\n\n<input [(ngModel)]=\"name\">\n<p>Hello, {{ name() }}!</p>" },
+        { "type": "note", "text": "Run the live version in the next example — it uses <code>[value]</code> + <code>(input)</code>, which is exactly what <code>[(ngModel)]</code> does under the hood." }
       ]
     },
     {
-      "id": "control-flow-note",
-      "title": "The modern way",
+      "id": "example-manual",
+      "title": "Example 2: the manual equivalent",
       "blocks": [
-        {
-          "type": "text",
-          "text": "You may see older code using <code>*ngIf</code> and <code>*ngFor</code> as attributes. The newer <code>@if</code> and <code>@for</code> blocks are built into the template, easier to read, and the recommended choice today."
-        },
-        {
-          "type": "link",
-          "url": "https://angular.dev/guide/templates/control-flow",
-          "label": "More on angular.dev"
-        }
+        { "type": "text", "text": "To see the two halves clearly, here's the same input written as a property binding plus an event binding — no <code>ngModel</code> at all." },
+        { "type": "ng", "ts": "text = 'edit me';", "html": "<input [value]=\"text\" (input)=\"text = $event.target.value\">\n<p>You typed: {{ text }}</p>" }
       ]
     },
     {
-      "id": "control-flow-recap",
+      "id": "example-model",
+      "title": "Example 3: two-way on your own component",
+      "blocks": [
+        { "type": "text", "text": "You can give your own component a two-way property with the <code>model()</code> function. It creates both the input and the matching <code>...Change</code> output for you, so a parent can use <code>[( )]</code> on it." },
+        { "type": "code", "label": "counter.ts (child)", "code": "import { Component, model } from '@angular/core';\n\n@Component({\n  selector: 'app-counter',\n  template: `\n    <button (click)=\"value.set(value() + 1)\">\n      Count: {{ value() }}\n    </button>`\n})\nexport class Counter {\n  value = model(0); // a two-way bindable signal\n}" },
+        { "type": "code", "label": "app.ts (parent)", "code": "// class:  total = signal(0);\n\n<app-counter [(value)]=\"total\" />\n<p>Parent sees: {{ total() }}</p>" },
+        { "type": "note", "text": "Click the child's button and the parent's <code>total</code> updates too — because <code>model()</code> binds both ways." }
+      ]
+    },
+    {
+      "id": "example-toggle",
+      "title": "Example 4: a toggle switch with model()",
+      "blocks": [
+        { "type": "text", "text": "A reusable on/off switch. The child owns the button; the parent reads and sets the value through two-way binding." },
+        { "type": "code", "label": "toggle.ts (child)", "code": "import { Component, model } from '@angular/core';\n\n@Component({\n  selector: 'app-toggle',\n  template: `\n    <button (click)=\"on.set(!on())\">\n      {{ on() ? 'ON' : 'OFF' }}\n    </button>`\n})\nexport class Toggle {\n  on = model(false);\n}" },
+        { "type": "code", "label": "app.ts (parent)", "code": "// class:  enabled = signal(false);\n\n<app-toggle [(on)]=\"enabled\" />\n<p>Notifications: {{ enabled() ? 'enabled' : 'disabled' }}</p>" }
+      ]
+    },
+    {
+      "id": "example-rating",
+      "title": "Example 5: a star rating with model()",
+      "blocks": [
+        { "type": "text", "text": "<code>model()</code> shines for custom input controls. This star rating both shows the current value and reports changes — all through one two-way binding." },
+        { "type": "code", "label": "rating.ts (child)", "code": "import { Component, model } from '@angular/core';\n\n@Component({\n  selector: 'app-rating',\n  template: `\n    @for (star of [1, 2, 3, 4, 5]; track star) {\n      <button (click)=\"value.set(star)\">\n        {{ star <= value() ? '★' : '☆' }}\n      </button>\n    }`\n})\nexport class Rating {\n  value = model(0);\n}" },
+        { "type": "code", "label": "app.ts (parent)", "code": "// class:  score = signal(3);\n\n<app-rating [(value)]=\"score\" />\n<p>You rated: {{ score() }} / 5</p>" },
+        { "type": "note", "text": "<code>model.required&lt;T&gt;()</code> works too, when the parent must provide a starting value." }
+      ]
+    },
+    {
+      "id": "two-way-recap",
       "title": "Recap",
       "blocks": [
-        {
-          "type": "list",
-          "items": [
-            "<code>@if / @else</code> shows or hides a block.",
-            "<code>@for (item of list; track item.id)</code> repeats a block.",
-            "<code>@empty</code> covers the empty-list case.",
-            "<code>@switch / @case / @default</code> picks one of many.",
-            "These replace the older <code>*ngIf</code> / <code>*ngFor</code>."
-          ]
-        }
+        { "type": "list", "items": [
+          "Two-way binding keeps a value and the view in sync in both directions.",
+          "Syntax is <code>[(x)]</code> — \"banana in a box\".",
+          "It's shorthand for <code>[x]</code> + <code>(xChange)</code>.",
+          "<code>[(ngModel)]</code> is the everyday case on form inputs (needs <code>FormsModule</code>).",
+          "Add two-way to your own component with <code>model()</code>."
+        ] }
       ]
     }
-  ],
-  "group": "Angular"
+  ]
 }

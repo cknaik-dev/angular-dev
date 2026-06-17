@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, Input, OnInit, inject, signal } fro
 import { MonacoEditorComponent } from '../monaco-editor/monaco-editor.component';
 import { PreviewPaneComponent } from '../preview-pane/preview-pane.component';
 import { ProgressService } from '../../core/progress.service';
+import { PrintModeService } from '../../core/print-mode.service';
 
 // A collapsible, editable Angular example: edit component.ts + component.html,
 // press Run, and see it rendered by the mini Angular preview engine.
@@ -10,6 +11,23 @@ import { ProgressService } from '../../core/progress.service';
   selector: 'app-ng-runner',
   imports: [MonacoEditorComponent, PreviewPaneComponent],
   template: `
+    <!-- Shown only when printing: the example code and its rendered output. -->
+    <div class="runner-print">
+      <p class="runner-print-label">component.ts</p>
+      <pre>{{ ts }}</pre>
+      <p class="runner-print-label">component.html</p>
+      <pre>{{ html }}</pre>
+      @if (printMode()) {
+        <p class="runner-print-label">Output</p>
+        <app-preview-pane
+          class="runner-print-output"
+          [tsCode]="ts"
+          [htmlCode]="html"
+          theme="light"
+        />
+      }
+    </div>
+
     <details class="runner" (toggle)="onToggle($event)">
       <summary class="runner-summary">Angular example — expand to run</summary>
 
@@ -56,14 +74,6 @@ import { ProgressService } from '../../core/progress.service';
         }
       }
     </details>
-
-    <!-- Shown only when printing, so examples appear in the PDF. -->
-    <div class="runner-print">
-      <p class="runner-print-label">component.ts</p>
-      <pre>{{ ts }}</pre>
-      <p class="runner-print-label">component.html</p>
-      <pre>{{ html }}</pre>
-    </div>
   `,
   styles: [
     `
@@ -166,7 +176,12 @@ import { ProgressService } from '../../core/progress.service';
         display: none;
       }
 
+      .runner-print-output {
+        background: #fff;
+      }
+
       @media print {
+        /* Hide the interactive runner; show the code + rendered output. */
         .runner {
           display: none;
         }
@@ -177,6 +192,7 @@ import { ProgressService } from '../../core/progress.service';
           border: 1px solid #999;
           border-radius: 0.4rem;
           overflow: hidden;
+          break-inside: avoid;
         }
 
         .runner-print-label {
@@ -185,6 +201,11 @@ import { ProgressService } from '../../core/progress.service';
           background: #f0f0f0;
           font-size: 0.78rem;
           font-weight: 700;
+          border-top: 1px solid #999;
+        }
+
+        .runner-print-label:first-child {
+          border-top: 0;
         }
 
         .runner-print pre {
@@ -194,10 +215,6 @@ import { ProgressService } from '../../core/progress.service';
           word-break: break-word;
           font-size: 0.8rem;
           line-height: 1.4;
-        }
-
-        .runner-print pre + .runner-print-label {
-          border-top: 1px solid #999;
         }
       }
     `
@@ -209,6 +226,7 @@ export class NgRunnerComponent implements OnInit {
   @Input({ required: true }) initialHtml = '';
 
   protected readonly theme = inject(ProgressService).theme;
+  protected readonly printMode = inject(PrintModeService).enabled;
   protected ts = '';
   protected html = '';
   protected readonly opened = signal(false);

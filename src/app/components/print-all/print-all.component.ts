@@ -1,28 +1,55 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  ViewChild,
+  computed,
+  inject,
+  signal
+} from '@angular/core';
+import { DOCUMENT, Location } from '@angular/common';
 import { Title } from '@angular/platform-browser';
-import { Location } from '@angular/common';
 import { ChapterRepositoryService } from '../../core/chapter-repository.service';
+import { PrintModeService } from '../../core/print-mode.service';
 import { ChapterDefinition } from '../../models/chapter';
 import { ChapterArticleComponent } from '../chapter-article/chapter-article.component';
 
-// Loads every chapter and renders them as one long document for printing /
-// saving as a single PDF. Opens the print dialog automatically once ready.
+// One-time generator: loads every chapter, renders the real styled content,
+// and produces a single PDF with html2pdf. Save the result as
+// public/course.pdf — the header "Download PDF" button serves that file.
 @Component({
   selector: 'app-print-all',
   imports: [ChapterArticleComponent],
   template: `
     <div class="print-toolbar">
       <button type="button" (click)="back()">← Back</button>
-      <button type="button" (click)="print()">Print / Save PDF</button>
-      @if (loading()) {
-        <span class="print-status">Loading {{ chapters().length }} chapters…</span>
-      } @else {
-        <span class="print-status">{{ chapters().length }} chapters ready</span>
-      }
+      <button type="button" (click)="generate()" [disabled]="loading() || busy()">
+        {{ busy() ? 'Generating…' : 'Download PDF' }}
+      </button>
+      <span class="print-status">
+        {{ loading() ? 'Loading chapters…' : chapters().length + ' chapters ready' }}
+      </span>
     </div>
 
-    <div class="print-doc">
-      <h1 class="print-title">Angular Learning — Full Course</h1>
+    <div #doc class="pdf-doc">
+      <section class="pdf-cover">
+        <h1>Angular Learning</h1>
+        <p class="pdf-subtitle">A beginner-friendly path from JavaScript to Angular</p>
+        <p class="pdf-meta">{{ chapters().length }} chapters</p>
+      </section>
+
+      <section class="pdf-toc">
+        <h2>Contents</h2>
+        @for (group of toc(); track group.name) {
+          <h3>{{ group.name }}</h3>
+          <ul>
+            @for (ch of group.items; track ch.id) {
+              <li><span class="toc-num">{{ ch.number }}</span><span>{{ ch.title }}</span></li>
+            }
+          </ul>
+        }
+      </section>
+
       @for (chapter of chapters(); track chapter.id) {
         <app-chapter-article class="print-chapter" [chapter]="chapter" />
       }
@@ -32,7 +59,7 @@ import { ChapterArticleComponent } from '../chapter-article/chapter-article.comp
     `
       :host {
         display: block;
-        max-width: 880px;
+        max-width: 860px;
         margin: 0 auto;
         padding: 1.5rem;
       }
@@ -58,9 +85,66 @@ import { ChapterArticleComponent } from '../chapter-article/chapter-article.comp
         font-size: 0.9rem;
       }
 
-      .print-title {
-        margin: 0 0 1.5rem;
-        font-size: 1.6rem;
+      .pdf-cover {
+        text-align: center;
+        padding: 5rem 0 3rem;
+      }
+
+      .pdf-cover h1 {
+        margin: 0;
+        font-size: 2.6rem;
+      }
+
+      .pdf-subtitle {
+        margin: 0.75rem 0 0;
+        color: var(--text-muted);
+        font-size: 1.1rem;
+      }
+
+      .pdf-meta {
+        margin: 0.5rem 0 0;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      .pdf-toc h2 {
+        margin: 0 0 1rem;
+        font-size: 1.8rem;
+      }
+
+      .pdf-toc h3 {
+        margin: 1.3rem 0 0.4rem;
+        font-size: 0.78rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+
+      .pdf-toc ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .pdf-toc li {
+        display: flex;
+        gap: 0.7rem;
+        padding: 0.3rem 0;
+        border-bottom: 1px solid var(--border);
+        font-size: 1rem;
+      }
+
+      .toc-num {
+        min-width: 1.7rem;
+        color: var(--text-muted);
+        text-align: right;
+      }
+
+      @media print {
+        .pdf-cover,
+        .pdf-toc {
+          break-after: page;
+        }
       }
 
       .print-chapter {
@@ -71,33 +155,45 @@ import { ChapterArticleComponent } from '../chapter-article/chapter-article.comp
         margin-top: 2.5rem;
       }
 
-      @media print {
-        :host {
-          padding: 0;
-          max-width: none;
-        }
+      /* For the PDF capture, show the code blocks and hide the live editors /
+         output iframes (html2canvas can't capture iframes). */
+      :host ::ng-deep .runner {
+        display: none !important;
+      }
 
-        .print-toolbar {
-          display: none;
-        }
-
-        /* Start each chapter on a fresh page. */
-        .print-chapter + .print-chapter {
-          break-before: page;
-          margin-top: 0;
-        }
+      :host ::ng-deep .runner-print {
+        display: block !important;
       }
     `
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PrintAllComponent {
+  @ViewChild('doc') private readonly doc?: ElementRef<HTMLElement>;
+
   private readonly chapterRepository = inject(ChapterRepositoryService);
   private readonly title = inject(Title);
   private readonly location = inject(Location);
+  private readonly printMode = inject(PrintModeService);
+  private readonly document = inject(DOCUMENT);
 
   protected readonly chapters = signal<ChapterDefinition[]>([]);
   protected readonly loading = signal(true);
+  protected readonly busy = signal(false);
+
+  // Group chapters for the Contents page (JavaScript / TypeScript / Angular).
+  protected readonly toc = computed(() => {
+    const groups: { name: string; items: ChapterDefinition[] }[] = [];
+    for (const chapter of this.chapters()) {
+      let bucket = groups.find((g) => g.name === chapter.group);
+      if (!bucket) {
+        bucket = { name: chapter.group, items: [] };
+        groups.push(bucket);
+      }
+      bucket.items.push(chapter);
+    }
+    return groups;
+  });
 
   constructor() {
     this.loadAll();
@@ -107,8 +203,42 @@ export class PrintAllComponent {
     this.location.back();
   }
 
-  protected print(): void {
-    window.print();
+  protected async generate(): Promise<void> {
+    if (!this.doc) {
+      return;
+    }
+    this.busy.set(true);
+
+    // Force light theme and expand all collapsed sections for a clean PDF.
+    const root = this.document.documentElement;
+    const previousTheme = root.dataset['theme'];
+    root.dataset['theme'] = 'light';
+    this.doc.nativeElement
+      .querySelectorAll<HTMLDetailsElement>('details')
+      .forEach((d) => (d.open = true));
+
+    // Let the theme + layout settle before capturing.
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    try {
+      const html2pdf = (await import('html2pdf.js')).default;
+      await html2pdf()
+        .set({
+          margin: [10, 10, 12, 10],
+          filename: 'angular-learning.pdf',
+          image: { type: 'jpeg', quality: 0.95 },
+          html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+          pagebreak: { mode: ['css', 'legacy'], before: '.print-chapter' }
+        })
+        .from(this.doc.nativeElement)
+        .save();
+    } finally {
+      if (previousTheme) {
+        root.dataset['theme'] = previousTheme;
+      }
+      this.busy.set(false);
+    }
   }
 
   private async loadAll(): Promise<void> {
@@ -119,10 +249,9 @@ export class PrintAllComponent {
       );
       this.chapters.set(full);
       this.title.setTitle('Angular Learning — Full Course');
+      this.printMode.enabled.set(true);
     } finally {
       this.loading.set(false);
-      // Give the articles a moment to render, then open the print dialog.
-      setTimeout(() => window.print(), 400);
     }
   }
 }

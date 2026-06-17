@@ -31,6 +31,13 @@
           "code": "<p id=\"out\"></p>\n\n<script>\n  function add(a, b) {\n    return a + b;\n  }\n  document.getElementById(\"out\").textContent = \"add(2, 3) = \" + add(2, 3);\n</script>"
         },
         {
+          "type": "image",
+          "src": "images/function-with-parameters-js.png",
+          "alt": "Handwritten note explaining functions and parameters",
+          "caption": "Functions and parameters at a glance",
+          "maxWidth": 720
+        },
+        {
           "type": "link",
           "url": "https://javascript.info/function-basics",
           "label": "More on javascript.info"
@@ -63,6 +70,13 @@
           "rows": 8,
           "height": 70,
           "code": "<p id=\"out\"></p>\n\n<script>\n  const add = (a, b) => a + b;\n  const square = n => n * n;\n  document.getElementById(\"out\").textContent =\n    \"add(2,3)=\" + add(2, 3) + \", square(5)=\" + square(5);\n</script>"
+        },
+        {
+          "type": "image",
+          "src": "images/arrow-function.png",
+          "alt": "Handwritten note explaining arrow functions",
+          "caption": "Arrow functions at a glance",
+          "maxWidth": 720
         },
         {
           "type": "link",

@@ -1,0 +1,112 @@
+{
+  "id": "chapter-31",
+  "number": 31,
+  "title": "Route Guards",
+  "summary": "Protect routes with guards — like blocking pages behind a login.",
+  "kicker": "Chapter 31",
+  "group": "Angular",
+  "heading": "Route Guards",
+  "sections": [
+    {
+      "id": "what-is-guard",
+      "title": "What is a route guard?",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A <strong>guard</strong> is a small function the router runs before (or after) navigating. It decides whether the user is allowed to go there — for example, blocking a dashboard unless the user is logged in."
+        },
+        {
+          "type": "flow",
+          "steps": [
+            "User opens a route",
+            "Guard runs",
+            "Allow ✓ or redirect ✗"
+          ]
+        },
+        {
+          "type": "link",
+          "url": "https://angular.dev/guide/routing/route-guards",
+          "label": "More on angular.dev"
+        }
+      ]
+    },
+    {
+      "id": "auth-guard",
+      "title": "An auth guard with canActivate",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A modern guard is just a function of type <code>CanActivateFn</code>. Inside it you can <code>inject</code> services. Return <code>true</code> to allow, or a <code>UrlTree</code> (from <code>router.parseUrl</code>) to redirect."
+        },
+        {
+          "type": "code",
+          "label": "auth.guard.ts",
+          "code": "import { inject } from '@angular/core';\nimport { CanActivateFn, Router } from '@angular/router';\nimport { AuthService } from './auth.service';\n\nexport const authGuard: CanActivateFn = () => {\n  const auth = inject(AuthService);\n  const router = inject(Router);\n\n  if (auth.isLoggedIn()) {\n    return true;\n  }\n  // not logged in -> send to the login page\n  return router.parseUrl('/login');\n};"
+        }
+      ]
+    },
+    {
+      "id": "attach-guard",
+      "title": "Attaching the guard to a route",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "List the guard in the route's <code>canActivate</code> array. You can attach several guards."
+        },
+        {
+          "type": "code",
+          "label": "routes",
+          "code": "import { authGuard } from './auth.guard';\n\nexport const routes: Routes = [\n  { path: 'login', component: Login },\n  {\n    path: 'dashboard',\n    component: Dashboard,\n    canActivate: [authGuard]\n  }\n];"
+        },
+        {
+          "type": "note",
+          "text": "Now visiting <code>/dashboard</code> while logged out bounces the user to <code>/login</code>."
+        }
+      ]
+    },
+    {
+      "id": "other-guards",
+      "title": "Other guards",
+      "blocks": [
+        {
+          "type": "stack",
+          "layers": [
+            {
+              "title": "canActivate",
+              "detail": "Can the user enter this route? (auth, roles)"
+            },
+            {
+              "title": "canActivateChild",
+              "detail": "Same check, applied to a route's children"
+            },
+            {
+              "title": "canDeactivate",
+              "detail": "Can the user leave? (warn about unsaved changes)"
+            }
+          ]
+        },
+        {
+          "type": "code",
+          "label": "canDeactivate example",
+          "code": "export const unsavedGuard: CanDeactivateFn<EditPage> = (page) => {\n  return page.hasUnsavedChanges()\n    ? confirm('Leave without saving?')\n    : true;\n};"
+        }
+      ]
+    },
+    {
+      "id": "guards-recap",
+      "title": "Recap",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "A guard is a function the router runs to allow or block navigation.",
+            "<code>CanActivateFn</code> returns <code>true</code>, <code>false</code>, or a <code>UrlTree</code> to redirect.",
+            "<code>inject()</code> services inside the guard (auth, router).",
+            "Attach with <code>canActivate: [authGuard]</code> on the route.",
+            "<code>canActivateChild</code> guards child routes; <code>canDeactivate</code> guards leaving."
+          ]
+        }
+      ]
+    }
+  ]
+}

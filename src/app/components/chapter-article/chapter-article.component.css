@@ -241,4 +241,14 @@
   .chapter-advanced > summary {
     list-style: none;
   }
+
+  /* Keep code, diagrams and figures from splitting across page breaks. */
+  .code-card,
+  .card-row,
+  .chapter-figure,
+  .stack-diagram,
+  .flow-diagram,
+  .chapter-note {
+    break-inside: avoid;
+  }
 }

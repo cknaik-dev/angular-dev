@@ -13,6 +13,7 @@
       "blocks": [
         { "type": "text", "text": "Functions (Chapter 4) get types too: one for each parameter, and one for what they return. Now TypeScript checks that you call them correctly." },
         { "type": "code", "label": "typed function", "code": "function add(a: number, b: number): number {\n  return a + b;\n}\n\nadd(2, 3);     // ok\nadd(2, \"3\");   // Error: \"3\" is not a number" },
+        { "type": "image", "src": "images/typescript-method.png", "alt": "Illustrated overview of typed methods in TypeScript", "caption": "Typed functions at a glance", "maxWidth": 760 },
         { "type": "link", "url": "https://www.typescriptlang.org/docs/handbook/2/functions.html", "label": "More on typescriptlang.org" }
       ]
     },

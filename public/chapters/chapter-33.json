@@ -1,0 +1,193 @@
+{
+  "id": "chapter-33",
+  "number": 33,
+  "title": "CRUD with JSON Server",
+  "summary": "Spin up a fake REST API and do the four CRUD operations against it.",
+  "kicker": "Chapter 33",
+  "group": "Angular",
+  "heading": "CRUD with JSON Server",
+  "sections": [
+    {
+      "id": "json-server",
+      "title": "What is JSON Server?",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "To practice talking to an API you need a server. <strong>JSON Server</strong> turns a plain JSON file into a full REST API in seconds — no backend code needed. It's perfect for learning and prototypes."
+        },
+        {
+          "type": "code",
+          "label": "Terminal",
+          "code": "npm install -g json-server"
+        },
+        {
+          "type": "text",
+          "text": "Create a <code>db.json</code> file with some starting data. Each top-level key becomes a resource (a collection)."
+        },
+        {
+          "type": "code",
+          "label": "db.json",
+          "code": "{\n  \"users\": [\n    { \"id\": 1, \"name\": \"Asha\", \"age\": 20 },\n    { \"id\": 2, \"name\": \"Ravi\", \"age\": 25 }\n  ]\n}"
+        },
+        {
+          "type": "code",
+          "label": "Terminal",
+          "code": "json-server --watch db.json\n# API now running at http://localhost:3000"
+        },
+        {
+          "type": "note",
+          "text": "You instantly get the endpoints <code>/users</code> and <code>/users/:id</code> — and JSON Server saves every change back into <code>db.json</code>."
+        },
+        {
+          "type": "link",
+          "url": "https://github.com/typicode/json-server",
+          "label": "JSON Server on GitHub"
+        }
+      ]
+    },
+    {
+      "id": "what-is-crud",
+      "title": "What is CRUD?",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "<strong>CRUD</strong> stands for the four things you do with data: <strong>C</strong>reate, <strong>R</strong>ead, <strong>U</strong>pdate, and <strong>D</strong>elete. Every app — a todo list, a shop, a social feed — is mostly CRUD underneath."
+        },
+        {
+          "type": "text",
+          "text": "Over a REST API (Chapter 32), each CRUD operation is a different HTTP method."
+        },
+        {
+          "type": "stack",
+          "layers": [
+            {
+              "title": "Create",
+              "detail": "POST — add a new item"
+            },
+            {
+              "title": "Read",
+              "detail": "GET — fetch items"
+            },
+            {
+              "title": "Update",
+              "detail": "PUT — change an existing item"
+            },
+            {
+              "title": "Delete",
+              "detail": "DELETE — remove an item"
+            }
+          ]
+        },
+        {
+          "type": "link",
+          "url": "/chapter/chapter-32",
+          "label": "Revisit Chapter 32: REST APIs In Depth"
+        }
+      ]
+    },
+    {
+      "id": "crud-read",
+      "title": "Read — GET",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Reading has two shapes: get the whole collection, or get one item by its id. These are plain <code>GET</code> requests — you can even open the URLs in your browser."
+        },
+        {
+          "type": "code",
+          "label": "get all",
+          "code": "GET http://localhost:3000/users\n\n[\n  { \"id\": 1, \"name\": \"Asha\", \"age\": 20 },\n  { \"id\": 2, \"name\": \"Ravi\", \"age\": 25 }\n]"
+        },
+        {
+          "type": "code",
+          "label": "get one",
+          "code": "GET http://localhost:3000/users/1\n\n{ \"id\": 1, \"name\": \"Asha\", \"age\": 20 }"
+        },
+        {
+          "type": "text",
+          "text": "On the command line you can try it with <code>curl</code>:"
+        },
+        {
+          "type": "code",
+          "label": "Terminal",
+          "code": "curl http://localhost:3000/users\ncurl http://localhost:3000/users/1"
+        }
+      ]
+    },
+    {
+      "id": "crud-create",
+      "title": "Create — POST",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Send a new item in the request body to the collection. JSON Server gives it a new <code>id</code> and saves it, then returns the created item."
+        },
+        {
+          "type": "code",
+          "label": "Terminal",
+          "code": "curl -X POST http://localhost:3000/users \\\n  -H \"Content-Type: application/json\" \\\n  -d '{ \"name\": \"Meera\", \"age\": 22 }'"
+        },
+        {
+          "type": "code",
+          "label": "response",
+          "code": "{ \"id\": 3, \"name\": \"Meera\", \"age\": 22 }"
+        }
+      ]
+    },
+    {
+      "id": "crud-update",
+      "title": "Update — PUT",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Point at one item's id and send the full updated object. JSON Server replaces it and returns the new version."
+        },
+        {
+          "type": "code",
+          "label": "Terminal",
+          "code": "curl -X PUT http://localhost:3000/users/1 \\\n  -H \"Content-Type: application/json\" \\\n  -d '{ \"name\": \"Asha\", \"age\": 21 }'"
+        },
+        {
+          "type": "code",
+          "label": "response",
+          "code": "{ \"id\": 1, \"name\": \"Asha\", \"age\": 21 }"
+        }
+      ]
+    },
+    {
+      "id": "crud-delete",
+      "title": "Delete — DELETE",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Point at the item's id with the <code>DELETE</code> method. JSON Server removes it and returns an empty object."
+        },
+        {
+          "type": "code",
+          "label": "Terminal",
+          "code": "curl -X DELETE http://localhost:3000/users/1"
+        },
+        {
+          "type": "note",
+          "text": "Check <code>db.json</code> after each call — you'll see the file actually change as you create, update, and delete."
+        }
+      ]
+    },
+    {
+      "id": "crud-recap",
+      "title": "Recap",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "<strong>JSON Server</strong> turns a <code>db.json</code> into a real REST API for practice.",
+            "<strong>CRUD</strong> = Create, Read, Update, Delete.",
+            "Create → <code>POST /users</code>, Read → <code>GET /users</code> or <code>/users/1</code>.",
+            "Update → <code>PUT /users/1</code>, Delete → <code>DELETE /users/1</code>.",
+            "JSON Server saves changes straight into <code>db.json</code>."
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -20,6 +20,13 @@
           "code": "const user = {\n  name: \"Asha\",\n  age: 20,\n  isActive: true\n};"
         },
         {
+          "type": "image",
+          "src": "images/objects.png",
+          "alt": "Handwritten note explaining objects",
+          "caption": "Objects at a glance",
+          "maxWidth": 720
+        },
+        {
           "type": "link",
           "url": "https://javascript.info/object",
           "label": "More on javascript.info"

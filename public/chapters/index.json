@@ -143,28 +143,98 @@
     "id": "chapter-21",
     "number": 21,
     "title": "Inputs and Outputs",
-    "summary": "How a parent component talks to a child, and the child talks back.",
+    "summary": "How a parent component passes data down and a child sends events back up.",
     "group": "Angular"
   },
   {
     "id": "chapter-22",
     "number": 22,
-    "title": "Control Flow in Templates",
-    "summary": "Show, hide, repeat, and switch parts of your template.",
+    "title": "Two-way Binding",
+    "summary": "Keep a value and the screen in sync, in both directions at once.",
     "group": "Angular"
   },
   {
     "id": "chapter-23",
     "number": 23,
-    "title": "Component Lifecycle",
-    "summary": "The stages a component goes through, from created to removed.",
+    "title": "Control Flow in Templates",
+    "summary": "Show, hide, repeat, and switch parts of your template.",
     "group": "Angular"
   },
   {
     "id": "chapter-24",
     "number": 24,
+    "title": "Component Lifecycle",
+    "summary": "The stages a component goes through, from created to removed.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-25",
+    "number": 25,
     "title": "Styles and Content Projection",
     "summary": "Scoped styling, passing markup into a component, and reaching its elements.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-26",
+    "number": 26,
+    "title": "Pipes",
+    "summary": "Transform how values look in the template without changing the data.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-27",
+    "number": 27,
+    "title": "Directives",
+    "summary": "Add behavior or change appearance and layout of elements.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-28",
+    "number": 28,
+    "title": "Template-driven Forms",
+    "summary": "Build forms right in the template with ngModel — great for simple forms.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-29",
+    "number": 29,
+    "title": "Reactive Forms",
+    "summary": "Define the form model in TypeScript — powerful for bigger, dynamic forms.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-30",
+    "number": 30,
+    "title": "Routing",
+    "summary": "Show different pages for different URLs, with path and query parameters.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-31",
+    "number": 31,
+    "title": "Route Guards",
+    "summary": "Protect routes with guards — like blocking pages behind a login.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-32",
+    "number": 32,
+    "title": "REST APIs In Depth",
+    "summary": "Resources, HTTP methods, CRUD, and status codes — the full picture.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-33",
+    "number": 33,
+    "title": "CRUD with JSON Server",
+    "summary": "Spin up a fake REST API and do the four CRUD operations against it.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-34",
+    "number": 34,
+    "title": "HttpClient in a Component",
+    "summary": "Call your JSON Server API straight from a component with HttpClient.",
     "group": "Angular"
   }
 ]

@@ -1,0 +1,129 @@
+{
+  "id": "chapter-28",
+  "number": 28,
+  "title": "Template-driven Forms",
+  "summary": "Build forms right in the template with ngModel — great for simple forms.",
+  "kicker": "Chapter 28",
+  "group": "Angular",
+  "heading": "Template-driven Forms",
+  "sections": [
+    {
+      "id": "two-kinds",
+      "title": "Two ways to build forms",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Angular gives you two styles of forms. They do the same job — collect and validate user input — but put the logic in different places."
+        },
+        {
+          "type": "stack",
+          "layers": [
+            {
+              "title": "Template-driven",
+              "detail": "Form logic lives in the template with ngModel. Simple and quick — this chapter."
+            },
+            {
+              "title": "Reactive",
+              "detail": "Form model lives in the TypeScript class. More powerful for big or dynamic forms — next chapter."
+            }
+          ]
+        },
+        {
+          "type": "note",
+          "text": "Reach for template-driven forms for small things like a login or contact form. Reach for reactive forms when the form is large, dynamic, or needs serious validation and testing."
+        },
+        {
+          "type": "link",
+          "url": "https://angular.dev/guide/forms/template-driven-forms",
+          "label": "More on angular.dev"
+        }
+      ]
+    },
+    {
+      "id": "setup",
+      "title": "Setup",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Template-driven forms come from <code>FormsModule</code>. Add it to the component's <code>imports</code>."
+        },
+        {
+          "type": "code",
+          "label": "component",
+          "code": "import { Component } from '@angular/core';\nimport { FormsModule } from '@angular/forms';\n\n@Component({\n  selector: 'app-signup',\n  imports: [FormsModule],\n  templateUrl: './signup.html'\n})\nexport class Signup {\n  model = { name: '', email: '' };\n}"
+        }
+      ]
+    },
+    {
+      "id": "ngmodel",
+      "title": "Binding inputs with ngModel",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Each input uses <code>[(ngModel)]</code> for two-way binding and a <code>name</code> attribute so the form can track it. Wrap the inputs in a <code>&lt;form&gt;</code> and handle <code>(ngSubmit)</code>."
+        },
+        {
+          "type": "code",
+          "label": "signup.html",
+          "code": "<form (ngSubmit)=\"submit()\">\n  <input name=\"name\" [(ngModel)]=\"model.name\" placeholder=\"Name\">\n  <input name=\"email\" [(ngModel)]=\"model.email\" placeholder=\"Email\">\n  <button type=\"submit\">Sign up</button>\n</form>"
+        },
+        {
+          "type": "code",
+          "label": "component",
+          "code": "submit() {\n  console.log(this.model); // { name: '...', email: '...' }\n}"
+        }
+      ]
+    },
+    {
+      "id": "validation",
+      "title": "Validation",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Add normal HTML validators like <code>required</code> and <code>minlength</code>. Give the input a template reference (<code>#name=\"ngModel\"</code>) to read its state and show messages."
+        },
+        {
+          "type": "code",
+          "label": "signup.html",
+          "code": "<input\n  name=\"name\"\n  [(ngModel)]=\"model.name\"\n  required\n  minlength=\"3\"\n  #name=\"ngModel\">\n\n@if (name.invalid && name.touched) {\n  <small>Name must be at least 3 characters.</small>\n}"
+        },
+        {
+          "type": "note",
+          "text": "Useful states on a control: <code>valid</code> / <code>invalid</code>, <code>touched</code> (the user visited it), and <code>dirty</code> (the value changed)."
+        }
+      ]
+    },
+    {
+      "id": "form-state",
+      "title": "Using the whole form's state",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Give the form a reference with <code>#form=\"ngForm\"</code> to check if the entire form is valid — handy for disabling the submit button."
+        },
+        {
+          "type": "code",
+          "label": "signup.html",
+          "code": "<form #form=\"ngForm\" (ngSubmit)=\"submit()\">\n  <input name=\"name\" [(ngModel)]=\"model.name\" required>\n  <button type=\"submit\" [disabled]=\"form.invalid\">\n    Sign up\n  </button>\n</form>"
+        }
+      ]
+    },
+    {
+      "id": "td-recap",
+      "title": "Recap",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "Template-driven forms keep the logic in the template; import <code>FormsModule</code>.",
+            "Bind inputs with <code>[(ngModel)]</code> and give each a <code>name</code>.",
+            "Handle submit with <code>(ngSubmit)</code>.",
+            "Validate with <code>required</code>, <code>minlength</code>, etc.; read state via <code>#ref=\"ngModel\"</code>.",
+            "Use <code>#form=\"ngForm\"</code> for the whole form's validity.",
+            "Best for small, simple forms."
+          ]
+        }
+      ]
+    }
+  ]
+}

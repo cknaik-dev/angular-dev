@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 import { MonacoEditorComponent } from '../monaco-editor/monaco-editor.component';
 import { ProgressService } from '../../core/progress.service';
+import { PrintModeService } from '../../core/print-mode.service';
 
 // A collapsible "edit and run" box for raw HTML/JS examples.
 // Uses the Monaco editor (created lazily on expand, so many runners on one
@@ -20,6 +21,23 @@ import { ProgressService } from '../../core/progress.service';
   selector: 'app-dom-runner',
   imports: [MonacoEditorComponent],
   template: `
+    <!-- Shown only when printing: the example code and its default output. -->
+    <div class="runner-print">
+      <p class="runner-print-label">Example</p>
+      <pre>{{ code }}</pre>
+      @if (printMode()) {
+        <p class="runner-print-label">Output</p>
+        <iframe
+          #printFrame
+          class="runner-print-frame"
+          title="Example output"
+          scrolling="no"
+          sandbox="allow-scripts"
+          [style.height.px]="printHeight()"
+        ></iframe>
+      }
+    </div>
+
     <details class="runner" (toggle)="onToggle($event)">
       <summary class="runner-summary">Example — expand to run</summary>
 
@@ -51,12 +69,6 @@ import { ProgressService } from '../../core/progress.service';
         }
       }
     </details>
-
-    <!-- Shown only when printing, so examples appear in the PDF. -->
-    <div class="runner-print">
-      <p class="runner-print-label">Example</p>
-      <pre>{{ code }}</pre>
-    </div>
   `,
   styles: [
     `
@@ -150,7 +162,15 @@ import { ProgressService } from '../../core/progress.service';
         display: none;
       }
 
+      .runner-print-frame {
+        display: block;
+        width: 100%;
+        border: 0;
+        background: #fff;
+      }
+
       @media print {
+        /* Hide the interactive runner; show the code + rendered output. */
         .runner {
           display: none;
         }
@@ -161,6 +181,7 @@ import { ProgressService } from '../../core/progress.service';
           border: 1px solid #999;
           border-radius: 0.4rem;
           overflow: hidden;
+          break-inside: avoid;
         }
 
         .runner-print-label {
@@ -169,6 +190,11 @@ import { ProgressService } from '../../core/progress.service';
           background: #f0f0f0;
           font-size: 0.78rem;
           font-weight: 700;
+          border-top: 1px solid #999;
+        }
+
+        .runner-print-label:first-child {
+          border-top: 0;
         }
 
         .runner-print pre {
@@ -188,12 +214,15 @@ export class DomRunnerComponent implements OnInit {
   @Input({ required: true }) initialCode = '';
   @Input() rows = 8;
   @ViewChild('frame') private readonly frame?: ElementRef<HTMLIFrameElement>;
+  @ViewChild('printFrame') private readonly printFrame?: ElementRef<HTMLIFrameElement>;
 
   private readonly destroyRef = inject(DestroyRef);
   protected readonly theme = inject(ProgressService).theme;
+  protected readonly printMode = inject(PrintModeService).enabled;
   protected code = '';
   protected readonly opened = signal(false);
   protected readonly outputHeight = signal(40);
+  protected readonly printHeight = signal(80);
 
   // Size the editor to the example length (Monaco line ≈ 19px + padding).
   protected get editorHeight(): number {
@@ -208,6 +237,17 @@ export class DomRunnerComponent implements OnInit {
         this.run();
       }
     });
+
+    // When print mode turns on, render the default output into the print frame.
+    effect(() => {
+      if (this.printMode()) {
+        setTimeout(() => {
+          if (this.printFrame) {
+            this.printFrame.nativeElement.srcdoc = this.wrap(this.code, true);
+          }
+        });
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -216,12 +256,14 @@ export class DomRunnerComponent implements OnInit {
     // The sandboxed iframe reports its content height via postMessage,
     // so we can size it exactly and avoid an inner scrollbar.
     const onMessage = (event: MessageEvent) => {
-      if (
-        this.frame &&
-        event.source === this.frame.nativeElement.contentWindow &&
-        event.data?.__runnerHeight
-      ) {
-        this.outputHeight.set(Math.ceil(event.data.__runnerHeight));
+      if (!event.data?.__runnerHeight) {
+        return;
+      }
+      const height = Math.ceil(event.data.__runnerHeight);
+      if (this.frame && event.source === this.frame.nativeElement.contentWindow) {
+        this.outputHeight.set(height);
+      } else if (this.printFrame && event.source === this.printFrame.nativeElement.contentWindow) {
+        this.printHeight.set(height);
       }
     };
     window.addEventListener('message', onMessage);
@@ -257,7 +299,7 @@ export class DomRunnerComponent implements OnInit {
     this.run();
   }
 
-  private wrap(snippet: string): string {
+  private wrap(snippet: string, forceLight = false): string {
     const resize = `<script>(function(){
       function post(){var b=document.body,h=document.documentElement;
         parent.postMessage({__runnerHeight:Math.max(b.scrollHeight,h.scrollHeight)},'*');}
@@ -265,7 +307,7 @@ export class DomRunnerComponent implements OnInit {
       if(window.ResizeObserver){new ResizeObserver(post).observe(document.documentElement);}
       setTimeout(post,0);
     })();<\/script>`;
-    const dark = this.theme() === 'dark';
+    const dark = !forceLight && this.theme() === 'dark';
     const bg = dark ? '#0f1722' : '#ffffff';
     const fg = dark ? '#e6edf6' : '#16202e';
     return `<!doctype html><html><head><meta charset="utf-8"><style>

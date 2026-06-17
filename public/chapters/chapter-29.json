@@ -1,0 +1,123 @@
+{
+  "id": "chapter-29",
+  "number": 29,
+  "title": "Reactive Forms",
+  "summary": "Define the form model in TypeScript — powerful for bigger, dynamic forms.",
+  "kicker": "Chapter 29",
+  "group": "Angular",
+  "heading": "Reactive Forms",
+  "sections": [
+    {
+      "id": "what-are-reactive",
+      "title": "Form model in the class",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Reactive forms flip things around: instead of the template owning the form, you build the form model in TypeScript. That makes the form easy to read, test, and change at runtime — ideal for larger or dynamic forms."
+        },
+        {
+          "type": "code",
+          "label": "imports",
+          "code": "import { ReactiveFormsModule } from '@angular/forms';\n\n@Component({\n  imports: [ReactiveFormsModule],\n  /* ... */\n})"
+        },
+        {
+          "type": "link",
+          "url": "https://angular.dev/guide/forms/reactive-forms",
+          "label": "More on angular.dev"
+        }
+      ]
+    },
+    {
+      "id": "formgroup",
+      "title": "FormGroup and FormControl",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A <code>FormControl</code> is a single field. A <code>FormGroup</code> bundles controls into one form. You create them in the class, then connect them in the template."
+        },
+        {
+          "type": "code",
+          "label": "signup.ts",
+          "code": "import { Component } from '@angular/core';\nimport { FormGroup, FormControl } from '@angular/forms';\n\nexport class Signup {\n  form = new FormGroup({\n    name: new FormControl(''),\n    email: new FormControl('')\n  });\n\n  submit() {\n    console.log(this.form.value); // { name: '...', email: '...' }\n  }\n}"
+        },
+        {
+          "type": "code",
+          "label": "signup.html",
+          "code": "<form [formGroup]=\"form\" (ngSubmit)=\"submit()\">\n  <input formControlName=\"name\" placeholder=\"Name\">\n  <input formControlName=\"email\" placeholder=\"Email\">\n  <button type=\"submit\">Sign up</button>\n</form>"
+        }
+      ]
+    },
+    {
+      "id": "validation",
+      "title": "Validation with Validators",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Pass validators when you create each control. They live in the class, not the template."
+        },
+        {
+          "type": "code",
+          "label": "signup.ts",
+          "code": "import { FormGroup, FormControl, Validators } from '@angular/forms';\n\nform = new FormGroup({\n  name: new FormControl('', [Validators.required, Validators.minLength(3)]),\n  email: new FormControl('', [Validators.required, Validators.email])\n});"
+        },
+        {
+          "type": "text",
+          "text": "Read a control's state to show messages and control the submit button:"
+        },
+        {
+          "type": "code",
+          "label": "signup.html",
+          "code": "<input formControlName=\"name\">\n@if (form.controls.name.invalid && form.controls.name.touched) {\n  <small>Name needs at least 3 characters.</small>\n}\n\n<button [disabled]=\"form.invalid\">Sign up</button>"
+        }
+      ]
+    },
+    {
+      "id": "formbuilder",
+      "title": "FormBuilder shorthand",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Writing <code>new FormControl</code> everywhere gets repetitive. <code>FormBuilder</code> (injected with <code>inject</code>) builds the same form with less code."
+        },
+        {
+          "type": "code",
+          "label": "signup.ts",
+          "code": "import { inject } from '@angular/core';\nimport { FormBuilder, Validators } from '@angular/forms';\n\nexport class Signup {\n  private fb = inject(FormBuilder);\n\n  form = this.fb.group({\n    name: ['', [Validators.required, Validators.minLength(3)]],\n    email: ['', [Validators.required, Validators.email]]\n  });\n}"
+        }
+      ]
+    },
+    {
+      "id": "reacting",
+      "title": "Reacting to changes",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Because the model lives in code, you can watch any value change as the user types — useful for live search, dependent fields, or autosave."
+        },
+        {
+          "type": "code",
+          "label": "signup.ts",
+          "code": "this.form.controls.name.valueChanges.subscribe(value => {\n  console.log('name is now', value);\n});"
+        }
+      ]
+    },
+    {
+      "id": "reactive-recap",
+      "title": "Recap",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "Reactive forms define the model in the class; import <code>ReactiveFormsModule</code>.",
+            "<code>FormControl</code> is one field; <code>FormGroup</code> bundles them.",
+            "Connect with <code>[formGroup]</code> and <code>formControlName</code>.",
+            "Add <code>Validators</code> when creating controls; read <code>.invalid</code>, <code>.touched</code>.",
+            "<code>FormBuilder</code> (<code>fb.group</code>) is a shorter way to build the form.",
+            "<code>valueChanges</code> lets you react as values change.",
+            "Best for large, dynamic, or heavily-validated forms."
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -282,6 +282,16 @@ export class PreviewEngine {
 
     for (const binding of propertyBindings) {
       const value = this.evaluateExpression(binding.expression, context);
+
+      if (binding.propertyName === 'ngClass') {
+        this.applyNgClass(element, value);
+        continue;
+      }
+      if (binding.propertyName === 'ngStyle') {
+        this.applyNgStyle(element, value);
+        continue;
+      }
+
       (element as unknown as Record<string, unknown>)[binding.propertyName] = value as unknown;
       if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
         element.setAttribute(binding.propertyName, `${value}`);
@@ -320,7 +330,7 @@ export class PreviewEngine {
     }
 
     const [, itemName, iterableExpression] = match;
-    const iterable = this.evaluateExpression(iterableExpression, context);
+    const iterable = this.evaluatePiped(iterableExpression, context);
     const values = Array.isArray(iterable) ? iterable : [];
 
     values.forEach((value, index) => {
@@ -339,9 +349,147 @@ export class PreviewEngine {
 
   private interpolate(template: string, context: RenderContext): string {
     return template.replace(/\{\{\s*([^}]+)\s*\}\}/g, (_, expression: string) => {
-      const value = this.evaluateExpression(expression, context);
+      const value = this.evaluatePiped(expression, context);
       return value == null ? '' : String(value);
     });
+  }
+
+  // Evaluate an expression that may end with one or more pipes: `value | a | b:arg`.
+  private evaluatePiped(expression: string, context: RenderContext): unknown {
+    const parts = this.splitTopLevel(expression, '|').filter((p) => p.length > 0);
+    if (parts.length <= 1) {
+      return this.evaluateExpression(expression, context);
+    }
+
+    let value = this.evaluateExpression(parts[0], context);
+    for (let i = 1; i < parts.length; i++) {
+      const segments = this.splitTopLevel(parts[i], ':');
+      const name = segments[0].trim();
+      const args = segments.slice(1).map((arg) => this.evaluateExpression(arg, context));
+      value = this.applyPipe(name, value, args);
+    }
+    return value;
+  }
+
+  // Split on a single-character separator at top level (not inside quotes,
+  // parens, brackets or braces). Collapses '||' so it isn't treated as a pipe.
+  private splitTopLevel(input: string, separator: '|' | ':'): string[] {
+    const parts: string[] = [];
+    let current = '';
+    let quote: string | null = null;
+    let depth = 0;
+
+    for (let i = 0; i < input.length; i++) {
+      const c = input[i];
+      if (quote) {
+        current += c;
+        if (c === quote) {
+          quote = null;
+        }
+        continue;
+      }
+      if (c === '"' || c === "'") {
+        quote = c;
+        current += c;
+        continue;
+      }
+      if (c === '(' || c === '[' || c === '{') {
+        depth += 1;
+      } else if (c === ')' || c === ']' || c === '}') {
+        depth -= 1;
+      }
+      if (
+        c === separator &&
+        depth === 0 &&
+        (separator !== '|' || (input[i + 1] !== '|' && input[i - 1] !== '|'))
+      ) {
+        parts.push(current.trim());
+        current = '';
+        continue;
+      }
+      current += c;
+    }
+    parts.push(current.trim());
+    return parts;
+  }
+
+  private applyPipe(name: string, value: unknown, args: unknown[]): unknown {
+    switch (name) {
+      case 'uppercase':
+        return String(value).toUpperCase();
+      case 'lowercase':
+        return String(value).toLowerCase();
+      case 'titlecase':
+        return String(value).replace(/\b\w/g, (c) => c.toUpperCase());
+      case 'json':
+        return JSON.stringify(value, null, 2);
+      case 'slice':
+        return (value as unknown[] | string).slice(
+          Number(args[0] ?? 0),
+          args[1] === undefined ? undefined : Number(args[1])
+        );
+      case 'currency':
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: (args[0] as string) || 'USD'
+        }).format(Number(value));
+      case 'percent':
+        return new Intl.NumberFormat('en-US', { style: 'percent' }).format(Number(value));
+      case 'number': {
+        const info = /^(\d+)\.(\d+)-(\d+)$/.exec(String(args[0] ?? ''));
+        const opts: Intl.NumberFormatOptions = info
+          ? { minimumFractionDigits: Number(info[2]), maximumFractionDigits: Number(info[3]) }
+          : {};
+        return new Intl.NumberFormat('en-US', opts).format(Number(value));
+      }
+      case 'date': {
+        const date = value instanceof Date ? value : new Date(value as string);
+        const fmt = args[0] as string | undefined;
+        if (fmt === 'shortTime') {
+          return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+        if (fmt === 'fullDate') {
+          return date.toLocaleDateString(undefined, {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+        }
+        return date.toLocaleDateString();
+      }
+      default:
+        return value;
+    }
+  }
+
+  private applyNgClass(element: HTMLElement, value: unknown): void {
+    if (typeof value === 'string') {
+      value
+        .split(/\s+/)
+        .filter(Boolean)
+        .forEach((cls) => element.classList.add(cls));
+    } else if (Array.isArray(value)) {
+      value.forEach((cls) => element.classList.add(String(cls)));
+    } else if (value && typeof value === 'object') {
+      for (const [cls, on] of Object.entries(value)) {
+        if (on) {
+          element.classList.add(cls);
+        }
+      }
+    }
+  }
+
+  private applyNgStyle(element: HTMLElement, value: unknown): void {
+    if (!value || typeof value !== 'object') {
+      return;
+    }
+    for (const [rawKey, raw] of Object.entries(value)) {
+      const dot = rawKey.indexOf('.');
+      const prop = dot >= 0 ? rawKey.slice(0, dot) : rawKey;
+      const styleValue = dot >= 0 ? `${raw}${rawKey.slice(dot + 1)}` : String(raw);
+      element.style.setProperty(prop, styleValue);
+    }
   }
 
   private evaluateExpression(expression: string, context: RenderContext): unknown {
