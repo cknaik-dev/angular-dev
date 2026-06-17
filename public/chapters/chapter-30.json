@@ -1,0 +1,83 @@
+{
+  "id": "chapter-30",
+  "number": 30,
+  "title": "Custom Form Controls (ControlValueAccessor)",
+  "summary": "Make your own component work with ngModel and formControlName.",
+  "kicker": "Chapter 30",
+  "group": "Angular",
+  "heading": "Custom Form Controls (ControlValueAccessor)",
+  "sections": [
+    {
+      "id": "why-cva",
+      "title": "Why a custom control?",
+      "blocks": [
+        { "type": "text", "text": "Native inputs work with forms out of the box — you can write <code>[(ngModel)]</code> or <code>formControlName</code> on an <code>&lt;input&gt;</code>. But a component you build (a star rating, a toggle, a colour picker) doesn't… unless you teach it how. That bridge is the <strong>ControlValueAccessor</strong> (CVA)." },
+        { "type": "flow", "steps": ["Form / ngModel", "ControlValueAccessor", "Your component"] },
+        { "type": "note", "text": "If you only need two-way binding, <code>model()</code> (Chapter 22) is simpler. Reach for a CVA when you want your control to plug into <strong>forms</strong> — <code>formControlName</code>, validation, <code>touched</code>/<code>disabled</code> state." },
+        { "type": "link", "url": "https://angular.dev/api/forms/ControlValueAccessor", "label": "More on angular.dev" }
+      ]
+    },
+    {
+      "id": "the-interface",
+      "title": "The four methods",
+      "blocks": [
+        { "type": "text", "text": "A CVA implements four methods that connect your component to the form." },
+        { "type": "stack", "layers": [
+          { "title": "writeValue(value)", "detail": "Form → component: show a value the form gives you" },
+          { "title": "registerOnChange(fn)", "detail": "Component → form: call fn when your value changes" },
+          { "title": "registerOnTouched(fn)", "detail": "Component → form: call fn when the user interacts (touched)" },
+          { "title": "setDisabledState(isDisabled)", "detail": "Form → component: react to being disabled (optional)" }
+        ] }
+      ]
+    },
+    {
+      "id": "example-rating",
+      "title": "Example: a star-rating control",
+      "blocks": [
+        { "type": "text", "text": "Register the component as a value accessor with the <code>NG_VALUE_ACCESSOR</code> token, then implement the four methods. After this, the rating works like any built-in input." },
+        { "type": "code", "label": "rating.ts", "code": "import { Component, forwardRef } from '@angular/core';\nimport { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';\n\n@Component({\n  selector: 'app-rating',\n  template: `\n    @for (star of [1, 2, 3, 4, 5]; track star) {\n      <button type=\"button\" [disabled]=\"disabled\" (click)=\"set(star)\">\n        {{ star <= value ? '★' : '☆' }}\n      </button>\n    }`,\n  providers: [{\n    provide: NG_VALUE_ACCESSOR,\n    useExisting: forwardRef(() => Rating),\n    multi: true\n  }]\n})\nexport class Rating implements ControlValueAccessor {\n  value = 0;\n  disabled = false;\n  private onChange = (_: number) => {};\n  private onTouched = () => {};\n\n  set(star: number) {\n    if (this.disabled) return;\n    this.value = star;\n    this.onChange(star);   // tell the form\n    this.onTouched();\n  }\n\n  writeValue(value: number) { this.value = value ?? 0; }\n  registerOnChange(fn: (v: number) => void) { this.onChange = fn; }\n  registerOnTouched(fn: () => void) { this.onTouched = fn; }\n  setDisabledState(isDisabled: boolean) { this.disabled = isDisabled; }\n}" }
+      ]
+    },
+    {
+      "id": "using-it",
+      "title": "Using it like a real input",
+      "blocks": [
+        { "type": "text", "text": "Now your component drops into either kind of form — no special wiring." },
+        { "type": "compare", "cards": [
+          { "title": "Template-driven", "code": "<app-rating [(ngModel)]=\"score\" name=\"score\" />" },
+          { "title": "Reactive", "code": "<app-rating formControlName=\"score\" />" }
+        ] },
+        { "type": "note", "text": "Because it's a real form control, <code>Validators.required</code>, <code>touched</code>, and a disabled form state all just work." }
+      ]
+    },
+    {
+      "id": "use-cases",
+      "title": "When to use it",
+      "blocks": [
+        { "type": "text", "text": "Anywhere you build a custom input that should live inside a form:" },
+        { "type": "list", "items": [
+          "Star ratings, like/heart toggles, thumbs up/down.",
+          "On/off switches and segmented toggles.",
+          "Colour pickers and sliders.",
+          "Tag / chip inputs (value is an array of strings).",
+          "Currency, phone, or masked text inputs.",
+          "Star/emoji pickers, star sliders, star meters — any custom widget that holds a value."
+        ] }
+      ]
+    },
+    {
+      "id": "cva-recap",
+      "title": "Recap",
+      "blocks": [
+        { "type": "list", "items": [
+          "A <strong>ControlValueAccessor</strong> lets your component act like a native form input.",
+          "Register it with <code>NG_VALUE_ACCESSOR</code> (<code>multi: true</code>, <code>forwardRef</code>).",
+          "<code>writeValue</code> takes a value in; <code>registerOnChange</code> sends changes out.",
+          "<code>registerOnTouched</code> reports interaction; <code>setDisabledState</code> handles disabling.",
+          "Then it works with both <code>[(ngModel)]</code> and <code>formControlName</code>.",
+          "For plain two-way (no forms), prefer <code>model()</code> instead."
+        ] }
+      ]
+    }
+  ]
+}

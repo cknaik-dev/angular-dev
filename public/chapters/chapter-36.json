@@ -1,0 +1,146 @@
+{
+  "id": "chapter-36",
+  "number": 36,
+  "title": "HttpClient in a Component",
+  "summary": "Call your JSON Server API straight from a component with HttpClient.",
+  "kicker": "Chapter 36",
+  "group": "Angular",
+  "heading": "HttpClient in a Component",
+  "sections": [
+    {
+      "id": "setup",
+      "title": "Turn on HttpClient",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "In the last chapter we hit the API with <code>curl</code>. Now let's do it from Angular. Angular talks to APIs through <code>HttpClient</code> — switch it on once in your app config."
+        },
+        {
+          "type": "code",
+          "label": "app.config.ts",
+          "code": "import { provideHttpClient } from '@angular/common/http';\n\nexport const appConfig = {\n  providers: [provideHttpClient()]\n};"
+        },
+        {
+          "type": "text",
+          "text": "Then <code>inject</code> it wherever you need it. We'll keep everything in one component here — no separate service."
+        },
+        {
+          "type": "code",
+          "label": "users.ts",
+          "code": "import { Component, inject } from '@angular/core';\nimport { HttpClient } from '@angular/common/http';\n\nexport class Users {\n  private http = inject(HttpClient);\n  private url = 'http://localhost:3000/users';\n}"
+        },
+        {
+          "type": "link",
+          "url": "https://angular.dev/guide/http",
+          "label": "HttpClient on angular.dev"
+        }
+      ]
+    },
+    {
+      "id": "read",
+      "title": "Read — GET the list",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Call <code>http.get</code> with the URL and <code>subscribe</code> to receive the data. <code>get&lt;User[]&gt;</code> tells TypeScript the response is an array. Store it in a signal and load it when the component starts."
+        },
+        {
+          "type": "code",
+          "label": "users.ts",
+          "code": "import { Component, inject, signal, OnInit } from '@angular/core';\nimport { HttpClient } from '@angular/common/http';\n\ninterface User { id?: number; name: string; age: number; }\n\n@Component({ /* ... */ })\nexport class Users implements OnInit {\n  private http = inject(HttpClient);\n  private url = 'http://localhost:3000/users';\n  users = signal<User[]>([]);\n\n  ngOnInit() {\n    this.http.get<User[]>(this.url)\n      .subscribe(data => this.users.set(data));\n  }\n}"
+        },
+        {
+          "type": "code",
+          "label": "users.html",
+          "code": "<ul>\n  @for (user of users(); track user.id) {\n    <li>{{ user.name }} ({{ user.age }})</li>\n  }\n</ul>"
+        },
+        {
+          "type": "note",
+          "text": "The request doesn't run until you <code>subscribe</code> — that's how Observables work."
+        }
+      ]
+    },
+    {
+      "id": "create",
+      "title": "Create — POST",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Send a new object in the body. When it succeeds, reload the list so the screen shows it."
+        },
+        {
+          "type": "code",
+          "label": "users.ts",
+          "code": "addUser() {\n  const newUser = { name: 'Meera', age: 22 };\n  this.http.post<User>(this.url, newUser).subscribe(() => {\n    this.http.get<User[]>(this.url)\n      .subscribe(data => this.users.set(data));\n  });\n}"
+        }
+      ]
+    },
+    {
+      "id": "update",
+      "title": "Update — PUT",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Point at the item's id and send the full updated object."
+        },
+        {
+          "type": "code",
+          "label": "users.ts",
+          "code": "saveUser(user: User) {\n  const updated = { ...user, age: 30 };\n  this.http.put<User>(`${this.url}/${user.id}`, updated)\n    .subscribe(result => console.log('updated', result));\n}"
+        }
+      ]
+    },
+    {
+      "id": "delete",
+      "title": "Delete — DELETE",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Delete by id, then drop it from the signal so the list updates instantly."
+        },
+        {
+          "type": "code",
+          "label": "users.ts",
+          "code": "deleteUser(id: number) {\n  this.http.delete(`${this.url}/${id}`).subscribe(() => {\n    this.users.update(list => list.filter(u => u.id !== id));\n  });\n}"
+        },
+        {
+          "type": "code",
+          "label": "users.html",
+          "code": "@for (user of users(); track user.id) {\n  <li>\n    {{ user.name }}\n    <button (click)=\"deleteUser(user.id!)\">Delete</button>\n  </li>\n}"
+        }
+      ]
+    },
+    {
+      "id": "errors",
+      "title": "Handling errors",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Network calls can fail. Pass an object to <code>subscribe</code> with <code>next</code> and <code>error</code> handlers."
+        },
+        {
+          "type": "code",
+          "label": "users.ts",
+          "code": "this.http.get<User[]>(this.url).subscribe({\n  next: data => this.users.set(data),\n  error: err => console.error('Request failed:', err.status)\n});"
+        }
+      ]
+    },
+    {
+      "id": "http-recap",
+      "title": "Recap",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "Enable Angular HTTP with <code>provideHttpClient()</code>.",
+            "<code>inject(HttpClient)</code> in the component and call <code>get/post/put/delete</code>.",
+            "Requests are Observables — they run when you <code>subscribe</code>.",
+            "Type the response: <code>get&lt;User[]&gt;</code>.",
+            "Handle failures with an <code>error</code> handler in <code>subscribe</code>.",
+            "This works for a small screen; for bigger apps you'd move the calls into a service."
+          ]
+        }
+      ]
+    }
+  ]
+}

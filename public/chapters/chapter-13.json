@@ -1,0 +1,58 @@
+{
+  "id": "chapter-13",
+  "number": 13,
+  "title": "Interfaces and Object Types",
+  "summary": "Describe the shape of your objects so they stay consistent.",
+  "kicker": "Chapter 13",
+  "heading": "Interfaces and Object Types",
+  "group": "TypeScript",
+  "sections": [
+    {
+      "id": "what-is-interface",
+      "title": "Describing an object's shape",
+      "blocks": [
+        { "type": "text", "text": "Objects (Chapter 7) hold named values. An <strong>interface</strong> describes the shape an object must have — which properties it needs and what type each one is." },
+        { "type": "code", "label": "interface", "code": "interface User {\n  name: string;\n  age: number;\n  isActive: boolean;\n}" },
+        { "type": "link", "url": "https://www.typescriptlang.org/docs/handbook/2/objects.html", "label": "More on typescriptlang.org" }
+      ]
+    },
+    {
+      "id": "using-interface",
+      "title": "Using an interface",
+      "blocks": [
+        { "type": "text", "text": "Once you have a shape, you can use it as a type. TypeScript then checks that every object matches it — no missing or misspelled properties." },
+        { "type": "code", "label": "using it", "code": "const user: User = {\n  name: \"Asha\",\n  age: 20,\n  isActive: true\n};\n\n// Missing 'age' would be an error" }
+      ]
+    },
+    {
+      "id": "optional-readonly",
+      "title": "Optional and readonly properties",
+      "blocks": [
+        { "type": "text", "text": "A <code>?</code> marks a property as optional. <code>readonly</code> means it can be set once but not changed afterwards." },
+        { "type": "code", "label": "options", "code": "interface Product {\n  readonly id: number;  // can't be changed\n  name: string;\n  discount?: number;    // optional\n}" }
+      ]
+    },
+    {
+      "id": "type-alias",
+      "title": "Type aliases and unions",
+      "blocks": [
+        { "type": "text", "text": "A <code>type</code> alias gives a name to any type. A <strong>union</strong> (<code>|</code>) lets a value be one of several types — handy for fixed sets of options." },
+        { "type": "code", "label": "type", "code": "type ID = string | number;\ntype Status = \"active\" | \"paused\" | \"closed\";\n\nlet userId: ID = 101;\nlet state: Status = \"active\";" },
+        { "type": "note", "text": "Rule of thumb: use <code>interface</code> for object shapes, and <code>type</code> for unions and aliases." }
+      ]
+    },
+    {
+      "id": "interfaces-recap",
+      "title": "Recap",
+      "blocks": [
+        { "type": "list", "items": [
+          "An <code>interface</code> describes an object's shape.",
+          "Use it as a type so objects must match it.",
+          "<code>?</code> makes a property optional; <code>readonly</code> locks it.",
+          "<code>type</code> names any type; <code>|</code> builds a union of options.",
+          "Interfaces for shapes, types for unions."
+        ] }
+      ]
+    }
+  ]
+}

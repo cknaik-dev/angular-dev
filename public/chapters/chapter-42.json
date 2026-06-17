@@ -1,0 +1,136 @@
+{
+  "id": "chapter-42",
+  "number": 42,
+  "title": "Authentication Flow",
+  "summary": "Put it all together: login, store a token, attach it, and guard routes.",
+  "kicker": "Chapter 42",
+  "group": "Angular",
+  "heading": "Authentication Flow",
+  "sections": [
+    {
+      "id": "the-pieces",
+      "title": "How the pieces fit",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Real auth combines four things you've already learned: a <strong>service</strong> holds the token, the user <strong>logs in</strong>, an <strong>interceptor</strong> attaches the token to every request, and a <strong>guard</strong> blocks protected routes. This chapter wires them into one flow."
+        },
+        {
+          "type": "flow",
+          "steps": [
+            "Login",
+            "Store token",
+            "Guard allows route",
+            "Interceptor adds token",
+            "API call"
+          ]
+        },
+        {
+          "type": "link",
+          "url": "https://angular.dev/guide/http/interceptors",
+          "label": "More on angular.dev"
+        }
+      ]
+    },
+    {
+      "id": "auth-service",
+      "title": "1. The AuthService",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The service owns everything auth-related: calling the login API, storing the token (in <code>localStorage</code> so it survives refreshes), exposing it as a signal, and logging out."
+        },
+        {
+          "type": "code",
+          "label": "auth.service.ts",
+          "code": "import { inject, Injectable, signal } from '@angular/core';\nimport { HttpClient } from '@angular/common/http';\nimport { tap } from 'rxjs';\n\n@Injectable({ providedIn: 'root' })\nexport class AuthService {\n  private http = inject(HttpClient);\n  readonly token = signal<string | null>(localStorage.getItem('token'));\n\n  isLoggedIn() {\n    return this.token() !== null;\n  }\n\n  login(email: string, password: string) {\n    return this.http\n      .post<{ token: string }>('/api/login', { email, password })\n      .pipe(tap(res => {\n        localStorage.setItem('token', res.token);\n        this.token.set(res.token);\n      }));\n  }\n\n  logout() {\n    localStorage.removeItem('token');\n    this.token.set(null);\n  }\n}"
+        }
+      ]
+    },
+    {
+      "id": "login-component",
+      "title": "2. The login page",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A small form calls <code>login()</code>. On success it sends the user to where they were headed (the <code>returnUrl</code>), or to the dashboard."
+        },
+        {
+          "type": "code",
+          "label": "login.ts",
+          "code": "private auth = inject(AuthService);\nprivate router = inject(Router);\nprivate route = inject(ActivatedRoute);\n\nsubmit(email: string, password: string) {\n  this.auth.login(email, password).subscribe({\n    next: () => {\n      const returnUrl =\n        this.route.snapshot.queryParamMap.get('returnUrl') ?? '/dashboard';\n      this.router.navigateByUrl(returnUrl);\n    },\n    error: () => alert('Login failed')\n  });\n}"
+        }
+      ]
+    },
+    {
+      "id": "guard",
+      "title": "3. The guard (with returnUrl)",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The guard (Chapter 32) blocks protected routes when logged out — and remembers where the user wanted to go by passing a <code>returnUrl</code> to the login page."
+        },
+        {
+          "type": "code",
+          "label": "auth.guard.ts",
+          "code": "import { inject } from '@angular/core';\nimport { CanActivateFn, Router } from '@angular/router';\nimport { AuthService } from './auth.service';\n\nexport const authGuard: CanActivateFn = (route, state) => {\n  const auth = inject(AuthService);\n  const router = inject(Router);\n\n  if (auth.isLoggedIn()) {\n    return true;\n  }\n  return router.createUrlTree(['/login'], {\n    queryParams: { returnUrl: state.url }\n  });\n};"
+        }
+      ]
+    },
+    {
+      "id": "interceptor",
+      "title": "4. The token interceptor",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "The interceptor (Chapter 41) attaches the stored token to every request, and logs the user out on a <code>401</code>."
+        },
+        {
+          "type": "code",
+          "label": "auth.interceptor.ts",
+          "code": "import { HttpInterceptorFn } from '@angular/common/http';\nimport { inject } from '@angular/core';\nimport { Router } from '@angular/router';\nimport { catchError, throwError } from 'rxjs';\nimport { AuthService } from './auth.service';\n\nexport const authInterceptor: HttpInterceptorFn = (req, next) => {\n  const auth = inject(AuthService);\n  const router = inject(Router);\n  const token = auth.token();\n\n  const sent = token\n    ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })\n    : req;\n\n  return next(sent).pipe(\n    catchError(err => {\n      if (err.status === 401) {\n        auth.logout();\n        router.navigate(['/login']);\n      }\n      return throwError(() => err);\n    })\n  );\n};"
+        }
+      ]
+    },
+    {
+      "id": "wiring",
+      "title": "5. Wiring it up",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Register the interceptor, and protect routes with the guard."
+        },
+        {
+          "type": "code",
+          "label": "app.config.ts",
+          "code": "providers: [\n  provideHttpClient(withInterceptors([authInterceptor])),\n  provideRouter(routes)\n]"
+        },
+        {
+          "type": "code",
+          "label": "app.routes.ts",
+          "code": "export const routes: Routes = [\n  { path: 'login', component: Login },\n  { path: 'dashboard', component: Dashboard, canActivate: [authGuard] }\n];"
+        },
+        {
+          "type": "note",
+          "text": "Now: visiting /dashboard logged out → guard sends you to /login?returnUrl=/dashboard → after login you're sent back, and every API call carries your token."
+        }
+      ]
+    },
+    {
+      "id": "auth-recap",
+      "title": "Recap",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "<strong>AuthService</strong> logs in, stores the token (localStorage + signal), and logs out.",
+            "The <strong>login page</strong> redirects to <code>returnUrl</code> on success.",
+            "The <strong>guard</strong> blocks protected routes and passes a <code>returnUrl</code>.",
+            "The <strong>interceptor</strong> attaches the token and handles 401s.",
+            "Together they form a complete, real-world auth flow."
+          ]
+        }
+      ]
+    }
+  ]
+}

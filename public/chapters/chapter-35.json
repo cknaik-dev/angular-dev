@@ -1,0 +1,92 @@
+{
+  "id": "chapter-35",
+  "number": 35,
+  "title": "RxJS and Observables",
+  "summary": "Streams of values over time — the foundation behind HttpClient and forms.",
+  "kicker": "Chapter 35",
+  "group": "Angular",
+  "heading": "RxJS and Observables",
+  "sections": [
+    {
+      "id": "what-is-observable",
+      "title": "What is an Observable?",
+      "blocks": [
+        { "type": "text", "text": "You've been using Observables already — <code>HttpClient</code> returns them and you call <code>.subscribe()</code>. An <strong>Observable</strong> is a stream of values that arrive over time: it might emit one value (an HTTP response), many (every click or keystroke), or none. RxJS is the library of tools for working with these streams." },
+        { "type": "svg", "caption": "An observable emits values over time until it completes.", "svg": "<svg viewBox='0 0 440 70' role='img' aria-label='Timeline of values emitted by an observable'><defs><marker id='rx-ar' markerWidth='9' markerHeight='9' refX='6' refY='3' orient='auto'><path d='M0,0 L6,3 L0,6 Z' fill='currentColor'/></marker></defs><line x1='20' y1='38' x2='420' y2='38' stroke='currentColor' stroke-width='1.5' marker-end='url(#rx-ar)'/><g fill='none' stroke='currentColor' stroke-width='1.5'><circle cx='90' cy='38' r='12'/><circle cx='180' cy='38' r='12'/><circle cx='270' cy='38' r='12'/></g><g fill='currentColor' font-size='12' text-anchor='middle' font-family='monospace'><text x='90' y='42'>1</text><text x='180' y='42'>2</text><text x='270' y='42'>3</text></g><g fill='currentColor' font-size='10' text-anchor='middle' opacity='0.7' font-family='sans-serif'><text x='400' y='24'>time →</text></g></svg>" },
+        { "type": "compare", "cards": [
+          { "title": "Promise", "code": "// one value, runs immediately\nfetch('/api').then(r => ...)" },
+          { "title": "Observable", "code": "// many values, runs on subscribe\nhttp.get('/api').subscribe(r => ...)" }
+        ] },
+        { "type": "note", "text": "Observables are <strong>lazy</strong>: nothing happens until you <code>subscribe</code>. A Promise runs as soon as it's created." },
+        { "type": "link", "url": "https://www.learnrxjs.io/", "label": "More on learnrxjs.io" }
+      ]
+    },
+    {
+      "id": "basics",
+      "title": "Basic: creating and subscribing",
+      "blocks": [
+        { "type": "text", "text": "Make simple observables with <code>of</code> (a fixed set of values) or <code>from</code> (an array or promise). Subscribe to receive each value." },
+        { "type": "code", "label": "create + subscribe", "code": "import { of, from } from 'rxjs';\n\nof(1, 2, 3).subscribe(n => console.log(n));    // 1, 2, 3\nfrom(['a', 'b']).subscribe(x => console.log(x)); // a, b" },
+        { "type": "text", "text": "Long-lived streams keep emitting, so you must stop listening to avoid leaks. In components, <code>takeUntilDestroyed()</code> cleans up automatically." },
+        { "type": "code", "label": "auto cleanup", "code": "import { interval } from 'rxjs';\nimport { takeUntilDestroyed } from '@angular/core/rxjs-interop';\n\ninterval(1000)\n  .pipe(takeUntilDestroyed())\n  .subscribe(n => console.log(n)); // stops when the component is destroyed" }
+      ]
+    },
+    {
+      "id": "operators",
+      "title": "Medium: operators with pipe",
+      "blocks": [
+        { "type": "text", "text": "<strong>Operators</strong> transform a stream. You chain them inside <code>.pipe(...)</code> — like array <code>map</code>/<code>filter</code>, but for values arriving over time." },
+        { "type": "code", "label": "map / filter / tap", "code": "import { of, map, filter, tap } from 'rxjs';\n\nof(1, 2, 3, 4).pipe(\n  filter(n => n % 2 === 0),        // keep evens\n  tap(n => console.log('saw', n)), // side-effect\n  map(n => n * 10)                 // transform\n).subscribe(n => console.log(n));  // 20, 40" },
+        { "type": "note", "text": "Each operator returns a new observable; the original stream is untouched." }
+      ]
+    },
+    {
+      "id": "async-pipe",
+      "title": "Medium: the async pipe",
+      "blocks": [
+        { "type": "text", "text": "In templates, the <code>async</code> pipe subscribes for you and unsubscribes when the component is destroyed — no manual <code>subscribe</code> needed." },
+        { "type": "code", "label": "component + template", "code": "// class:\nusers$ = this.http.get<User[]>('/api/users');\n\n// template:\n@if (users$ | async; as users) {\n  @for (u of users; track u.id) {\n    <li>{{ u.name }}</li>\n  }\n}" }
+      ]
+    },
+    {
+      "id": "flattening",
+      "title": "Advanced: switchMap (dependent calls)",
+      "blocks": [
+        { "type": "text", "text": "When one stream should trigger another — like a search box firing an HTTP request per keystroke — use <code>switchMap</code>. It cancels the previous inner request when a new value arrives, exactly what a type-ahead needs." },
+        { "type": "code", "label": "type-ahead search", "code": "import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs';\n\nthis.searchControl.valueChanges.pipe(\n  debounceTime(300),       // wait for a pause in typing\n  distinctUntilChanged(),  // ignore if unchanged\n  switchMap(term =>        // swap to a new request, cancel the old\n    this.http.get(`/api/search?q=${term}`)\n  )\n).subscribe(results => this.results = results);" },
+        { "type": "note", "text": "Relatives: <code>mergeMap</code> (run all), <code>concatMap</code> (one after another), <code>exhaustMap</code> (ignore new while busy). <code>switchMap</code> is the go-to for search and navigation." }
+      ]
+    },
+    {
+      "id": "combining",
+      "title": "Advanced: combining streams",
+      "blocks": [
+        { "type": "text", "text": "Run several requests together with <code>forkJoin</code> (wait for all, like <code>Promise.all</code>), or react whenever any of several streams changes with <code>combineLatest</code>." },
+        { "type": "code", "label": "forkJoin (parallel)", "code": "import { forkJoin } from 'rxjs';\n\nforkJoin({\n  user: this.http.get('/api/user/1'),\n  posts: this.http.get('/api/user/1/posts')\n}).subscribe(({ user, posts }) => {\n  // both have arrived\n});" }
+      ]
+    },
+    {
+      "id": "subjects",
+      "title": "Advanced: Subjects",
+      "blocks": [
+        { "type": "text", "text": "A <strong>Subject</strong> is both an observable and an emitter — you can push values into it. A <strong>BehaviorSubject</strong> also remembers the latest value and hands it to new subscribers, which makes it handy for simple shared state in a service." },
+        { "type": "code", "label": "BehaviorSubject", "code": "import { BehaviorSubject } from 'rxjs';\n\nprivate count = new BehaviorSubject(0);\nreadonly count$ = this.count.asObservable();\n\nincrease() {\n  this.count.next(this.count.value + 1);\n}" },
+        { "type": "note", "text": "Today, <strong>signals</strong> are often simpler for state; use observables for streams and async events. Bridge them with <code>toSignal(obs$)</code> and <code>toObservable(sig)</code>." }
+      ]
+    },
+    {
+      "id": "rxjs-recap",
+      "title": "Recap",
+      "blocks": [
+        { "type": "list", "items": [
+          "An Observable is a lazy stream of values over time; subscribe to receive them.",
+          "Create with <code>of</code> / <code>from</code>; clean up with <code>takeUntilDestroyed()</code>.",
+          "Transform with operators inside <code>.pipe()</code>: <code>map</code>, <code>filter</code>, <code>tap</code>.",
+          "The <code>async</code> pipe subscribes and cleans up for you in templates.",
+          "<code>switchMap</code> chains dependent calls; <code>forkJoin</code> runs calls in parallel.",
+          "<code>Subject</code> / <code>BehaviorSubject</code> let you push values; signals are often simpler for state."
+        ] }
+      ]
+    }
+  ]
+}

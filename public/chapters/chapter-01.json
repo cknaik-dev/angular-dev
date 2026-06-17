@@ -1,0 +1,168 @@
+{
+  "id": "chapter-01",
+  "number": 1,
+  "title": "JavaScript, TypeScript, and Angular",
+  "summary": "Meet the three tools you'll use, and see how they team up.",
+  "kicker": "Chapter 1",
+  "heading": "JavaScript, TypeScript, and Angular",
+  "sections": [
+    {
+      "id": "what-is-javascript",
+      "title": "What is JavaScript?",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Think of a web page like a body. HTML is the bones that give it shape, CSS is the clothes that make it look nice, and JavaScript is the muscles that make it move. Anything that reacts when you click, type, or scroll is JavaScript doing its job."
+        },
+        {
+          "type": "boxes",
+          "boxes": [
+            {
+              "title": "HTML",
+              "detail": "Structure"
+            },
+            {
+              "title": "CSS",
+              "detail": "Style"
+            },
+            {
+              "title": "JavaScript",
+              "detail": "Behavior"
+            }
+          ]
+        },
+        {
+          "type": "link",
+          "url": "https://javascript.info/intro",
+          "label": "More on javascript.info"
+        }
+      ]
+    },
+    {
+      "id": "what-is-typescript",
+      "title": "What is TypeScript?",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "TypeScript is just JavaScript with a helpful safety net. You tell it what kind of value a variable should hold — like a number or some text — and it warns you about mistakes before your app ever runs."
+        },
+        {
+          "type": "compare",
+          "cards": [
+            {
+              "title": "JavaScript",
+              "code": "let age = 25;"
+            },
+            {
+              "title": "TypeScript",
+              "code": "let age: number = 25;"
+            }
+          ]
+        },
+        {
+          "type": "link",
+          "url": "https://www.typescriptlang.org/docs/",
+          "label": "More on typescriptlang.org"
+        }
+      ]
+    },
+    {
+      "id": "what-is-angular",
+      "title": "What is Angular?",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Angular is a framework — basically a big box of ready-made tools for building web apps. Instead of building everything from scratch, it hands you components, data binding, routing, and forms. You write it all in TypeScript."
+        }
+      ]
+    },
+    {
+      "id": "how-they-connect",
+      "title": "How they connect",
+      "blocks": [
+        {
+          "type": "stack",
+          "layers": [
+            {
+              "title": "Angular",
+              "detail": "The toolkit you build with"
+            },
+            {
+              "title": "TypeScript",
+              "detail": "The language you write in"
+            },
+            {
+              "title": "JavaScript",
+              "detail": "What actually runs in the browser"
+            }
+          ]
+        },
+        {
+          "type": "note",
+          "text": "An easy way to remember it: Angular is the toolkit, TypeScript is the friendly language you write in, and JavaScript is what actually runs in the browser."
+        }
+      ]
+    },
+    {
+      "id": "variables",
+      "title": "Variables",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A variable is just a labelled box where you keep a value so you can use it again later."
+        },
+        {
+          "type": "stack",
+          "layers": [
+            {
+              "title": "const",
+              "detail": "For values that never change (start here)"
+            },
+            {
+              "title": "let",
+              "detail": "For values that might change"
+            },
+            {
+              "title": "var",
+              "detail": "The old way — best to avoid it"
+            }
+          ]
+        },
+        {
+          "type": "compare",
+          "cards": [
+            {
+              "title": "let",
+              "code": "let marks = 80;\nmarks = 90;"
+            },
+            {
+              "title": "const",
+              "code": "const appName = \"Playground\";"
+            }
+          ]
+        },
+        {
+          "type": "link",
+          "url": "https://javascript.info/variables",
+          "label": "More on javascript.info"
+        }
+      ]
+    },
+    {
+      "id": "recap",
+      "title": "Recap",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "JavaScript makes a page actually do things.",
+            "TypeScript adds a safety net and catches mistakes early.",
+            "Angular uses TypeScript to build bigger apps in a tidy way.",
+            "Reach for <code>const</code> first, and use <code>let</code> only when the value needs to change."
+          ]
+        }
+      ]
+    }
+  ],
+  "group": "JavaScript"
+}

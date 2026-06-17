@@ -22,13 +22,15 @@ import type * as Monaco from 'monaco-editor';
   template: '<div #editorHost class="editor-host"></div>',
   styles: [
     `
-      :host,
-      .editor-host {
+      :host {
         display: block;
         width: 100%;
         height: 100%;
-        min-height: 26rem;
-        border-radius: 1rem;
+      }
+
+      .editor-host {
+        width: 100%;
+        height: 100%;
         overflow: hidden;
       }
     `
@@ -57,6 +59,18 @@ export class MonacoEditorComponent implements AfterViewInit, OnChanges {
 
     const monaco = await loader.init();
     this.monaco = monaco;
+
+    // These editors show teaching snippets (often class-body fragments), not
+    // full programs — so turn off the red error squiggles from the language service.
+    monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+      noSemanticValidation: true,
+      noSyntaxValidation: true
+    });
+    monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+      noSemanticValidation: true,
+      noSyntaxValidation: true
+    });
+
     if (!this.editorHost) {
       return;
     }

@@ -1,0 +1,92 @@
+{
+  "id": "chapter-22",
+  "number": 22,
+  "title": "Two-way Binding",
+  "summary": "Keep a value and the screen in sync, in both directions at once.",
+  "kicker": "Chapter 22",
+  "group": "Angular",
+  "heading": "Two-way Binding",
+  "sections": [
+    {
+      "id": "what-is-two-way",
+      "title": "What is two-way binding?",
+      "blocks": [
+        { "type": "text", "text": "Property binding sends data <em>into</em> the view; event binding sends events <em>out</em>. <strong>Two-way binding</strong> does both at once: the class updates the view, and the view updates the class — they stay in sync automatically." },
+        { "type": "svg", "caption": "The value and the view update each other.", "svg": "<svg viewBox='0 0 440 150' role='img' aria-label='Two-way binding keeps the class value and the view in sync both ways'><defs><marker id='tw-ar' markerWidth='8' markerHeight='8' refX='6' refY='3' orient='auto'><path d='M0,0 L6,3 L0,6 Z' fill='currentColor'/></marker></defs><g fill='none' stroke='currentColor' stroke-width='1.5'><rect x='15' y='45' width='150' height='60' rx='8'/><rect x='275' y='45' width='150' height='60' rx='8'/><line x1='165' y1='62' x2='273' y2='62' marker-end='url(#tw-ar)'/><line x1='273' y1='90' x2='167' y2='90' marker-end='url(#tw-ar)'/></g><g fill='currentColor' font-size='13' text-anchor='middle' font-family='sans-serif'><text x='90' y='80'>class value</text><text x='350' y='80'>view (input)</text></g><g fill='currentColor' font-size='11' text-anchor='middle' opacity='0.75' font-family='monospace'><text x='219' y='54'>set value</text><text x='219' y='104'>user types</text></g></svg>" },
+        { "type": "text", "text": "The syntax is <code>[( )]</code> — square brackets (property in) plus parentheses (event out). People call it the <strong>\"banana in a box\"</strong>." },
+        { "type": "link", "url": "https://angular.dev/guide/templates/two-way-binding", "label": "More on angular.dev" }
+      ]
+    },
+    {
+      "id": "under-the-hood",
+      "title": "It's just two bindings",
+      "blocks": [
+        { "type": "text", "text": "Two-way binding is sugar. <code>[(value)]</code> expands to a property binding plus an event binding named <code>valueChange</code> — these two lines do exactly the same thing:" },
+        { "type": "compare", "cards": [
+          { "title": "Two-way", "code": "<app-x [(value)]=\"count\" />" },
+          { "title": "The long form", "code": "<app-x\n  [value]=\"count\"\n  (valueChange)=\"count = $event\" />" }
+        ] },
+        { "type": "note", "text": "Rule: <code>[(thing)]</code> works when something has both a <code>thing</code> input and a <code>thingChange</code> output." }
+      ]
+    },
+    {
+      "id": "example-ngmodel",
+      "title": "Example 1: ngModel on a form input",
+      "blocks": [
+        { "type": "text", "text": "The most common two-way binding is <code>[(ngModel)]</code> on an <code>&lt;input&gt;</code> — type in the box and the class value updates live. Needs <code>FormsModule</code>." },
+        { "type": "code", "label": "real Angular", "code": "// class:  name = signal('');\n\n<input [(ngModel)]=\"name\">\n<p>Hello, {{ name() }}!</p>" },
+        { "type": "note", "text": "Run the live version in the next example — it uses <code>[value]</code> + <code>(input)</code>, which is exactly what <code>[(ngModel)]</code> does under the hood." }
+      ]
+    },
+    {
+      "id": "example-manual",
+      "title": "Example 2: the manual equivalent",
+      "blocks": [
+        { "type": "text", "text": "To see the two halves clearly, here's the same input written as a property binding plus an event binding — no <code>ngModel</code> at all." },
+        { "type": "ng", "ts": "text = 'edit me';", "html": "<input [value]=\"text\" (input)=\"text = $event.target.value\">\n<p>You typed: {{ text }}</p>" }
+      ]
+    },
+    {
+      "id": "example-model",
+      "title": "Example 3: two-way on your own component",
+      "blocks": [
+        { "type": "text", "text": "You can give your own component a two-way property with the <code>model()</code> function. It creates both the input and the matching <code>...Change</code> output for you, so a parent can use <code>[( )]</code> on it." },
+        { "type": "code", "label": "counter.ts (child)", "code": "import { Component, model } from '@angular/core';\n\n@Component({\n  selector: 'app-counter',\n  template: `\n    <button (click)=\"value.set(value() + 1)\">\n      Count: {{ value() }}\n    </button>`\n})\nexport class Counter {\n  value = model(0); // a two-way bindable signal\n}" },
+        { "type": "code", "label": "app.ts (parent)", "code": "// class:  total = signal(0);\n\n<app-counter [(value)]=\"total\" />\n<p>Parent sees: {{ total() }}</p>" },
+        { "type": "note", "text": "Click the child's button and the parent's <code>total</code> updates too — because <code>model()</code> binds both ways." }
+      ]
+    },
+    {
+      "id": "example-toggle",
+      "title": "Example 4: a toggle switch with model()",
+      "blocks": [
+        { "type": "text", "text": "A reusable on/off switch. The child owns the button; the parent reads and sets the value through two-way binding." },
+        { "type": "code", "label": "toggle.ts (child)", "code": "import { Component, model } from '@angular/core';\n\n@Component({\n  selector: 'app-toggle',\n  template: `\n    <button (click)=\"on.set(!on())\">\n      {{ on() ? 'ON' : 'OFF' }}\n    </button>`\n})\nexport class Toggle {\n  on = model(false);\n}" },
+        { "type": "code", "label": "app.ts (parent)", "code": "// class:  enabled = signal(false);\n\n<app-toggle [(on)]=\"enabled\" />\n<p>Notifications: {{ enabled() ? 'enabled' : 'disabled' }}</p>" }
+      ]
+    },
+    {
+      "id": "example-rating",
+      "title": "Example 5: a star rating with model()",
+      "blocks": [
+        { "type": "text", "text": "<code>model()</code> shines for custom input controls. This star rating both shows the current value and reports changes — all through one two-way binding." },
+        { "type": "code", "label": "rating.ts (child)", "code": "import { Component, model } from '@angular/core';\n\n@Component({\n  selector: 'app-rating',\n  template: `\n    @for (star of [1, 2, 3, 4, 5]; track star) {\n      <button (click)=\"value.set(star)\">\n        {{ star <= value() ? '★' : '☆' }}\n      </button>\n    }`\n})\nexport class Rating {\n  value = model(0);\n}" },
+        { "type": "code", "label": "app.ts (parent)", "code": "// class:  score = signal(3);\n\n<app-rating [(value)]=\"score\" />\n<p>You rated: {{ score() }} / 5</p>" },
+        { "type": "note", "text": "<code>model.required&lt;T&gt;()</code> works too, when the parent must provide a starting value." }
+      ]
+    },
+    {
+      "id": "two-way-recap",
+      "title": "Recap",
+      "blocks": [
+        { "type": "list", "items": [
+          "Two-way binding keeps a value and the view in sync in both directions.",
+          "Syntax is <code>[(x)]</code> — \"banana in a box\".",
+          "It's shorthand for <code>[x]</code> + <code>(xChange)</code>.",
+          "<code>[(ngModel)]</code> is the everyday case on form inputs (needs <code>FormsModule</code>).",
+          "Add two-way to your own component with <code>model()</code>."
+        ] }
+      ]
+    }
+  ]
+}

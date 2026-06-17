@@ -1,0 +1,130 @@
+/* Theme tokens (--surface, --accent, ...) cascade down from app-root. */
+
+.chapter-shell {
+  padding: 1.5rem;
+}
+
+.chapter-layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 260px) minmax(0, 860px);
+  justify-content: center;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.chapter-sidebar {
+  position: sticky;
+  top: 1.5rem;
+  display: grid;
+  gap: 1rem;
+  max-height: calc(100vh - 3rem);
+  overflow: auto;
+}
+
+.chapter-sidebar-card {
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--surface);
+}
+
+.chapter-sidebar-card h3,
+.chapter-sidebar-card summary {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.chapter-sidebar-card summary {
+  cursor: pointer;
+}
+
+.chapter-group-label {
+  margin: 0.85rem 0 0.25rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.chapter-group-label:first-of-type {
+  margin-top: 0;
+}
+
+.chapter-nav {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.chapter-nav-link {
+  display: block;
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  border: 0;
+  border-radius: 0.4rem;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  text-decoration: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+.chapter-nav-link:hover {
+  background: var(--surface-2);
+}
+
+.chapter-nav-link.active {
+  background: var(--surface-2);
+  color: var(--accent);
+}
+
+/* Error fallback (uses the same card look as a chapter page). */
+.chapter-page {
+  padding: 2rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--surface);
+}
+
+.lesson-error {
+  margin: 0;
+  color: var(--danger);
+}
+
+@media (max-width: 720px) {
+  .chapter-shell {
+    padding: 1rem;
+  }
+
+  .chapter-layout {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .chapter-sidebar {
+    position: static;
+    max-height: none;
+  }
+
+  /* On mobile, cap the chapter list height so it doesn't push content down. */
+  .chapter-sidebar-card--chapters {
+    max-height: 45vh;
+    overflow: auto;
+  }
+}
+
+@media print {
+  .chapter-sidebar {
+    display: none;
+  }
+
+  .chapter-shell {
+    padding: 0;
+  }
+
+  .chapter-layout {
+    display: block;
+  }
+}

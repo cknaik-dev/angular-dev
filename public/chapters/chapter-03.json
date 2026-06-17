@@ -1,0 +1,157 @@
+{
+  "id": "chapter-03",
+  "number": 3,
+  "title": "The DOM, jQuery, and Angular",
+  "summary": "See how JavaScript actually changes the page — and how that idea grew into Angular.",
+  "kicker": "Chapter 3",
+  "heading": "The DOM, jQuery, and Angular",
+  "sections": [
+    {
+      "id": "what-is-dom",
+      "title": "What is the DOM?",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "When the browser opens your HTML, it quietly turns the page into a tree of elements. That tree is called the <strong>DOM</strong>, and JavaScript can read it and change it while the page is open."
+        },
+        {
+          "type": "stack",
+          "layers": [
+            {
+              "title": "HTML",
+              "detail": "What you write"
+            },
+            {
+              "title": "DOM tree",
+              "detail": "What the browser builds from it"
+            },
+            {
+              "title": "JavaScript",
+              "detail": "Reads and changes it"
+            }
+          ]
+        },
+        {
+          "type": "svg",
+          "caption": "The browser turns your HTML into a tree like this.",
+          "svg": "<svg viewBox='0 0 440 215' role='img' aria-label='A DOM tree with html, body, and child elements'><g fill='none' stroke='currentColor' stroke-width='1.5'><line x1='220' y1='46' x2='220' y2='90'/><line x1='220' y1='124' x2='85' y2='168'/><line x1='220' y1='124' x2='220' y2='168'/><line x1='220' y1='124' x2='355' y2='168'/><rect x='180' y='12' width='80' height='34' rx='6'/><rect x='180' y='90' width='80' height='34' rx='6'/><rect x='40' y='168' width='90' height='34' rx='6'/><rect x='175' y='168' width='90' height='34' rx='6'/><rect x='310' y='168' width='90' height='34' rx='6'/></g><g fill='currentColor' font-size='14' text-anchor='middle' font-family='sans-serif'><text x='220' y='34'>html</text><text x='220' y='112'>body</text><text x='85' y='190'>h1</text><text x='220' y='190'>p</text><text x='355' y='190'>button</text></g></svg>"
+        },
+        {
+          "type": "link",
+          "url": "https://javascript.info/dom-nodes",
+          "label": "More on javascript.info"
+        }
+      ]
+    },
+    {
+      "id": "dom-methods",
+      "title": "Working with the DOM",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Changing the page is usually two simple steps: first find the element you want, then change it."
+        },
+        {
+          "type": "compare",
+          "cards": [
+            {
+              "title": "Find",
+              "code": "const h = document.getElementById(\"title\");"
+            },
+            {
+              "title": "Change",
+              "code": "h.textContent = \"Hello\";"
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "items": [
+            "<code>querySelector()</code> — grabs the first element that matches a CSS selector",
+            "<code>addEventListener()</code> — runs your code when something happens, like a click",
+            "<code>textContent</code> / <code>innerHTML</code> — change what's shown inside an element"
+          ]
+        },
+        {
+          "type": "run",
+          "rows": 9,
+          "height": 90,
+          "code": "<h2 id=\"title\">Hello</h2>\n<button id=\"btn\">Change text</button>\n\n<script>\n  document.getElementById(\"btn\").addEventListener(\"click\", function () {\n    document.getElementById(\"title\").textContent = \"You changed me!\";\n  });\n</script>"
+        },
+        {
+          "type": "link",
+          "url": "https://javascript.info/searching-elements",
+          "label": "More on javascript.info"
+        }
+      ]
+    },
+    {
+      "id": "why-dom-useful",
+      "title": "Why it matters",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Changing the DOM is what makes a page feel alive instead of frozen. Try the counter below — click it a few times, then tweak the code and run it again."
+        },
+        {
+          "type": "flow",
+          "steps": [
+            "User action",
+            "JavaScript runs",
+            "DOM changes",
+            "Page updates"
+          ]
+        },
+        {
+          "type": "run",
+          "rows": 9,
+          "height": 90,
+          "code": "<button id=\"b\">Clicked 0 times</button>\n\n<script>\n  let count = 0;\n  document.getElementById(\"b\").addEventListener(\"click\", function () {\n    count = count + 1;\n    document.getElementById(\"b\").textContent = \"Clicked \" + count + \" times\";\n  });\n</script>"
+        },
+        {
+          "type": "run",
+          "rows": 8,
+          "height": 90,
+          "code": "<input id=\"name\" placeholder=\"Type your name\">\n<p id=\"out\"></p>\n\n<script>\n  document.getElementById(\"name\").addEventListener(\"input\", function (e) {\n    document.getElementById(\"out\").textContent = \"Hello, \" + e.target.value;\n  });\n</script>"
+        }
+      ]
+    },
+    {
+      "id": "js-to-angular",
+      "title": "From JavaScript to Angular",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Plain JavaScript gave you full control, but a lot of it was manual and repetitive. jQuery made the same work shorter and easier. As apps got bigger, people needed real structure — and that's where frameworks like Angular came in."
+        },
+        {
+          "type": "flow",
+          "steps": [
+            "JavaScript",
+            "jQuery",
+            "Angular"
+          ]
+        },
+        {
+          "type": "note",
+          "text": "Short version: JavaScript gave power, jQuery gave convenience, and Angular gave structure."
+        }
+      ]
+    },
+    {
+      "id": "recap",
+      "title": "Recap",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "The DOM is the browser's live version of your page.",
+            "JavaScript uses it to find elements and change them.",
+            "jQuery made that easier, and Angular brought structure to whole apps."
+          ]
+        }
+      ]
+    }
+  ],
+  "group": "JavaScript"
+}

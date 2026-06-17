@@ -1,0 +1,59 @@
+{
+  "id": "chapter-12",
+  "number": 12,
+  "title": "TypeScript Basics",
+  "summary": "Add types to your values so mistakes are caught before the app runs.",
+  "kicker": "Chapter 12",
+  "heading": "TypeScript Basics",
+  "group": "TypeScript",
+  "sections": [
+    {
+      "id": "why-types",
+      "title": "Why types?",
+      "blocks": [
+        { "type": "text", "text": "Plain JavaScript lets you put anything in any variable, so a typo or wrong value only blows up when the app runs. TypeScript lets you say what kind of value belongs where, and warns you while you type — long before a user ever sees it." },
+        { "type": "flow", "steps": ["Write TypeScript", "Types checked", "Compiles to JavaScript", "Runs in browser"] },
+        { "type": "link", "url": "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html", "label": "More on typescriptlang.org" }
+      ]
+    },
+    {
+      "id": "annotations",
+      "title": "Type annotations",
+      "blocks": [
+        { "type": "text", "text": "Add a type after a colon. These are the everyday ones you'll use constantly." },
+        { "type": "code", "label": "types", "code": "let age: number = 25;\nlet name: string = \"Asha\";\nlet isActive: boolean = true;\nlet scores: number[] = [80, 90, 75];" }
+      ]
+    },
+    {
+      "id": "inference",
+      "title": "Type inference",
+      "blocks": [
+        { "type": "text", "text": "You don't always have to write the type. If you give a value right away, TypeScript figures the type out for you — and still protects it." },
+        { "type": "code", "label": "inference", "code": "let city = \"Delhi\"; // inferred as string\n\ncity = 42; // Error: a number isn't a string" },
+        { "type": "note", "text": "Let TypeScript infer when it's obvious; add a type yourself when it makes the code clearer." }
+      ]
+    },
+    {
+      "id": "any-unknown",
+      "title": "any and unknown",
+      "blocks": [
+        { "type": "text", "text": "<code>any</code> turns the safety off for a value — avoid it. <code>unknown</code> is the safe version: you must check what it is before using it." },
+        { "type": "code", "label": "any vs unknown", "code": "let a: any = \"hello\";\na.foo.bar; // allowed, but risky\n\nlet u: unknown = \"hello\";\n// u.length; // not allowed until you check the type" },
+        { "type": "note", "text": "Reaching for <code>any</code> a lot usually means you're fighting the types. Prefer real types or <code>unknown</code>." }
+      ]
+    },
+    {
+      "id": "ts-basics-recap",
+      "title": "Recap",
+      "blocks": [
+        { "type": "list", "items": [
+          "TypeScript checks types before the code runs.",
+          "Annotate with a colon: <code>age: number</code>.",
+          "Common types: <code>string</code>, <code>number</code>, <code>boolean</code>, <code>number[]</code>.",
+          "Inference fills in obvious types for you.",
+          "Avoid <code>any</code>; use real types or <code>unknown</code>."
+        ] }
+      ]
+    }
+  ]
+}

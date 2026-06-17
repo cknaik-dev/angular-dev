@@ -7,6 +7,8 @@ const STORAGE_KEY = 'angular-learning-playground.progress';
 export class ProgressService {
   readonly completedLessonIds = signal<Set<string>>(new Set<string>());
   private readonly state: ProgressState = this.loadState();
+  // Reactive theme so editors, previews, and chrome can all follow it.
+  readonly theme = signal<'dark' | 'light'>(this.state.theme);
 
   constructor() {
     this.completedLessonIds.set(new Set(this.state.completedLessonIds));
@@ -18,6 +20,7 @@ export class ProgressService {
 
   setTheme(theme: 'dark' | 'light'): void {
     this.state.theme = theme;
+    this.theme.set(theme);
     this.persist();
   }
 
@@ -78,6 +81,7 @@ export class ProgressService {
     this.state.completedLessonIds = [...state.completedLessonIds];
     this.state.edits = structuredClone(state.edits);
     this.completedLessonIds.set(new Set(state.completedLessonIds));
+    this.theme.set(state.theme);
     this.persist();
   }
 

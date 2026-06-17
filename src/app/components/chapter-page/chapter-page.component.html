@@ -1,0 +1,46 @@
+<main class="chapter-shell">
+  <div class="chapter-layout">
+    <aside class="chapter-sidebar" aria-label="Chapter navigation">
+      <div class="chapter-sidebar-card chapter-sidebar-card--chapters">
+        <h3>Chapters</h3>
+        @for (group of chapterGroups(); track group.name) {
+          <p class="chapter-group-label">{{ group.name }}</p>
+          <nav class="chapter-nav">
+            @for (chapter of group.items; track chapter.id) {
+              <a
+                class="chapter-nav-link"
+                [routerLink]="['/chapter', chapter.id]"
+                routerLinkActive="active"
+              >
+                {{ chapter.number }}. {{ chapter.title }}
+              </a>
+            }
+          </nav>
+        }
+      </div>
+
+      @if (selectedChapter(); as chapter) {
+        <details class="chapter-sidebar-card chapter-sidebar-card--toc">
+          <summary>On this page</summary>
+          <nav class="chapter-nav">
+            @for (section of chapter.sections; track section.id) {
+              <a
+                class="chapter-nav-link"
+                [href]="'#' + section.id"
+                (click)="scrollToSection(section.id, $event)"
+              >{{ section.title }}</a>
+            }
+          </nav>
+        </details>
+      }
+    </aside>
+
+    @if (chapterError()) {
+      <article class="chapter-page">
+        <p class="lesson-error">{{ chapterError() }}</p>
+      </article>
+    } @else if (selectedChapter(); as chapter) {
+      <app-chapter-article [chapter]="chapter" />
+    }
+  </div>
+</main>

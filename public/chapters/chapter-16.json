@@ -1,0 +1,51 @@
+{
+  "id": "chapter-16",
+  "number": 16,
+  "title": "Your First App: Hello World",
+  "summary": "Edit the starter app and show your own message on the screen.",
+  "kicker": "Chapter 16",
+  "group": "Angular",
+  "heading": "Your First App: Hello World",
+  "sections": [
+    {
+      "id": "starter-app",
+      "title": "What ng new gave you",
+      "blocks": [
+        { "type": "text", "text": "After <code>ng new</code> and <code>ng serve</code> (Chapter 15), you saw a starter page in the browser. That page is one component — the root component, <code>App</code>. Let's open it and make it say hello our way." },
+        { "type": "text", "text": "The root component is two files that work together: the class (the data and logic) and the template (the HTML it shows)." },
+        { "type": "code", "label": "app.ts (the class)", "code": "import { Component } from '@angular/core';\n\n@Component({\n  selector: 'app-root',\n  templateUrl: './app.html'\n})\nexport class App {\n  title = 'Hello, World!';\n}" },
+        { "type": "code", "label": "app.html (the template)", "code": "<h1>{{ title }}</h1>" }
+      ]
+    },
+    {
+      "id": "how-it-shows",
+      "title": "How it reaches the screen",
+      "blocks": [
+        { "type": "text", "text": "The class has a property <code>title</code>. The template reads it with <code>{{ title }}</code> — the interpolation from Chapter 6. Angular renders the root component into the <code>&lt;app-root&gt;</code> tag inside <code>index.html</code>, and that's what you see." },
+        { "type": "flow", "steps": ["title in class", "{{ title }} in template", "Rendered into <app-root>", "Shown in browser"] }
+      ]
+    },
+    {
+      "id": "try-hello",
+      "title": "Try it live",
+      "blocks": [
+        { "type": "text", "text": "Edit the code below and press Run. Change the <code>username</code> value, or the text in the template, and watch the output update." },
+        { "type": "ng", "ts": "username = 'World';", "html": "<h1>Hello, {{ username }}!</h1>\n<p>Welcome to your first Angular app.</p>" },
+        { "type": "note", "text": "Change <code>username = 'World'</code> to your own name and press Run — the heading updates, because the template just shows whatever the class holds." }
+      ]
+    },
+    {
+      "id": "hello-recap",
+      "title": "Recap",
+      "blocks": [
+        { "type": "list", "items": [
+          "The starter app is a single root component, <code>App</code>.",
+          "A component is a class (data) plus a template (HTML).",
+          "<code>{{ title }}</code> shows a class property on the page.",
+          "Angular renders the root component into <code>&lt;app-root&gt;</code> in <code>index.html</code>.",
+          "Change the class value and the screen follows."
+        ] }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,166 @@
+{
+  "id": "chapter-32",
+  "number": 32,
+  "title": "Route Guards",
+  "summary": "Protect routes with guards — like blocking pages behind a login.",
+  "kicker": "Chapter 32",
+  "group": "Angular",
+  "heading": "Route Guards",
+  "sections": [
+    {
+      "id": "what-is-guard",
+      "title": "What is a route guard?",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A <strong>guard</strong> is a small function the router runs before (or after) navigating. It decides whether the user is allowed to go there — for example, blocking a dashboard unless the user is logged in."
+        },
+        {
+          "type": "flow",
+          "steps": [
+            "User opens a route",
+            "Guard runs",
+            "Allow ✓ or redirect ✗"
+          ]
+        },
+        {
+          "type": "link",
+          "url": "https://angular.dev/guide/routing/route-guards",
+          "label": "More on angular.dev"
+        }
+      ]
+    },
+    {
+      "id": "generate-guard",
+      "title": "Generating a guard with the CLI",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Don't write the file by hand — let the CLI scaffold it. <code>ng generate guard</code> creates the guard file (and its test)."
+        },
+        {
+          "type": "code",
+          "label": "Terminal",
+          "code": "ng generate guard auth\n# short version:\nng g guard auth"
+        },
+        {
+          "type": "text",
+          "text": "The CLI then asks which kind of guard you want — pick one (or more) with the spacebar:"
+        },
+        {
+          "type": "code",
+          "label": "prompt",
+          "code": "? Which type of guard would you like to create?\n  ◯ CanActivate\n  ◯ CanActivateChild\n  ◯ CanDeactivate\n  ◯ CanMatch"
+        },
+        {
+          "type": "text",
+          "text": "Choosing <strong>CanActivate</strong> generates a ready-to-fill functional guard:"
+        },
+        {
+          "type": "code",
+          "label": "auth.guard.ts (generated)",
+          "code": "import { CanActivateFn } from '@angular/router';\n\nexport const authGuard: CanActivateFn = (route, state) => {\n  return true;\n};"
+        },
+        {
+          "type": "note",
+          "text": "It also creates <code>auth.guard.spec.ts</code>. Now you just fill in the logic — that's the next step."
+        }
+      ]
+    },
+    {
+      "id": "auth-guard",
+      "title": "An auth guard with canActivate",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A modern guard is just a function of type <code>CanActivateFn</code>. Inside it you can <code>inject</code> services. Return <code>true</code> to allow, or a <code>UrlTree</code> (from <code>router.parseUrl</code>) to redirect."
+        },
+        {
+          "type": "code",
+          "label": "auth.guard.ts",
+          "code": "import { inject } from '@angular/core';\nimport { CanActivateFn, Router } from '@angular/router';\nimport { AuthService } from './auth.service';\n\nexport const authGuard: CanActivateFn = () => {\n  const auth = inject(AuthService);\n  const router = inject(Router);\n\n  if (auth.isLoggedIn()) {\n    return true;\n  }\n  // not logged in -> send to the login page\n  return router.parseUrl('/login');\n};"
+        }
+      ]
+    },
+    {
+      "id": "attach-guard",
+      "title": "Attaching the guard to a route",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "List the guard in the route's <code>canActivate</code> array. You can attach several guards."
+        },
+        {
+          "type": "code",
+          "label": "routes",
+          "code": "import { authGuard } from './auth.guard';\n\nexport const routes: Routes = [\n  { path: 'login', component: Login },\n  {\n    path: 'dashboard',\n    component: Dashboard,\n    canActivate: [authGuard]\n  }\n];"
+        },
+        {
+          "type": "note",
+          "text": "Now visiting <code>/dashboard</code> while logged out bounces the user to <code>/login</code>."
+        }
+      ]
+    },
+    {
+      "id": "other-guards",
+      "title": "Other guards",
+      "blocks": [
+        {
+          "type": "stack",
+          "layers": [
+            {
+              "title": "canActivate",
+              "detail": "Can the user enter this route? (auth, roles)"
+            },
+            {
+              "title": "canActivateChild",
+              "detail": "Same check, applied to a route's children"
+            },
+            {
+              "title": "canDeactivate",
+              "detail": "Can the user leave? (warn about unsaved changes)"
+            }
+          ]
+        },
+        {
+          "type": "code",
+          "label": "canDeactivate example",
+          "code": "export const unsavedGuard: CanDeactivateFn<EditPage> = (page) => {\n  return page.hasUnsavedChanges()\n    ? confirm('Leave without saving?')\n    : true;\n};"
+        }
+      ]
+    },
+    {
+      "id": "guard-use-cases",
+      "title": "Common use cases",
+      "blocks": [
+        { "type": "text", "text": "Guards show up all over real apps. A few you'll meet often:" },
+        { "type": "stack", "layers": [
+          { "title": "Authentication", "detail": "Require a logged-in user before showing a page; otherwise redirect to /login." },
+          { "title": "Roles & permissions", "detail": "Let only admins reach /admin; send others to a 'not allowed' page." },
+          { "title": "Unsaved changes", "detail": "canDeactivate: warn before leaving a half-filled form." },
+          { "title": "Onboarding / setup", "detail": "Force new users through a setup step before the main app." },
+          { "title": "Subscription / paywall", "detail": "Block premium routes unless the plan is active." },
+          { "title": "Feature flags", "detail": "Hide a route that isn't enabled yet for this user." }
+        ] },
+        { "type": "code", "label": "role guard example", "code": "export const adminGuard: CanActivateFn = () => {\n  const auth = inject(AuthService);\n  const router = inject(Router);\n  return auth.isAdmin() ? true : router.parseUrl('/not-allowed');\n};" },
+        { "type": "note", "text": "A guard can also return a <code>Promise</code> or <code>Observable</code> of <code>boolean</code>/<code>UrlTree</code> — handy when the check needs a server call (e.g. verifying a token)." }
+      ]
+    },
+    {
+      "id": "guards-recap",
+      "title": "Recap",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "A guard is a function the router runs to allow or block navigation.",
+            "<code>CanActivateFn</code> returns <code>true</code>, <code>false</code>, or a <code>UrlTree</code> to redirect.",
+            "<code>inject()</code> services inside the guard (auth, router).",
+            "Attach with <code>canActivate: [authGuard]</code> on the route.",
+            "<code>canActivateChild</code> guards child routes; <code>canDeactivate</code> guards leaving."
+          ]
+        }
+      ]
+    }
+  ]
+}

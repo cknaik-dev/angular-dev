@@ -1,0 +1,95 @@
+{
+  "id": "chapter-21",
+  "number": 21,
+  "title": "Inputs and Outputs",
+  "summary": "How a parent component passes data down and a child sends events back up.",
+  "kicker": "Chapter 21",
+  "group": "Angular",
+  "heading": "Inputs and Outputs",
+  "sections": [
+    {
+      "id": "why-inputs-outputs",
+      "title": "Talking between components",
+      "blocks": [
+        { "type": "text", "text": "Apps are trees of components, so neighbours need to share. The rule is one-directional and simple: a parent passes data <strong>down</strong> to a child through an <strong>input</strong>, and a child sends events <strong>up</strong> to its parent through an <strong>output</strong>. Data down, events up." },
+        { "type": "svg", "caption": "Data flows down through inputs; events flow up through outputs.", "svg": "<svg viewBox='0 0 440 150' role='img' aria-label='Parent passes input down to child, child emits output up to parent'><defs><marker id='io-ar' markerWidth='8' markerHeight='8' refX='6' refY='3' orient='auto'><path d='M0,0 L6,3 L0,6 Z' fill='currentColor'/></marker></defs><g fill='none' stroke='currentColor' stroke-width='1.5'><rect x='150' y='12' width='140' height='44' rx='8'/><rect x='150' y='96' width='140' height='44' rx='8'/><line x1='195' y1='56' x2='195' y2='94' marker-end='url(#io-ar)'/><line x1='245' y1='94' x2='245' y2='58' marker-end='url(#io-ar)'/></g><g fill='currentColor' font-size='13' text-anchor='middle' font-family='sans-serif'><text x='220' y='39'>Parent</text><text x='220' y='123'>Child</text></g><g fill='currentColor' font-size='11' text-anchor='middle' opacity='0.75' font-family='monospace'><text x='150' y='79'>input ↓</text><text x='300' y='79'>output ↑</text></g></svg>" },
+        { "type": "note", "text": "Keeping data flowing one way (down) and events flowing the other (up) is what makes big component trees predictable — you always know who owns the data." },
+        { "type": "link", "url": "https://angular.dev/guide/components/inputs", "label": "More on angular.dev" }
+      ]
+    },
+    {
+      "id": "example-input",
+      "title": "Example 1: passing data down with input()",
+      "blocks": [
+        { "type": "text", "text": "An <code>input()</code> is how a child receives a value. It returns a <strong>signal</strong>, so you read it by calling it with <code>()</code> — and the view updates automatically if the parent changes it. You can give it a default value." },
+        { "type": "code", "label": "greeting.ts (child)", "code": "import { Component, input } from '@angular/core';\n\n@Component({\n  selector: 'app-greeting',\n  template: `<p>Hello, {{ name() }}!</p>`\n})\nexport class Greeting {\n  name = input('friend'); // default if the parent passes nothing\n}" },
+        { "type": "text", "text": "The parent sets it with property binding — the same <code>[ ]</code> from Chapter 20. A plain string needs no brackets; use brackets to bind to a value." },
+        { "type": "code", "label": "app.html (parent)", "code": "<app-greeting name=\"Asha\" />        <!-- static text -->\n<app-greeting [name]=\"userName\" />  <!-- bound to a property -->" },
+        { "type": "svg", "caption": "The parent's value lands in the child's input signal.", "svg": "<svg viewBox='0 0 440 120' role='img' aria-label='Parent userName flows into the child name input'><defs><marker id='in-ar' markerWidth='8' markerHeight='8' refX='6' refY='3' orient='auto'><path d='M0,0 L6,3 L0,6 Z' fill='currentColor'/></marker></defs><g fill='none' stroke='currentColor' stroke-width='1.5'><rect x='15' y='40' width='170' height='44' rx='8'/><rect x='255' y='40' width='170' height='44' rx='8'/><line x1='185' y1='62' x2='253' y2='62' marker-end='url(#in-ar)'/></g><g fill='currentColor' font-size='12' text-anchor='middle' font-family='monospace'><text x='100' y='66'>userName = 'Asha'</text><text x='340' y='60'>name()</text><text x='340' y='76' font-size='10' opacity='0.7'>input</text></g><g fill='currentColor' font-size='10' text-anchor='middle' opacity='0.75' font-family='monospace'><text x='219' y='52'>[name]</text></g></svg>" }
+      ]
+    },
+    {
+      "id": "input-options",
+      "title": "Input options: required, alias, transform",
+      "blocks": [
+        { "type": "text", "text": "Inputs can do more than hold a default. These options come up constantly in real components." },
+        { "type": "code", "label": "input options", "code": "import { input, numberAttribute } from '@angular/core';\n\n// Must be provided — Angular errors if the parent forgets it\nuserId = input.required<number>();\n\n// Exposed to the parent under a different name: [label]=\"...\"\ntitle = input('', { alias: 'label' });\n\n// Convert the incoming value (e.g. attribute string -> number)\nage = input(0, { transform: numberAttribute });" },
+        { "type": "note", "text": "<code>input.required</code> is great for values a component can't work without — you get a clear error instead of a silent bug." }
+      ]
+    },
+    {
+      "id": "example-output",
+      "title": "Example 2: sending events up with output()",
+      "blocks": [
+        { "type": "text", "text": "An <code>output()</code> lets a child notify its parent. The child calls <code>.emit(value)</code>; the value it sends becomes <code>$event</code> in the parent. Type the output so the payload is checked." },
+        { "type": "code", "label": "like-button.ts (child)", "code": "import { Component, output } from '@angular/core';\n\n@Component({\n  selector: 'app-like-button',\n  template: `<button (click)=\"liked.emit(count)\">👍 Like</button>`\n})\nexport class LikeButton {\n  count = 1;\n  liked = output<number>(); // emits a number\n}" },
+        { "type": "code", "label": "app.ts (parent)", "code": "// class:\n//   total = 0;\n//   onLike(amount: number) { this.total += amount; }\n\n<app-like-button (liked)=\"onLike($event)\" />\n<p>Likes: {{ total }}</p>" },
+        { "type": "svg", "caption": "The child emits a value; it arrives as $event in the parent.", "svg": "<svg viewBox='0 0 440 120' role='img' aria-label='Child emits liked event up to the parent handler'><defs><marker id='out-ar' markerWidth='8' markerHeight='8' refX='6' refY='3' orient='auto'><path d='M0,0 L6,3 L0,6 Z' fill='currentColor'/></marker></defs><g fill='none' stroke='currentColor' stroke-width='1.5'><rect x='255' y='40' width='170' height='44' rx='8'/><rect x='15' y='40' width='170' height='44' rx='8'/><line x1='253' y1='62' x2='187' y2='62' marker-end='url(#out-ar)'/></g><g fill='currentColor' font-size='12' text-anchor='middle' font-family='monospace'><text x='100' y='60'>onLike($event)</text><text x='100' y='76' font-size='10' opacity='0.7'>parent</text><text x='340' y='66'>liked.emit(1)</text></g><g fill='currentColor' font-size='10' text-anchor='middle' opacity='0.75' font-family='monospace'><text x='219' y='52'>(liked)</text></g></svg>" }
+      ]
+    },
+    {
+      "id": "example-both",
+      "title": "Example 3: input and output together",
+      "blocks": [
+        { "type": "text", "text": "Most real components use both. Here a <strong>stepper</strong> receives its current count as an input and emits the new count whenever a button is pressed — the parent stays the owner of the value." },
+        { "type": "code", "label": "stepper.ts (child)", "code": "import { Component, input, output } from '@angular/core';\n\n@Component({\n  selector: 'app-stepper',\n  template: `\n    <button (click)=\"change(-1)\">−</button>\n    <span>{{ count() }}</span>\n    <button (click)=\"change(1)\">+</button>`\n})\nexport class Stepper {\n  count = input(0);\n  countChange = output<number>();\n\n  change(step: number) {\n    this.countChange.emit(this.count() + step);\n  }\n}" },
+        { "type": "code", "label": "app.ts (parent)", "code": "// class:  total = 0;\n\n<app-stepper\n  [count]=\"total\"\n  (countChange)=\"total = $event\" />\n\n<p>Total: {{ total }}</p>" },
+        { "type": "note", "text": "Because the input is <code>count</code> and the output is <code>countChange</code>, the parent can shorten those two lines to a two-way binding: <code>[(count)]=\"total\"</code> — that's the next chapter." }
+      ]
+    },
+    {
+      "id": "example-object-input",
+      "title": "Example 4: passing an object as input",
+      "blocks": [
+        { "type": "text", "text": "Inputs aren't limited to strings — they carry any type: numbers, booleans, arrays, or whole objects. A card component can take a full <code>user</code> object." },
+        { "type": "code", "label": "user-card.ts (child)", "code": "import { Component, input } from '@angular/core';\n\ninterface User { name: string; age: number; }\n\n@Component({\n  selector: 'app-user-card',\n  template: `\n    <div class=\"card\">\n      <h3>{{ user().name }}</h3>\n      <p>Age: {{ user().age }}</p>\n    </div>`\n})\nexport class UserCard {\n  user = input.required<User>();\n}" },
+        { "type": "code", "label": "app.html (parent)", "code": "// class:  currentUser = { name: 'Asha', age: 20 };\n\n<app-user-card [user]=\"currentUser\" />" },
+        { "type": "note", "text": "Brackets are required here — <code>[user]</code> binds to a real object. Without brackets the child would receive the literal string \"currentUser\"." }
+      ]
+    },
+    {
+      "id": "example-list-output",
+      "title": "Example 5: a list item that emits its id",
+      "blocks": [
+        { "type": "text", "text": "A very common pattern: render a list of child components, and let each one tell the parent when it's clicked or removed. The child emits its own id; the parent owns the list and removes it." },
+        { "type": "code", "label": "todo-item.ts (child)", "code": "import { Component, input, output } from '@angular/core';\n\n@Component({\n  selector: 'app-todo-item',\n  template: `\n    <li>\n      {{ text() }}\n      <button (click)=\"remove.emit(id())\">✕</button>\n    </li>`\n})\nexport class TodoItem {\n  id = input.required<number>();\n  text = input.required<string>();\n  remove = output<number>();\n}" },
+        { "type": "code", "label": "app.ts (parent)", "code": "// class:\n//   todos = [{ id: 1, text: 'Learn' }, { id: 2, text: 'Build' }];\n//   removeTodo(id: number) {\n//     this.todos = this.todos.filter(t => t.id !== id);\n//   }\n\n@for (todo of todos; track todo.id) {\n  <app-todo-item\n    [id]=\"todo.id\"\n    [text]=\"todo.text\"\n    (remove)=\"removeTodo($event)\" />\n}" },
+        { "type": "note", "text": "The parent keeps ownership of the list; the child just announces \"remove me\" by id. That's data down, events up in action." }
+      ]
+    },
+    {
+      "id": "io-recap",
+      "title": "Recap",
+      "blocks": [
+        { "type": "list", "items": [
+          "<strong>Data down, events up</strong>: <code>input()</code> receives, <code>output()</code> sends.",
+          "An input is a signal — read it with <code>name()</code>; give it a default.",
+          "Options: <code>input.required</code>, <code>alias</code>, and <code>transform</code>.",
+          "Set an input from the parent with <code>[name]=\"value\"</code>.",
+          "A child fires an output with <code>thing.emit(payload)</code>; the parent reads <code>$event</code>.",
+          "An input <code>x</code> plus output <code>xChange</code> can be used as two-way <code>[(x)]</code>."
+        ] }
+      ]
+    }
+  ]
+}

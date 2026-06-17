@@ -1,0 +1,225 @@
+{
+  "id": "chapter-34",
+  "number": 34,
+  "title": "CRUD with JSON Server",
+  "summary": "Spin up a fake REST API and do the four CRUD operations against it.",
+  "kicker": "Chapter 34",
+  "group": "Angular",
+  "heading": "CRUD with JSON Server",
+  "sections": [
+    {
+      "id": "json-server",
+      "title": "What is JSON Server?",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "To practice talking to an API you need a server. <strong>JSON Server</strong> turns a plain JSON file into a full REST API in seconds — no backend code needed. It's perfect for learning and prototypes."
+        },
+        {
+          "type": "code",
+          "label": "Terminal",
+          "code": "npm install -g json-server"
+        },
+        {
+          "type": "text",
+          "text": "Create a <code>db.json</code> file with some starting data. Each top-level key becomes a resource (a collection)."
+        },
+        {
+          "type": "code",
+          "label": "db.json",
+          "code": "{\n  \"users\": [\n    { \"id\": 1, \"name\": \"Asha\", \"age\": 20 },\n    { \"id\": 2, \"name\": \"Ravi\", \"age\": 25 }\n  ]\n}"
+        },
+        {
+          "type": "code",
+          "label": "Terminal",
+          "code": "json-server --watch db.json\n# API now running at http://localhost:3000"
+        },
+        {
+          "type": "note",
+          "text": "You instantly get the endpoints <code>/users</code> and <code>/users/:id</code> — and JSON Server saves every change back into <code>db.json</code>."
+        },
+        {
+          "type": "link",
+          "url": "https://github.com/typicode/json-server",
+          "label": "JSON Server on GitHub"
+        }
+      ]
+    },
+    {
+      "id": "what-is-crud",
+      "title": "What is CRUD?",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "<strong>CRUD</strong> stands for the four things you do with data: <strong>C</strong>reate, <strong>R</strong>ead, <strong>U</strong>pdate, and <strong>D</strong>elete. Every app — a todo list, a shop, a social feed — is mostly CRUD underneath."
+        },
+        {
+          "type": "text",
+          "text": "Over a REST API (Chapter 33), each CRUD operation is a different HTTP method."
+        },
+        {
+          "type": "stack",
+          "layers": [
+            {
+              "title": "Create",
+              "detail": "POST — add a new item"
+            },
+            {
+              "title": "Read",
+              "detail": "GET — fetch items"
+            },
+            {
+              "title": "Update",
+              "detail": "PUT — change an existing item"
+            },
+            {
+              "title": "Delete",
+              "detail": "DELETE — remove an item"
+            }
+          ]
+        },
+        {
+          "type": "link",
+          "url": "/chapter/chapter-33",
+          "label": "Revisit Chapter 33: REST APIs In Depth"
+        }
+      ]
+    },
+    {
+      "id": "crud-read",
+      "title": "Read — GET",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Reading has two shapes: get the whole collection, or get one item by its id. These are plain <code>GET</code> requests — you can even open the URLs in your browser."
+        },
+        {
+          "type": "code",
+          "label": "get all",
+          "code": "GET http://localhost:3000/users\n\n[\n  { \"id\": 1, \"name\": \"Asha\", \"age\": 20 },\n  { \"id\": 2, \"name\": \"Ravi\", \"age\": 25 }\n]"
+        },
+        {
+          "type": "code",
+          "label": "get one",
+          "code": "GET http://localhost:3000/users/1\n\n{ \"id\": 1, \"name\": \"Asha\", \"age\": 20 }"
+        },
+        {
+          "type": "text",
+          "text": "On the command line you can try it with <code>curl</code>:"
+        },
+        {
+          "type": "code",
+          "label": "Terminal",
+          "code": "curl http://localhost:3000/users\ncurl http://localhost:3000/users/1"
+        }
+      ]
+    },
+    {
+      "id": "crud-create",
+      "title": "Create — POST",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Send a new item in the request body to the collection. JSON Server gives it a new <code>id</code> and saves it, then returns the created item."
+        },
+        {
+          "type": "code",
+          "label": "Terminal",
+          "code": "curl -X POST http://localhost:3000/users \\\n  -H \"Content-Type: application/json\" \\\n  -d '{ \"name\": \"Meera\", \"age\": 22 }'"
+        },
+        {
+          "type": "code",
+          "label": "response",
+          "code": "{ \"id\": 3, \"name\": \"Meera\", \"age\": 22 }"
+        }
+      ]
+    },
+    {
+      "id": "crud-update",
+      "title": "Update — PUT",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Point at one item's id and send the full updated object. JSON Server replaces it and returns the new version."
+        },
+        {
+          "type": "code",
+          "label": "Terminal",
+          "code": "curl -X PUT http://localhost:3000/users/1 \\\n  -H \"Content-Type: application/json\" \\\n  -d '{ \"name\": \"Asha\", \"age\": 21 }'"
+        },
+        {
+          "type": "code",
+          "label": "response",
+          "code": "{ \"id\": 1, \"name\": \"Asha\", \"age\": 21 }"
+        }
+      ]
+    },
+    {
+      "id": "crud-delete",
+      "title": "Delete — DELETE",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Point at the item's id with the <code>DELETE</code> method. JSON Server removes it and returns an empty object."
+        },
+        {
+          "type": "code",
+          "label": "Terminal",
+          "code": "curl -X DELETE http://localhost:3000/users/1"
+        },
+        {
+          "type": "note",
+          "text": "Check <code>db.json</code> after each call — you'll see the file actually change as you create, update, and delete."
+        }
+      ]
+    },
+    {
+      "id": "pagination",
+      "title": "Pagination",
+      "blocks": [
+        { "type": "text", "text": "A real collection can hold thousands of rows — you never load them all at once. <strong>Pagination</strong> fetches one page at a time: ask for a page number and a page size, and the server returns just that slice." },
+        { "type": "flow", "steps": ["Page 1 (1–10)", "Page 2 (11–20)", "Page 3 (21–30)"] },
+        { "type": "text", "text": "JSON Server paginates with the <code>_page</code> and <code>_limit</code> query parameters." },
+        { "type": "code", "label": "requests", "code": "GET /users?_page=1&_limit=10   # items 1–10\nGET /users?_page=2&_limit=10   # items 11–20\nGET /users?_page=3&_limit=10   # items 21–30" },
+        { "type": "text", "text": "To build page buttons you also need the <strong>total count</strong>. JSON Server sends it in the <code>X-Total-Count</code> response header — see it with <code>curl -i</code>:" },
+        { "type": "code", "label": "Terminal", "code": "curl -i \"http://localhost:3000/users?_page=1&_limit=10\"\n\nHTTP/1.1 200 OK\nX-Total-Count: 57\n...\n[ /* 10 users */ ]" },
+        { "type": "text", "text": "From the total and the page size you compute how many pages there are:" },
+        { "type": "code", "label": "total pages", "code": "const total = 57;        // from X-Total-Count\nconst limit = 10;\nconst pages = Math.ceil(total / limit);  // 6" },
+        { "type": "note", "text": "Version note: JSON Server v1 uses <code>_per_page</code> instead of <code>_limit</code> and returns a wrapper object — <code>{ first, prev, next, last, pages, data }</code> — with the page in <code>data</code>. Older v0 uses <code>_limit</code> + the <code>X-Total-Count</code> header shown above." }
+      ]
+    },
+    {
+      "id": "pagination-angular",
+      "title": "Reading the count in Angular",
+      "blocks": [
+        { "type": "text", "text": "<code>HttpClient</code> hides headers by default. Pass <code>{ observe: 'response' }</code> to get the full response, then read <code>X-Total-Count</code> from <code>res.headers</code>." },
+        { "type": "code", "label": "users.ts", "code": "import { HttpClient, HttpParams } from '@angular/common/http';\n\ngetPage(page: number, limit = 10) {\n  const params = new HttpParams()\n    .set('_page', page)\n    .set('_limit', limit);\n\n  return this.http.get<User[]>('http://localhost:3000/users', {\n    params,\n    observe: 'response'   // give me headers too\n  });\n}\n\n// usage:\nthis.getPage(2).subscribe(res => {\n  const users = res.body ?? [];\n  const total = Number(res.headers.get('X-Total-Count'));\n  const pages = Math.ceil(total / 10);\n});" }
+      ]
+    },
+    {
+      "id": "sort-filter",
+      "title": "Sorting and filtering",
+      "blocks": [
+        { "type": "text", "text": "Pagination usually pairs with sorting and filtering — all just query parameters in JSON Server." },
+        { "type": "code", "label": "examples", "code": "GET /users?_sort=age&_order=desc   # sort by age, high → low\nGET /users?city=Delhi              # only users in Delhi\nGET /users?age_gte=18&age_lte=30   # age between 18 and 30\nGET /users?q=asha                  # full-text search" },
+        { "type": "note", "text": "Combine them freely: <code>/users?city=Delhi&_sort=age&_page=1&_limit=10</code> — filter, sort, then page." }
+      ]
+    },
+    {
+      "id": "crud-recap",
+      "title": "Recap",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "<strong>JSON Server</strong> turns a <code>db.json</code> into a real REST API for practice.",
+            "<strong>CRUD</strong> = Create, Read, Update, Delete.",
+            "Create → <code>POST /users</code>, Read → <code>GET /users</code> or <code>/users/1</code>.",
+            "Update → <code>PUT /users/1</code>, Delete → <code>DELETE /users/1</code>.",
+            "JSON Server saves changes straight into <code>db.json</code>."
+          ]
+        }
+      ]
+    }
+  ]
+}
