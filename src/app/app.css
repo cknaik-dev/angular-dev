@@ -58,102 +58,82 @@
 .topbar-actions {
   display: flex;
   gap: 0.5rem;
-  flex-wrap: wrap;
+  align-items: center;
 }
 
-.secondary-button,
-.primary-button {
+.action-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   padding: 0.5rem 0.9rem;
   border: 1px solid var(--border);
   border-radius: 0.5rem;
   background: var(--surface);
   color: var(--text);
+  font: inherit;
   cursor: pointer;
+  text-decoration: none;
 }
 
-.primary-button {
+.action-button:hover {
+  border-color: var(--accent);
+}
+
+.action-button.primary {
   background: var(--accent);
   border-color: var(--accent);
   color: var(--accent-text);
 }
 
-/* The download button is an anchor styled as a button. */
-a.primary-button {
-  display: inline-flex;
-  align-items: center;
-  text-decoration: none;
+.action-icon {
+  display: none; /* desktop shows text labels instead */
+  font-size: 1.05rem;
+  line-height: 1;
 }
 
-.secondary-button:hover {
-  border-color: var(--accent);
-}
-
-/* Print split-button + dropdown */
-.print-menu {
-  display: inline-flex;
-  gap: 0.35rem;
-  align-items: stretch;
-}
-
-.print-more {
-  position: relative;
-}
-
-.print-more > summary {
-  display: inline-flex;
-  align-items: center;
-  list-style: none;
-  padding: 0.5rem 0.6rem;
-}
-
-.print-more > summary::-webkit-details-marker {
+/* Desktop: full brand name, no hamburger (sidebar is always visible). */
+.brand-short {
   display: none;
 }
 
-.print-options {
-  position: absolute;
-  right: 0;
-  top: calc(100% + 0.35rem);
-  z-index: 10;
-  display: grid;
-  min-width: 11rem;
-  padding: 0.3rem;
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  background: var(--surface);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+.menu-button {
+  display: none;
 }
 
-.print-options button {
-  padding: 0.5rem 0.7rem;
-  border: 0;
-  border-radius: 0.4rem;
-  background: transparent;
-  color: var(--text);
-  text-align: left;
-  font: inherit;
-  cursor: pointer;
-}
-
-.print-options button:hover {
-  background: var(--surface-2);
-}
-
+/* Mobile: compact header — abbreviation + icon buttons + hamburger. */
 @media (max-width: 720px) {
   .topbar {
-    flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    padding: 0.6rem 0.9rem;
   }
 
-  /* On mobile the main button prints the current chapter directly. */
-  .print-more {
+  .brand-tagline,
+  .brand-full {
     display: none;
   }
-}
 
-@media print {
-  .print-menu {
+  .brand-short {
+    display: inline;
+  }
+
+  .brand h1 {
+    font-size: 1.25rem;
+  }
+
+  .action-label {
     display: none;
+  }
+
+  .action-icon {
+    display: inline;
+  }
+
+  .action-button {
+    padding: 0.5rem 0.65rem;
+  }
+
+  .menu-button {
+    display: inline-flex;
   }
 }
 

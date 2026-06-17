@@ -50,9 +50,14 @@ npm run pdf          # writes public/course.pdf
 ## Deploy to GitHub Pages
 
 ```bash
-ng build --base-href /angular-dev/
-npx angular-cli-ghpages --dir=dist/angular-learning-playground/browser
+npm run deploy
 ```
 
-This publishes to the `gh-pages` branch and adds a `404.html` SPA fallback so deep links work.
-Then enable Pages: repo **Settings → Pages → Source: branch `gh-pages` / root**.
+This builds with `--base-href /angular-dev/`, publishes to the `gh-pages` branch, and
+adds a `404.html` SPA fallback so deep links work. Then enable Pages once:
+repo **Settings → Pages → Source: branch `gh-pages` / root**. Live at
+https://cknaik-dev.github.io/angular-dev/.
+
+> Run `npm run deploy` (not the raw `ng build --base-href /angular-dev/` inside **Git Bash**).
+> Git Bash rewrites the leading-slash `/angular-dev/` into a Windows path, producing a
+> broken `<base href>`. The npm script runs through `cmd`, which doesn't do that.

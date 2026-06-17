@@ -4,6 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
 import { ChapterRepositoryService } from '../../core/chapter-repository.service';
+import { SidebarService } from '../../core/sidebar.service';
 import { ChapterDefinition, ChapterGroup, ChapterSummary } from '../../models/chapter';
 import { ChapterArticleComponent } from '../chapter-article/chapter-article.component';
 
@@ -31,11 +32,32 @@ export class ChapterPageComponent {
       (el as HTMLDetailsElement).open = true;
     }
     el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    this.closeMenu();
   }
 
   protected readonly chapters = signal<ChapterSummary[]>([]);
   protected readonly selectedChapter = signal<ChapterDefinition | null>(null);
   protected readonly chapterError = signal<string | null>(null);
+  // Mobile: the chapter list collapses behind the header's hamburger.
+  protected readonly sidebar = inject(SidebarService);
+
+  private readonly currentIndex = computed(() => {
+    const id = this.selectedChapter()?.id;
+    return this.chapters().findIndex((c) => c.id === id);
+  });
+  protected readonly prevChapter = computed(() => {
+    const i = this.currentIndex();
+    return i > 0 ? this.chapters()[i - 1] : null;
+  });
+  protected readonly nextChapter = computed(() => {
+    const i = this.currentIndex();
+    const list = this.chapters();
+    return i >= 0 && i < list.length - 1 ? list[i + 1] : null;
+  });
+
+  protected closeMenu(): void {
+    this.sidebar.close();
+  }
 
   // Group chapters by category (JavaScript / TypeScript / Angular) for the sidebar.
   protected readonly chapterGroups = computed(() => {
@@ -79,6 +101,7 @@ export class ChapterPageComponent {
       const chapter = await this.chapterRepository.getChapterById(id);
       this.selectedChapter.set(chapter);
       this.title.setTitle(`Angular Learning — ${chapter.title}`);
+      this.closeMenu();
       window.scrollTo({ top: 0 });
     } catch (error) {
       this.selectedChapter.set(null);

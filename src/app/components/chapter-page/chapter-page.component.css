@@ -4,12 +4,63 @@
   padding: 1.5rem;
 }
 
+/* Previous / Next chapter pager (chapter footer) */
+.chapter-pager {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.pager-link {
+  display: grid;
+  gap: 0.2rem;
+  max-width: 48%;
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  text-decoration: none;
+  color: var(--text);
+  background: var(--surface);
+}
+
+.pager-link:hover {
+  border-color: var(--accent);
+}
+
+.pager-link.next {
+  text-align: right;
+  margin-left: auto;
+}
+
+.pager-dir {
+  font-size: 0.78rem;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.pager-title {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
 .chapter-layout {
   display: grid;
   grid-template-columns: minmax(220px, 260px) minmax(0, 860px);
   justify-content: center;
   gap: 1.5rem;
   align-items: start;
+}
+
+/* Let the content column shrink so wide code blocks scroll, not the page. */
+.chapter-layout > * {
+  min-width: 0;
+}
+
+.chapter-content {
+  min-width: 0;
 }
 
 .chapter-sidebar {
@@ -19,6 +70,11 @@
   gap: 1rem;
   max-height: calc(100vh - 3rem);
   overflow: auto;
+}
+
+/* Backdrop behind the mobile slide-in drawer (hidden on desktop). */
+.sidebar-backdrop {
+  display: none;
 }
 
 .chapter-sidebar-card {
@@ -103,15 +159,47 @@
     gap: 1rem;
   }
 
+  /* Off-canvas drawer that slides in from the left. */
   .chapter-sidebar {
-    position: static;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 50;
+    width: min(82%, 320px);
+    height: 100dvh;
     max-height: none;
+    margin: 0;
+    padding: 1rem;
+    background: var(--bg);
+    border-right: 1px solid var(--border);
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.35);
+    overflow-y: auto;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
   }
 
-  /* On mobile, cap the chapter list height so it doesn't push content down. */
-  .chapter-sidebar-card--chapters {
-    max-height: 45vh;
-    overflow: auto;
+  .chapter-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease;
+  }
+
+  .sidebar-backdrop.show {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .pager-link {
+    max-width: 49%;
   }
 }
 

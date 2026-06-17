@@ -9,6 +9,7 @@ import {
 import { Router, RouterOutlet } from '@angular/router';
 import { ProgressService } from './core/progress.service';
 import { PrintModeService } from './core/print-mode.service';
+import { SidebarService } from './core/sidebar.service';
 
 @Component({
   selector: 'app-root',
@@ -27,6 +28,7 @@ export class App {
     return this.theme() === 'dark';
   }
 
+  protected readonly sidebar = inject(SidebarService);
   protected readonly theme = this.progressService.theme;
 
   constructor() {

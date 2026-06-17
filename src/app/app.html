@@ -1,18 +1,46 @@
 <div class="app-shell">
   <header class="topbar">
     <div class="brand">
-      <h1>Angular Learning</h1>
-      <p>A simple, printable introduction to JavaScript, TypeScript, and Angular.</p>
+      <h1>
+        <span class="brand-full">Angular Learning</span>
+        <span class="brand-short">AL</span>
+      </h1>
+      <p class="brand-tagline">A simple, printable introduction to JavaScript, TypeScript, and Angular.</p>
     </div>
 
     <div class="topbar-actions">
-      <button class="secondary-button" type="button" (click)="toggleTheme()">
-        {{ theme() === 'dark' ? 'Light mode' : 'Dark mode' }}
+      <button
+        class="action-button"
+        type="button"
+        (click)="toggleTheme()"
+        [attr.aria-label]="theme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
+        [title]="theme() === 'dark' ? 'Light mode' : 'Dark mode'"
+      >
+        <span class="action-icon">{{ theme() === 'dark' ? '☀' : '☾' }}</span>
+        <span class="action-label">{{ theme() === 'dark' ? 'Light mode' : 'Dark mode' }}</span>
       </button>
 
-      <a class="primary-button" href="course.pdf" download="angular-learning.pdf">
-        Download PDF
+      <a
+        class="action-button primary"
+        href="course.pdf"
+        download="angular-learning.pdf"
+        title="Download PDF"
+        aria-label="Download PDF"
+      >
+        <span class="action-icon">⬇</span>
+        <span class="action-label">Download PDF</span>
       </a>
+
+      <button
+        class="action-button menu-button"
+        type="button"
+        (click)="sidebar.toggle()"
+        [attr.aria-expanded]="sidebar.open()"
+        aria-label="Open chapters"
+        title="Chapters"
+      >
+        <span class="action-icon">☰</span>
+      </button>
     </div>
   </header>
 

@@ -1,6 +1,8 @@
 <main class="chapter-shell">
+  <div class="sidebar-backdrop" [class.show]="sidebar.open()" (click)="sidebar.close()"></div>
+
   <div class="chapter-layout">
-    <aside class="chapter-sidebar" aria-label="Chapter navigation">
+    <aside class="chapter-sidebar" [class.open]="sidebar.open()" aria-label="Chapter navigation">
       <div class="chapter-sidebar-card chapter-sidebar-card--chapters">
         <h3>Chapters</h3>
         @for (group of chapterGroups(); track group.name) {
@@ -11,6 +13,7 @@
                 class="chapter-nav-link"
                 [routerLink]="['/chapter', chapter.id]"
                 routerLinkActive="active"
+                (click)="closeMenu()"
               >
                 {{ chapter.number }}. {{ chapter.title }}
               </a>
@@ -40,7 +43,26 @@
         <p class="lesson-error">{{ chapterError() }}</p>
       </article>
     } @else if (selectedChapter(); as chapter) {
-      <app-chapter-article [chapter]="chapter" />
+      <div class="chapter-content">
+        <app-chapter-article [chapter]="chapter" />
+
+        <nav class="chapter-pager" aria-label="Previous and next chapter">
+          @if (prevChapter(); as prev) {
+            <a class="pager-link prev" [routerLink]="['/chapter', prev.id]" (click)="closeMenu()">
+              <span class="pager-dir">← Previous</span>
+              <span class="pager-title">{{ prev.number }}. {{ prev.title }}</span>
+            </a>
+          } @else {
+            <span></span>
+          }
+          @if (nextChapter(); as next) {
+            <a class="pager-link next" [routerLink]="['/chapter', next.id]" (click)="closeMenu()">
+              <span class="pager-dir">Next →</span>
+              <span class="pager-title">{{ next.number }}. {{ next.title }}</span>
+            </a>
+          }
+        </nav>
+      </div>
     }
   </div>
 </main>

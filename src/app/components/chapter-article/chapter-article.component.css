@@ -150,6 +150,7 @@
 
 .code-card {
   flex: 1 1 240px;
+  min-width: 0;
   padding: 0.9rem;
   margin-top: 1rem;
 }
