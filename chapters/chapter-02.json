@@ -1,0 +1,114 @@
+{
+  "id": "chapter-02",
+  "number": 2,
+  "title": "Conditions and Loops",
+  "summary": "Teach your code to make choices and to repeat itself.",
+  "kicker": "Chapter 2",
+  "heading": "Conditions and Loops",
+  "sections": [
+    {
+      "id": "if-else",
+      "title": "if / else",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Sometimes you only want code to run in certain situations. <code>if</code> runs something when a condition is true, and <code>else</code> handles everything else."
+        },
+        {
+          "type": "code",
+          "label": "if / else",
+          "code": "let age = 18;\nif (age >= 18) {\n  // runs when true\n} else {\n  // runs otherwise\n}"
+        },
+        {
+          "type": "run",
+          "rows": 9,
+          "code": "<p id=\"out\"></p>\n\n<script>\n  let age = 18;\n  if (age >= 18) {\n    document.getElementById(\"out\").textContent = \"Adult\";\n  } else {\n    document.getElementById(\"out\").textContent = \"Minor\";\n  }\n</script>"
+        },
+        {
+          "type": "link",
+          "url": "https://javascript.info/ifelse",
+          "label": "More on javascript.info"
+        }
+      ]
+    },
+    {
+      "id": "comparisons",
+      "title": "Comparisons and logic",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "To build a condition, you compare values and then combine the answers. These are the ones you'll reach for most often."
+        },
+        {
+          "type": "list",
+          "items": [
+            "<code>===</code> is equal, <code>!==</code> is not equal",
+            "<code>&gt;</code> <code>&lt;</code> <code>&gt;=</code> <code>&lt;=</code> compare numbers",
+            "<code>&amp;&amp;</code> means and, <code>||</code> means or, <code>!</code> means not"
+          ]
+        },
+        {
+          "type": "link",
+          "url": "https://javascript.info/comparison",
+          "label": "More on javascript.info"
+        }
+      ]
+    },
+    {
+      "id": "for-loop",
+      "title": "Loops",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A loop lets you repeat the same code without copying it over and over. A <code>for</code> loop runs a set number of times."
+        },
+        {
+          "type": "code",
+          "label": "for",
+          "code": "for (let i = 1; i <= 5; i++) {\n  // runs 5 times\n}"
+        },
+        {
+          "type": "run",
+          "rows": 9,
+          "code": "<ul id=\"list\"></ul>\n\n<script>\n  for (let i = 1; i <= 5; i++) {\n    const li = document.createElement(\"li\");\n    li.textContent = \"Item \" + i;\n    document.getElementById(\"list\").appendChild(li);\n  }\n</script>"
+        },
+        {
+          "type": "link",
+          "url": "https://javascript.info/while-for",
+          "label": "More on javascript.info"
+        }
+      ]
+    },
+    {
+      "id": "for-of",
+      "title": "Looping over a list",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "When you have a list, <code>for...of</code> hands you one item at a time so you can work with each one."
+        },
+        {
+          "type": "run",
+          "rows": 9,
+          "code": "<p id=\"out\"></p>\n\n<script>\n  const fruits = [\"apple\", \"mango\", \"kiwi\"];\n  let result = \"\";\n  for (const fruit of fruits) {\n    result += fruit + \" \";\n  }\n  document.getElementById(\"out\").textContent = result;\n</script>"
+        }
+      ]
+    },
+    {
+      "id": "loops-recap",
+      "title": "Recap",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "<code>if / else</code> decides which code runs.",
+            "Compare values with <code>===</code>, and join conditions with <code>&amp;&amp;</code> (and) / <code>||</code> (or).",
+            "<code>for</code> repeats a set number of times.",
+            "<code>for...of</code> goes through a list one item at a time."
+          ]
+        }
+      ]
+    }
+  ],
+  "group": "JavaScript"
+}

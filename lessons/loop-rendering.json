@@ -1,0 +1,16 @@
+{
+  "id": "loop-rendering",
+  "title": "Loop Rendering",
+  "learningObjective": "Render repeated content from an array.",
+  "description": "Render a list.",
+  "hint": "Use *ngFor",
+  "ts": "items = ['Apple', 'Banana', 'Orange'];",
+  "html": "<ul>\n  <li *ngFor=\"let item of items\">{{item}}</li>\n</ul>",
+  "expectedOutput": "Apple, Banana, and Orange render as list items.",
+  "checks": [
+    {
+      "type": "allTextIncluded",
+      "values": ["Apple", "Banana", "Orange"]
+    }
+  ]
+}

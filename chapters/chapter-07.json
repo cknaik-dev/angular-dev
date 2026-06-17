@@ -1,0 +1,85 @@
+{
+  "id": "chapter-07",
+  "number": 7,
+  "title": "Objects",
+  "summary": "Group related values together under one name.",
+  "kicker": "Chapter 7",
+  "heading": "Objects",
+  "sections": [
+    {
+      "id": "what-is-object",
+      "title": "What is an object?",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "An object groups related values together as named pairs. Instead of three loose variables for a user, you keep them in one tidy bundle. Each name is called a <strong>property</strong>."
+        },
+        {
+          "type": "code",
+          "label": "Object",
+          "code": "const user = {\n  name: \"Asha\",\n  age: 20,\n  isActive: true\n};"
+        },
+        {
+          "type": "image",
+          "src": "images/objects.png",
+          "alt": "Handwritten note explaining objects",
+          "caption": "Objects at a glance",
+          "maxWidth": 720
+        },
+        {
+          "type": "link",
+          "url": "https://javascript.info/object",
+          "label": "More on javascript.info"
+        }
+      ]
+    },
+    {
+      "id": "using-properties",
+      "title": "Reading and changing properties",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Use a dot to read a property or to change it."
+        },
+        {
+          "type": "compare",
+          "cards": [
+            {
+              "title": "Read",
+              "code": "user.name; // \"Asha\""
+            },
+            {
+              "title": "Change",
+              "code": "user.age = 21;"
+            }
+          ]
+        },
+        {
+          "type": "run",
+          "rows": 9,
+          "code": "<p id=\"out\"></p>\n\n<script>\n  const user = { name: \"Asha\", age: 20 };\n  user.age = 21;\n  document.getElementById(\"out\").textContent =\n    user.name + \" is now \" + user.age;\n</script>"
+        },
+        {
+          "type": "note",
+          "text": "An Angular component keeps its data as properties just like this — and your template reads them with <code>{{ user.name }}</code>."
+        }
+      ]
+    },
+    {
+      "id": "objects-recap",
+      "title": "Recap",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "An object bundles related values under one name.",
+            "Each value is a property, written as <code>name: value</code>.",
+            "Read or change a property with a dot: <code>user.age</code>.",
+            "Angular components hold their data the same way."
+          ]
+        }
+      ]
+    }
+  ],
+  "group": "JavaScript"
+}

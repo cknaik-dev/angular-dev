@@ -1,0 +1,187 @@
+{
+  "id": "chapter-27",
+  "number": 27,
+  "title": "Directives",
+  "summary": "Add behavior or change appearance and layout of elements.",
+  "kicker": "Chapter 27",
+  "group": "Angular",
+  "heading": "Directives",
+  "sections": [
+    {
+      "id": "what-is-directive",
+      "title": "What is a directive?",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A directive is an instruction you attach to an element to give it extra behavior. Angular has three kinds."
+        },
+        {
+          "type": "stack",
+          "layers": [
+            {
+              "title": "Components",
+              "detail": "A directive with its own template — the ones you've been building"
+            },
+            {
+              "title": "Attribute directives",
+              "detail": "Change the look or behavior of an element (e.g. ngClass, ngStyle)"
+            },
+            {
+              "title": "Structural directives",
+              "detail": "Add or remove elements, changing the layout (e.g. @if, @for)"
+            }
+          ]
+        },
+        {
+          "type": "link",
+          "url": "https://angular.dev/guide/directives",
+          "label": "More on angular.dev"
+        }
+      ]
+    },
+    {
+      "id": "ngclass",
+      "title": "ngClass — toggle CSS classes",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "<code>ngClass</code> adds or removes classes based on conditions. Give it an object of <code>class: condition</code> pairs."
+        },
+        {
+          "type": "code",
+          "label": "ngClass",
+          "code": "// class:  isActive = true;  hasError = false;\n\n<div [ngClass]=\"{ active: isActive, error: hasError }\">\n  Status\n</div>\n<!-- gets class=\"active\" -->"
+        },
+        {
+          "type": "text",
+          "text": "Click to toggle the class and watch the style change:"
+        },
+        {
+          "type": "ng",
+          "ts": "active = false;\ntoggle() {\n  active = !active;\n}",
+          "html": "<style>\n  .pill { padding: 6px 12px; border-radius: 999px; background: #e5e7eb; }\n  .active { background: tomato; color: white; }\n</style>\n\n<button (click)=\"toggle()\">Toggle</button>\n<span class=\"pill\" [ngClass]=\"{ active: active }\">Status</span>"
+        }
+      ]
+    },
+    {
+      "id": "ngstyle",
+      "title": "ngStyle — set inline styles",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "<code>ngStyle</code> sets one or more inline styles from your data."
+        },
+        {
+          "type": "code",
+          "label": "ngStyle",
+          "code": "// class:  color = 'tomato';  size = 18;\n\n<p [ngStyle]=\"{ color: color, 'font-size.px': size }\">\n  Styled text\n</p>"
+        },
+        {
+          "type": "text",
+          "text": "Toggle to change the inline styles live:"
+        },
+        {
+          "type": "ng",
+          "ts": "big = false;\ntoggle() {\n  big = !big;\n}",
+          "html": "<button (click)=\"toggle()\">Toggle size</button>\n<p [ngStyle]=\"{ color: big ? 'tomato' : 'gray', 'font-size.px': big ? 28 : 16 }\">\n  Resize me\n</p>"
+        },
+        {
+          "type": "note",
+          "text": "For a single class or style, the plain bindings <code>[class.active]=\"isActive\"</code> and <code>[style.color]=\"color\"</code> are often simpler."
+        }
+      ]
+    },
+    {
+      "id": "ngmodel",
+      "title": "ngModel — two-way binding",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "<code>ngModel</code> is an attribute directive that binds a form control both ways (Chapter 19). It comes from <code>FormsModule</code>."
+        },
+        {
+          "type": "code",
+          "label": "ngModel",
+          "code": "<input [(ngModel)]=\"name\" />\n<p>Hello {{ name }}</p>"
+        }
+      ]
+    },
+    {
+      "id": "structural-directives",
+      "title": "Structural directives",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Structural directives add or remove elements. Modern Angular uses the built-in <code>@if</code>, <code>@for</code>, and <code>@switch</code> blocks (Chapter 23) for this."
+        },
+        {
+          "type": "code",
+          "label": "modern control flow",
+          "code": "@if (isLoggedIn) {\n  <p>Welcome!</p>\n}\n\n@for (item of items; track item) {\n  <li>{{ item }}</li>\n}"
+        },
+        {
+          "type": "text",
+          "text": "Older code uses the <code>*</code>-prefixed forms, which you'll still see around:"
+        },
+        {
+          "type": "code",
+          "label": "older form",
+          "code": "<p *ngIf=\"isLoggedIn\">Welcome!</p>\n<li *ngFor=\"let item of items\">{{ item }}</li>"
+        },
+        {
+          "type": "note",
+          "text": "The <code>*</code> is shorthand that wraps the element in a hidden template. Prefer the new <code>@</code> blocks in fresh code."
+        }
+      ]
+    },
+    {
+      "id": "custom-directive",
+      "title": "Writing your own directive",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Scaffold a directive with the CLI:"
+        },
+        {
+          "type": "code",
+          "label": "Terminal",
+          "code": "ng generate directive highlight\n# short version:\nng g d highlight"
+        },
+        {
+          "type": "text",
+          "text": "A custom attribute directive is a class marked with <code>@Directive</code>. It can react to the host element — here it sets a yellow background."
+        },
+        {
+          "type": "code",
+          "label": "highlight.directive.ts",
+          "code": "import { Directive, ElementRef } from '@angular/core';\n\n@Directive({\n  selector: '[appHighlight]'\n})\nexport class HighlightDirective {\n  constructor(el: ElementRef) {\n    el.nativeElement.style.background = 'yellow';\n  }\n}\n\n// use it:  <p appHighlight>Highlighted</p>"
+        },
+        {
+          "type": "text",
+          "text": "Use <code>host</code> listeners and bindings to react to events like hover or clicks."
+        },
+        {
+          "type": "link",
+          "url": "https://angular.dev/guide/directives/attribute-directives",
+          "label": "Attribute directives on angular.dev"
+        }
+      ]
+    },
+    {
+      "id": "directives-recap",
+      "title": "Recap",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "Directives add behavior to elements; components are directives with a template.",
+            "Attribute directives change look/behavior: <code>ngClass</code>, <code>ngStyle</code>, <code>ngModel</code>.",
+            "Structural directives change layout: use <code>@if</code> / <code>@for</code> / <code>@switch</code>.",
+            "Older code uses <code>*ngIf</code> / <code>*ngFor</code> — same idea, older syntax.",
+            "Write your own with <code>@Directive</code> and a CSS-attribute selector."
+          ]
+        }
+      ]
+    }
+  ]
+}

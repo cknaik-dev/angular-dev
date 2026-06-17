@@ -1,0 +1,146 @@
+{
+  "id": "chapter-24",
+  "number": 24,
+  "title": "Component Lifecycle",
+  "summary": "The stages a component goes through, from created to removed.",
+  "kicker": "Chapter 24",
+  "heading": "Component Lifecycle",
+  "sections": [
+    {
+      "id": "what-is-lifecycle",
+      "title": "What is the lifecycle?",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Every component is born, lives on the screen for a while, and is eventually removed. Angular lets you run your own code at these moments by adding special methods called <strong>lifecycle hooks</strong>."
+        },
+        {
+          "type": "svg",
+          "caption": "Angular calls hooks at each stage of a component's life.",
+          "svg": "<svg viewBox='0 0 440 130' role='img' aria-label='Lifecycle from constructor to ngOnInit to running to ngOnDestroy'><defs><marker id='lc-ar' markerWidth='8' markerHeight='8' refX='6' refY='3' orient='auto'><path d='M0,0 L6,3 L0,6 Z' fill='currentColor'/></marker></defs><g fill='none' stroke='currentColor' stroke-width='1.5'><rect x='8' y='48' width='96' height='40' rx='6'/><rect x='128' y='48' width='96' height='40' rx='6'/><rect x='248' y='48' width='80' height='40' rx='6'/><rect x='350' y='48' width='84' height='40' rx='6'/><line x1='104' y1='68' x2='126' y2='68' marker-end='url(#lc-ar)'/><line x1='224' y1='68' x2='246' y2='68' marker-end='url(#lc-ar)'/><line x1='328' y1='68' x2='348' y2='68' marker-end='url(#lc-ar)'/></g><g fill='currentColor' font-size='11' text-anchor='middle' font-family='monospace'><text x='56' y='66'>constructor</text><text x='176' y='66'>ngOnInit</text><text x='288' y='66'>running</text><text x='392' y='64'>ngOn-</text><text x='392' y='77'>Destroy</text></g></svg>"
+        },
+        {
+          "type": "link",
+          "url": "https://angular.dev/guide/components/lifecycle",
+          "label": "More on angular.dev"
+        }
+      ]
+    },
+    {
+      "id": "common-hooks",
+      "title": "The hooks you'll use most",
+      "blocks": [
+        {
+          "type": "stack",
+          "layers": [
+            {
+              "title": "constructor",
+              "detail": "Runs first; use it for injecting services, not for heavy work"
+            },
+            {
+              "title": "ngOnInit",
+              "detail": "Runs once after the component is set up; good for initial loading"
+            },
+            {
+              "title": "ngOnChanges",
+              "detail": "Runs whenever an input value changes"
+            },
+            {
+              "title": "ngOnDestroy",
+              "detail": "Runs just before the component is removed; clean up here"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hook-example",
+      "title": "Using a hook",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "To use a hook, implement its interface and add the method. Here the component loads data when it starts and cleans up when it leaves."
+        },
+        {
+          "type": "code",
+          "label": "timer.ts",
+          "code": "import { Component, OnInit, OnDestroy } from '@angular/core';\n\n@Component({ selector: 'app-timer', template: `...` })\nexport class Timer implements OnInit, OnDestroy {\n  ngOnInit() {\n    console.log('started');\n  }\n  ngOnDestroy() {\n    console.log('cleaning up');\n  }\n}"
+        },
+        {
+          "type": "note",
+          "text": "With signals and <code>computed</code>, you often need fewer hooks — Angular reacts to changes for you. But <code>ngOnInit</code> and <code>ngOnDestroy</code> are still very common."
+        },
+        {
+          "type": "note",
+          "text": "Lifecycle hooks need a real component being created and destroyed, so try this one in your own Angular app — add a <code>console.log</code> in each hook and watch the order in the browser console."
+        }
+      ]
+    },
+    {
+      "id": "advanced-hooks",
+      "title": "The other lifecycle hooks",
+      "collapsed": true,
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Angular has a few more hooks for advanced cases. You'll rarely reach for these as a beginner, but here they are for completeness."
+        },
+        {
+          "type": "stack",
+          "layers": [
+            {
+              "title": "ngOnChanges",
+              "detail": "Runs whenever an input value changes (before ngOnInit the first time)"
+            },
+            {
+              "title": "ngDoCheck",
+              "detail": "Runs on every change-detection pass; for your own custom change checks"
+            },
+            {
+              "title": "ngAfterContentInit",
+              "detail": "Once, after projected content (ng-content) is ready"
+            },
+            {
+              "title": "ngAfterContentChecked",
+              "detail": "After Angular checks the projected content"
+            },
+            {
+              "title": "ngAfterViewInit",
+              "detail": "Once, after the component's view and child views are ready"
+            },
+            {
+              "title": "ngAfterViewChecked",
+              "detail": "After Angular checks the component's view"
+            }
+          ]
+        },
+        {
+          "type": "note",
+          "text": "The \"Checked\" hooks run very often, so keep them light. Most apps only ever need <code>ngOnInit</code> and <code>ngOnDestroy</code>."
+        },
+        {
+          "type": "link",
+          "url": "https://angular.dev/guide/components/lifecycle",
+          "label": "Full lifecycle reference on angular.dev"
+        }
+      ]
+    },
+    {
+      "id": "lifecycle-recap",
+      "title": "Recap",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "Lifecycle hooks run your code at key moments.",
+            "<code>constructor</code> first, then <code>ngOnInit</code> once set up.",
+            "<code>ngOnChanges</code> runs when inputs change.",
+            "<code>ngOnDestroy</code> runs before removal — clean up there.",
+            "Implement the matching interface to use a hook."
+          ]
+        }
+      ]
+    }
+  ],
+  "group": "Angular"
+}

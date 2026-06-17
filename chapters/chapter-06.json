@@ -1,0 +1,83 @@
+{
+  "id": "chapter-06",
+  "number": 6,
+  "title": "Strings: Joining and Templates",
+  "summary": "Build text from pieces using + and the cleaner backtick style.",
+  "kicker": "Chapter 6",
+  "heading": "Strings: Joining and Templates",
+  "sections": [
+    {
+      "id": "joining-with-plus",
+      "title": "Joining text with +",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A string is just text. To build a bigger string from smaller pieces, you can glue them together with the <code>+</code> sign. This is called concatenation."
+        },
+        {
+          "type": "code",
+          "label": "Joining",
+          "code": "const name = \"Asha\";\n\"Hello \" + name + \"!\"; // \"Hello Asha!\""
+        },
+        {
+          "type": "run",
+          "rows": 8,
+          "code": "<p id=\"out\"></p>\n\n<script>\n  const name = \"Asha\";\n  const age = 20;\n  document.getElementById(\"out\").textContent =\n    \"Hello \" + name + \", age \" + age;\n</script>"
+        },
+        {
+          "type": "link",
+          "url": "https://javascript.info/string",
+          "label": "More on javascript.info"
+        }
+      ]
+    },
+    {
+      "id": "template-literals",
+      "title": "Template literals (backticks)",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "All those <code>+</code> signs get messy fast. Instead, you can wrap text in backticks <code>``</code> and drop values straight in with <code>${ }</code>. It reads much more naturally."
+        },
+        {
+          "type": "compare",
+          "cards": [
+            {
+              "title": "With +",
+              "code": "\"Hello \" + name + \", age \" + age"
+            },
+            {
+              "title": "With ` `",
+              "code": "`Hello ${name}, age ${age}`"
+            }
+          ]
+        },
+        {
+          "type": "run",
+          "rows": 8,
+          "code": "<p id=\"out\"></p>\n\n<script>\n  const name = \"Asha\";\n  const age = 20;\n  document.getElementById(\"out\").textContent = `Hello ${name}, age ${age}`;\n</script>"
+        },
+        {
+          "type": "note",
+          "text": "Angular's <code>{{ name }}</code> in templates is the same idea — drop a value right into your text."
+        }
+      ]
+    },
+    {
+      "id": "strings-recap",
+      "title": "Recap",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "A string is text, written in quotes.",
+            "<code>+</code> joins strings together.",
+            "Backticks with <code>${ }</code> are a cleaner way to mix text and values.",
+            "This is the same idea as Angular's <code>{{ }}</code>."
+          ]
+        }
+      ]
+    }
+  ],
+  "group": "JavaScript"
+}

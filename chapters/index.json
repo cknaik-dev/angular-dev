@@ -1,0 +1,296 @@
+[
+  {
+    "id": "chapter-01",
+    "number": 1,
+    "title": "JavaScript, TypeScript, and Angular",
+    "summary": "Meet the three tools you'll use, and see how they team up.",
+    "group": "JavaScript"
+  },
+  {
+    "id": "chapter-02",
+    "number": 2,
+    "title": "Conditions and Loops",
+    "summary": "Teach your code to make choices and to repeat itself.",
+    "group": "JavaScript"
+  },
+  {
+    "id": "chapter-03",
+    "number": 3,
+    "title": "The DOM, jQuery, and Angular",
+    "summary": "See how JavaScript actually changes the page — and how that idea grew into Angular.",
+    "group": "JavaScript"
+  },
+  {
+    "id": "chapter-04",
+    "number": 4,
+    "title": "Functions and Arrow Functions",
+    "summary": "Wrap code so you can reuse it — and meet the shorter arrow style.",
+    "group": "JavaScript"
+  },
+  {
+    "id": "chapter-05",
+    "number": 5,
+    "title": "Arrays and Array Methods",
+    "summary": "Keep many values in one list, then loop through them and reshape them.",
+    "group": "JavaScript"
+  },
+  {
+    "id": "chapter-06",
+    "number": 6,
+    "title": "Strings: Joining and Templates",
+    "summary": "Build text from pieces using + and the cleaner backtick style.",
+    "group": "JavaScript"
+  },
+  {
+    "id": "chapter-07",
+    "number": 7,
+    "title": "Objects",
+    "summary": "Group related values together under one name.",
+    "group": "JavaScript"
+  },
+  {
+    "id": "chapter-08",
+    "number": 8,
+    "title": "Classes",
+    "summary": "A blueprint for making objects — and the shape of every Angular component.",
+    "group": "JavaScript"
+  },
+  {
+    "id": "chapter-09",
+    "number": 9,
+    "title": "Modules: import and export",
+    "summary": "Split code across files and share it between them.",
+    "group": "JavaScript"
+  },
+  {
+    "id": "chapter-10",
+    "number": 10,
+    "title": "Promises and async / await",
+    "summary": "How JavaScript handles things that take time, like loading data.",
+    "group": "JavaScript"
+  },
+  {
+    "id": "chapter-11",
+    "number": 11,
+    "title": "A Taste of REST and fetch",
+    "summary": "A first peek at loading data from the internet. We'll go deeper later.",
+    "group": "JavaScript"
+  },
+  {
+    "id": "chapter-12",
+    "number": 12,
+    "title": "TypeScript Basics",
+    "summary": "Add types to your values so mistakes are caught before the app runs.",
+    "group": "TypeScript"
+  },
+  {
+    "id": "chapter-13",
+    "number": 13,
+    "title": "Interfaces and Object Types",
+    "summary": "Describe the shape of your objects so they stay consistent.",
+    "group": "TypeScript"
+  },
+  {
+    "id": "chapter-14",
+    "number": 14,
+    "title": "Typed Functions and Generics",
+    "summary": "Give functions typed inputs and outputs, and reuse types with generics.",
+    "group": "TypeScript"
+  },
+  {
+    "id": "chapter-15",
+    "number": 15,
+    "title": "Getting Started with Angular",
+    "summary": "Install the tools and create your first Angular app.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-16",
+    "number": 16,
+    "title": "Your First App: Hello World",
+    "summary": "Edit the starter app and show your own message on the screen.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-17",
+    "number": 17,
+    "title": "Files and Folder Structure",
+    "summary": "A tour of what the CLI creates and which files matter most.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-18",
+    "number": 18,
+    "title": "Signals: Angular's Reactivity",
+    "summary": "Values that know when they change — and update the screen for you.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-19",
+    "number": 19,
+    "title": "Components: The Basics",
+    "summary": "The building block of every Angular app — a reusable piece of UI.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-20",
+    "number": 20,
+    "title": "Templates and Data Binding",
+    "summary": "Connect your component's data to what shows on screen.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-21",
+    "number": 21,
+    "title": "Inputs and Outputs",
+    "summary": "How a parent component passes data down and a child sends events back up.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-22",
+    "number": 22,
+    "title": "Two-way Binding",
+    "summary": "Keep a value and the screen in sync, in both directions at once.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-23",
+    "number": 23,
+    "title": "Control Flow in Templates",
+    "summary": "Show, hide, repeat, and switch parts of your template.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-24",
+    "number": 24,
+    "title": "Component Lifecycle",
+    "summary": "The stages a component goes through, from created to removed.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-25",
+    "number": 25,
+    "title": "Styles and Content Projection",
+    "summary": "Scoped styling, passing markup into a component, and reaching its elements.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-26",
+    "number": 26,
+    "title": "Pipes",
+    "summary": "Transform how values look in the template without changing the data.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-27",
+    "number": 27,
+    "title": "Directives",
+    "summary": "Add behavior or change appearance and layout of elements.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-28",
+    "number": 28,
+    "title": "Template-driven Forms",
+    "summary": "Build forms right in the template with ngModel — great for simple forms.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-29",
+    "number": 29,
+    "title": "Reactive Forms",
+    "summary": "Define the form model in TypeScript — powerful for bigger, dynamic forms.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-30",
+    "number": 30,
+    "title": "Custom Form Controls (ControlValueAccessor)",
+    "summary": "Make your own component work with ngModel and formControlName.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-31",
+    "number": 31,
+    "title": "Routing",
+    "summary": "Show different pages for different URLs, with path and query parameters.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-32",
+    "number": 32,
+    "title": "Route Guards",
+    "summary": "Protect routes with guards — like blocking pages behind a login.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-33",
+    "number": 33,
+    "title": "REST APIs In Depth",
+    "summary": "Resources, HTTP methods, CRUD, and status codes — the full picture.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-34",
+    "number": 34,
+    "title": "CRUD with JSON Server",
+    "summary": "Spin up a fake REST API and do the four CRUD operations against it.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-35",
+    "number": 35,
+    "title": "RxJS and Observables",
+    "summary": "Streams of values over time — the foundation behind HttpClient and forms.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-36",
+    "number": 36,
+    "title": "HttpClient in a Component",
+    "summary": "Call your JSON Server API straight from a component with HttpClient.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-37",
+    "number": 37,
+    "title": "Services and Dependency Injection",
+    "summary": "Share logic and data across components with injectable services.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-38",
+    "number": 38,
+    "title": "HttpClient with a Service",
+    "summary": "Move your API calls into a service that components can share.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-39",
+    "number": 39,
+    "title": "Sharing Data with a Service",
+    "summary": "Let far-apart components communicate through a shared service.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-40",
+    "number": 40,
+    "title": "Environments",
+    "summary": "Keep different settings — like API URLs — for development and production.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-41",
+    "number": 41,
+    "title": "HTTP Interceptors",
+    "summary": "Run code on every request and response — auth tokens, errors, logging.",
+    "group": "Angular"
+  },
+  {
+    "id": "chapter-42",
+    "number": 42,
+    "title": "Authentication Flow",
+    "summary": "Put it all together: login, store a token, attach it, and guard routes.",
+    "group": "Angular"
+  }
+]

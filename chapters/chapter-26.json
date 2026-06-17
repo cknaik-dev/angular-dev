@@ -1,0 +1,233 @@
+{
+  "id": "chapter-26",
+  "number": 26,
+  "title": "Pipes",
+  "summary": "Transform how values look in the template without changing the data.",
+  "kicker": "Chapter 26",
+  "group": "Angular",
+  "heading": "Pipes",
+  "sections": [
+    {
+      "id": "what-is-pipe",
+      "title": "What is a pipe?",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "A pipe formats a value for display using the <code>|</code> symbol in a template. It only changes what's shown on screen — the underlying data stays exactly the same."
+        },
+        {
+          "type": "code",
+          "label": "template",
+          "code": "<p>{{ price | currency }}</p>\n<!-- data: price = 1500  ->  shows $1,500.00 -->"
+        },
+        {
+          "type": "flow",
+          "steps": [
+            "value",
+            "| pipe",
+            "formatted output"
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Some pipes take <strong>arguments</strong> after a colon: <code>{{ value | pipeName:arg1:arg2 }}</code>."
+        },
+        {
+          "type": "link",
+          "url": "https://angular.dev/guide/templates/pipes",
+          "label": "More on angular.dev"
+        }
+      ]
+    },
+    {
+      "id": "text-pipes",
+      "title": "Text pipes",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "These change the casing of text."
+        },
+        {
+          "type": "code",
+          "label": "uppercase / lowercase / titlecase",
+          "code": "{{ 'hello' | uppercase }}        <!-- HELLO -->\n{{ 'HELLO' | lowercase }}        <!-- hello -->\n{{ 'hello world' | titlecase }}  <!-- Hello World -->"
+        },
+        {
+          "type": "text",
+          "text": "Try it — type below and watch the pipes format your text live:"
+        },
+        {
+          "type": "ng",
+          "ts": "text = 'hello world';",
+          "html": "<input id=\"t\" [value]=\"text\" (input)=\"text = $event.target.value\">\n<p>upper: {{ text | uppercase }}</p>\n<p>title: {{ text | titlecase }}</p>"
+        }
+      ]
+    },
+    {
+      "id": "number-pipes",
+      "title": "Number pipes",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "Format numbers as plain decimals, currency, or percentages. The <code>number</code> pipe's argument is <code>'minIntegerDigits.minFractionDigits-maxFractionDigits'</code>."
+        },
+        {
+          "type": "code",
+          "label": "number / currency / percent",
+          "code": "{{ 3.14159 | number:'1.0-2' }}   <!-- 3.14 -->\n{{ 1500 | currency:'USD' }}      <!-- $1,500.00 -->\n{{ 0.25 | percent }}             <!-- 25% -->"
+        },
+        {
+          "type": "text",
+          "text": "Change the amount and see the currency and number pipes reformat it:"
+        },
+        {
+          "type": "ng",
+          "ts": "price = 1500;",
+          "html": "<input id=\"p\" type=\"number\" [value]=\"price\" (input)=\"price = +$event.target.value\">\n<p>{{ price | currency:'USD' }}</p>\n<p>{{ price | number:'1.0-2' }}</p>"
+        }
+      ]
+    },
+    {
+      "id": "date-pipe",
+      "title": "The date pipe",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "<code>date</code> formats a date value. Pass a format string to control how it looks."
+        },
+        {
+          "type": "code",
+          "label": "date",
+          "code": "{{ today | date }}              <!-- Jun 12, 2026 -->\n{{ today | date:'shortTime' }}  <!-- 9:30 AM -->\n{{ today | date:'dd/MM/yyyy' }} <!-- 12/06/2026 -->\n{{ today | date:'fullDate' }}   <!-- Friday, June 12, 2026 -->"
+        },
+        {
+          "type": "text",
+          "text": "Edit and run — these show today's date in different formats:"
+        },
+        {
+          "type": "ng",
+          "ts": "today = new Date();",
+          "html": "<p>default: {{ today | date }}</p>\n<p>time: {{ today | date:'shortTime' }}</p>\n<p>full: {{ today | date:'fullDate' }}</p>"
+        }
+      ]
+    },
+    {
+      "id": "data-pipes",
+      "title": "Data pipes: json, slice, keyvalue",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "<code>json</code> is handy for debugging — it prints any value as JSON. <code>slice</code> takes part of a list or string. <code>keyvalue</code> turns an object into a list you can loop over."
+        },
+        {
+          "type": "code",
+          "label": "json (debug)",
+          "code": "<pre>{{ user | json }}</pre>\n<!-- { \"name\": \"Asha\", \"age\": 20 } -->"
+        },
+        {
+          "type": "code",
+          "label": "slice (first 3)",
+          "code": "@for (item of items | slice:0:3; track item) {\n  <li>{{ item }}</li>\n}"
+        },
+        {
+          "type": "code",
+          "label": "keyvalue",
+          "code": "@for (entry of user | keyvalue; track entry.key) {\n  <li>{{ entry.key }}: {{ entry.value }}</li>\n}"
+        },
+        {
+          "type": "text",
+          "text": "Edit and run — see <code>json</code> and <code>slice</code> in action:"
+        },
+        {
+          "type": "ng",
+          "ts": "user = { name: 'Asha', age: 20 };\nitems = ['apple', 'mango', 'kiwi', 'pear', 'plum'];",
+          "html": "<pre>{{ user | json }}</pre>\n\n<p>first 3: {{ items | slice:0:3 }}</p>\n<ul>\n  @for (item of items | slice:0:3; track item) {\n    <li>{{ item }}</li>\n  }\n</ul>"
+        }
+      ]
+    },
+    {
+      "id": "async-pipe",
+      "title": "The async pipe",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "<code>async</code> unwraps a value that arrives later — a Promise or an Observable — and keeps the screen updated when it changes. It also cleans up the subscription for you."
+        },
+        {
+          "type": "code",
+          "label": "async",
+          "code": "// class:  user$ = this.http.get('/api/user');\n\n@if (user$ | async; as user) {\n  <p>{{ user.name }}</p>\n}"
+        },
+        {
+          "type": "note",
+          "text": "The async pipe pairs perfectly with HttpClient and signals — no manual subscribe/unsubscribe needed."
+        }
+      ]
+    },
+    {
+      "id": "chaining-pipes",
+      "title": "Chaining pipes",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "You can pipe a value through several pipes in a row — they run left to right."
+        },
+        {
+          "type": "code",
+          "label": "chained",
+          "code": "{{ today | date:'fullDate' | uppercase }}\n<!-- FRIDAY, JUNE 12, 2026 -->"
+        }
+      ]
+    },
+    {
+      "id": "custom-pipe",
+      "title": "Writing your own pipe",
+      "blocks": [
+        {
+          "type": "text",
+          "text": "When no built-in pipe fits, write your own. Let the CLI scaffold it for you:"
+        },
+        {
+          "type": "code",
+          "label": "Terminal",
+          "code": "ng generate pipe exclaim\n# short version:\nng g p exclaim"
+        },
+        {
+          "type": "text",
+          "text": "A pipe is a class with a <code>transform</code> method, marked with <code>@Pipe</code>."
+        },
+        {
+          "type": "code",
+          "label": "exclaim.pipe.ts",
+          "code": "import { Pipe, PipeTransform } from '@angular/core';\n\n@Pipe({ name: 'exclaim' })\nexport class ExclaimPipe implements PipeTransform {\n  transform(value: string): string {\n    return value + '!';\n  }\n}\n\n// use it:  {{ 'hi' | exclaim }}  ->  hi!"
+        },
+        {
+          "type": "text",
+          "text": "Pipes are <strong>pure</strong> by default: they only re-run when their input changes, which keeps them fast. An <em>impure</em> pipe (like <code>async</code>) re-runs more often — use them sparingly."
+        },
+        {
+          "type": "link",
+          "url": "https://angular.dev/guide/templates/pipes#creating-custom-pipes",
+          "label": "Custom pipes on angular.dev"
+        }
+      ]
+    },
+    {
+      "id": "pipes-recap",
+      "title": "Recap",
+      "blocks": [
+        {
+          "type": "list",
+          "items": [
+            "A pipe formats a value for display with <code>|</code> — the data is unchanged.",
+            "Text: <code>uppercase</code>, <code>lowercase</code>, <code>titlecase</code>.",
+            "Numbers: <code>number</code>, <code>currency</code>, <code>percent</code>.",
+            "Also <code>date</code>, <code>json</code>, <code>slice</code>, <code>keyvalue</code>, and <code>async</code>.",
+            "Arguments come after a colon; chain pipes left to right.",
+            "Write your own with <code>@Pipe</code> and a <code>transform</code> method."
+          ]
+        }
+      ]
+    }
+  ]
+}

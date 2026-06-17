@@ -1,0 +1,16 @@
+{
+  "id": "conditional-rendering",
+  "title": "Conditional Rendering",
+  "learningObjective": "Show content only when a condition is true.",
+  "description": "Show text conditionally.",
+  "hint": "Use *ngIf",
+  "ts": "show = true;",
+  "html": "<p *ngIf=\"show\">Visible Message</p>",
+  "expectedOutput": "Visible Message appears.",
+  "checks": [
+    {
+      "type": "textIncludes",
+      "value": "Visible Message"
+    }
+  ]
+}
