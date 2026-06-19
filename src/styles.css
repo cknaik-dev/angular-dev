@@ -8,8 +8,16 @@ html,
 body {
   margin: 0;
   min-height: 100%;
-  max-width: 100%;
-  overflow-x: hidden;
+}
+
+/* Guard against horizontal scroll on small screens only.
+   (Applying overflow-x globally would turn the page into a scroll container
+   and break the sticky sidebar on desktop.) */
+@media (max-width: 720px) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
 }
 
 body {
@@ -26,4 +34,32 @@ select {
 code,
 pre {
   font-family: 'JetBrains Mono', monospace;
+}
+
+/* Super-slim scrollbars everywhere. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(140, 140, 160, 0.5) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(140, 140, 160, 0.45);
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(140, 140, 160, 0.7);
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
 }

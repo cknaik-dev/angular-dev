@@ -69,6 +69,17 @@ function serveStatic() {
       document.querySelectorAll('details').forEach((d) => (d.open = true));
       const toolbar = document.querySelector('.print-toolbar');
       if (toolbar) toolbar.style.display = 'none';
+
+      // Headings rendered inside example previews (e.g. "<h1>Hello, World!</h1>")
+      // must not become PDF bookmarks — demote them to plain divs.
+      document
+        .querySelectorAll('app-preview-pane h1, app-preview-pane h2, app-preview-pane h3, app-preview-pane h4, app-preview-pane h5, app-preview-pane h6')
+        .forEach((h) => {
+          const div = document.createElement('div');
+          div.innerHTML = h.innerHTML;
+          div.style.fontWeight = '700';
+          h.replaceWith(div);
+        });
     });
     await page.waitForTimeout(1500); // let previews + fonts settle
 
@@ -76,6 +87,8 @@ function serveStatic() {
       path: outFile,
       format: 'A4',
       printBackground: true,
+      tagged: true, // accessible/structured PDF
+      outline: true, // bookmarks from <h1>..<h6> (chapter navigation in Adobe)
       margin: { top: '12mm', bottom: '14mm', left: '12mm', right: '12mm' }
     });
     console.log('Wrote', path.relative(process.cwd(), outFile));

@@ -73,7 +73,7 @@
       @case ('code') {
         <div class="code-card">
           @if (block.label) {
-            <h4>{{ block.label }}</h4>
+            <p class="code-card-title">{{ block.label }}</p>
           }
           <pre>{{ block.code }}</pre>
         </div>
@@ -88,7 +88,7 @@
         <div class="card-row">
           @for (card of block.cards; track $index) {
             <div class="code-card">
-              <h4>{{ card.title }}</h4>
+              <p class="code-card-title">{{ card.title }}</p>
               <pre>{{ card.code }}</pre>
             </div>
           }

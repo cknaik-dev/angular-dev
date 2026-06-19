@@ -41,7 +41,7 @@ import { ChapterArticleComponent } from '../chapter-article/chapter-article.comp
       <section class="pdf-toc">
         <h2>Contents</h2>
         @for (group of toc(); track group.name) {
-          <h3>{{ group.name }}</h3>
+          <p class="toc-group">{{ group.name }}</p>
           <ul>
             @for (ch of group.items; track ch.id) {
               <li><span class="toc-num">{{ ch.number }}</span><span>{{ ch.title }}</span></li>
@@ -112,7 +112,7 @@ import { ChapterArticleComponent } from '../chapter-article/chapter-article.comp
         font-size: 1.8rem;
       }
 
-      .pdf-toc h3 {
+      .pdf-toc .toc-group {
         margin: 1.3rem 0 0.4rem;
         font-size: 0.78rem;
         letter-spacing: 0.08em;
