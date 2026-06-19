@@ -37,6 +37,16 @@
       ]
     },
     {
+      "id": "generate-interceptor",
+      "title": "Generating an interceptor with the CLI",
+      "blocks": [
+        { "type": "text", "text": "Let the CLI scaffold it — it creates a functional interceptor file (and its test)." },
+        { "type": "code", "label": "Terminal", "code": "ng generate interceptor auth\n# short version:\nng g interceptor auth" },
+        { "type": "code", "label": "auth.interceptor.ts (generated)", "code": "import { HttpInterceptorFn } from '@angular/common/http';\n\nexport const authInterceptor: HttpInterceptorFn = (req, next) => {\n  return next(req);\n};" },
+        { "type": "note", "text": "It also creates <code>auth.interceptor.spec.ts</code>. Then you fill in the logic and register it — covered next." }
+      ]
+    },
+    {
       "id": "registering",
       "title": "Writing and registering one",
       "blocks": [

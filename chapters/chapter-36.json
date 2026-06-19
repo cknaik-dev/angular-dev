@@ -126,6 +126,32 @@
       ]
     },
     {
+      "id": "why-subscribe",
+      "title": "Why subscribe — and its downsides",
+      "blocks": [
+        { "type": "text", "text": "HttpClient returns an <strong>Observable</strong>, and an observable is <em>lazy</em> — the request doesn't actually go out until something <code>subscribe</code>s to it. So <code>subscribe</code> is what fires the call and hands you the result." },
+        { "type": "note", "text": "Calling <code>http.get(...)</code> on its own does nothing. No subscribe = no request." },
+        { "type": "text", "text": "But subscribing by hand has two catches:" },
+        { "type": "stack", "layers": [
+          { "title": "Memory leaks", "detail": "A subscription keeps listening until it completes or you unsubscribe. A GET completes on its own, but streams (form valueChanges, route params, intervals) don't — forget to unsubscribe and they pile up." },
+          { "title": "Change detection", "detail": "You manually stuff the result into a field/signal. With OnPush or zoneless, a plain field set can be missed; you end up needing extra wiring to refresh the view." }
+        ] }
+      ]
+    },
+    {
+      "id": "async-pipe",
+      "title": "Use | async to avoid both",
+      "blocks": [
+        { "type": "text", "text": "The <code>async</code> pipe subscribes for you in the template, <strong>unsubscribes automatically</strong> when the component is destroyed (no leaks), and tells Angular to update the view when data arrives (no change-detection worries). Keep the Observable in a field and pipe it." },
+        { "type": "code", "label": "users.ts", "code": "import { Component, inject } from '@angular/core';\nimport { HttpClient } from '@angular/common/http';\n\nexport class Users {\n  private http = inject(HttpClient);\n  // no subscribe, no signal — just the observable\n  users$ = this.http.get<User[]>('http://localhost:3000/users');\n}" },
+        { "type": "code", "label": "users.html", "code": "@if (users$ | async; as users) {\n  <ul>\n    @for (user of users; track user.id) {\n      <li>{{ user.name }}</li>\n    }\n  </ul>\n} @else {\n  <p>Loading…</p>\n}" },
+        { "type": "note", "text": "Rule of thumb: prefer <code>| async</code> for showing data. If you must subscribe in the class (e.g. to trigger a side effect), add <code>takeUntilDestroyed()</code> so it cleans up." },
+        { "type": "text", "text": "<code>takeUntilDestroyed()</code> completes the stream when the component is destroyed, so the subscription can't leak. Call it in an <strong>injection context</strong> (a field initializer or the constructor):" },
+        { "type": "code", "label": "users.ts", "code": "import { Component, inject } from '@angular/core';\nimport { HttpClient } from '@angular/common/http';\nimport { takeUntilDestroyed } from '@angular/core/rxjs-interop';\n\nexport class Users {\n  private http = inject(HttpClient);\n\n  constructor() {\n    this.http.get<User[]>('http://localhost:3000/users')\n      .pipe(takeUntilDestroyed())\n      .subscribe(users => console.log(users));\n  }\n}" },
+        { "type": "note", "text": "Subscribing later (e.g. in <code>ngOnInit</code> or a click handler) is outside the injection context, so pass a <code>DestroyRef</code>: <code>takeUntilDestroyed(this.destroyRef)</code> (with <code>private destroyRef = inject(DestroyRef)</code>)." }
+      ]
+    },
+    {
       "id": "http-recap",
       "title": "Recap",
       "blocks": [
@@ -137,6 +163,7 @@
             "Requests are Observables — they run when you <code>subscribe</code>.",
             "Type the response: <code>get&lt;User[]&gt;</code>.",
             "Handle failures with an <code>error</code> handler in <code>subscribe</code>.",
+            "Manual <code>subscribe</code> risks leaks (streams) and change-detection misses — prefer <code>| async</code>, which subscribes and cleans up for you.",
             "This works for a small screen; for bigger apps you'd move the calls into a service."
           ]
         }
